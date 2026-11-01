@@ -201,6 +201,20 @@ watch(previewOpen, async (open) => {
   border-bottom: var(--dsfs-shell-border-width) solid var(--border-default-grey);
 }
 
+/* Toolbar items keep their natural width and wrap onto a new line as a whole,
+   instead of being squeezed until their labels break (e.g. "Nouveau dossier").
+   max-width keeps a single very long label inside the row at 320px (RGAA 10.11). */
+.dsfs-app-shell__toolbar {
+  flex-wrap: wrap;
+  row-gap: var(--dsfs-space-1w);
+  padding-block: var(--dsfs-space-1w);
+}
+
+.dsfs-app-shell__toolbar > :deep(*) {
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
 /* DsfrBreadcrumb ships with vertical margins designed for content pages. */
 .dsfs-app-shell__breadcrumb :deep(.fr-breadcrumb) {
   margin: 0;
@@ -241,6 +255,16 @@ watch(previewOpen, async (open) => {
     overflow: visible;
     border-right: 0;
     background-color: transparent;
+  }
+
+  /* DSFR mobile gutters (fr-container uses 1rem below md). */
+  .dsfs-app-shell__breadcrumb,
+  .dsfs-app-shell__toolbar {
+    padding-inline: var(--dsfs-space-2w);
+  }
+
+  .dsfs-app-shell__main {
+    padding: var(--dsfs-space-2w);
   }
 
   .dsfs-app-shell__preview {
