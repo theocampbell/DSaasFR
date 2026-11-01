@@ -12,7 +12,7 @@ strictement les couleurs, la typographie, les espacements et l'accessibilité du
 ## Installation
 
 ```bash
-npm install @gouvminint/vue-dsfr dsaasfr
+npm install @gouvminint/vue-dsfr vue-router dsaasfr
 ```
 
 ```ts
@@ -24,6 +24,7 @@ import DSaaSFR from 'dsaasfr'
 import '@gouvfr/dsfr/dist/core/core.main.min.css'
 import '@gouvfr/dsfr/dist/component/component.main.min.css'
 import '@gouvfr/dsfr/dist/utility/utility.main.min.css'
+import '@gouvfr/dsfr/dist/scheme/scheme.min.css'
 import '@gouvminint/vue-dsfr/styles'
 import 'dsaasfr/styles'
 
@@ -42,8 +43,10 @@ import { DsfsAppShell } from 'dsaasfr'
 
 ```vue
 <DsfsAppShell v-model:preview-open="preview">
-  <template #header><DsfrHeader service-title="Mon service" /></template>
-  <template #sidebar><!-- primary navigation --></template>
+  <template #sidebar>
+    <!-- bloc-marque + service name + navigation: replaces the DSFR header -->
+    <DsfsSidebar service-title="Mon service" :items="items" />
+  </template>
   <template #breadcrumb><DsfrBreadcrumb :links="links" /></template>
   <template #toolbar><DsfrButton label="Nouveau" size="sm" /></template>
 
@@ -58,6 +61,7 @@ import { DsfsAppShell } from 'dsaasfr'
 | Component | Status |
 |---|---|
 | `DsfsAppShell` | Draft — see [decision 0002](docs/decisions/0002-app-shell-layout.md) |
+| `DsfsSidebar` | Draft — see [decision 0003](docs/decisions/0003-brand-in-sidebar.md) |
 
 ## Principles
 

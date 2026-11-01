@@ -69,4 +69,8 @@ The human product owner reviews the decision records and the Storybook result.
 
 - Import `@gouvfr/dsfr/dist/utility/utility.main.min.css`, not `utility.min.css`:
   the latter contains a legacy media query that Vite 8 (lightningcss) rejects.
+- Dark mode needs `@gouvfr/dsfr/dist/scheme/scheme.min.css`: `core.main` only ships
+  the light palette.
+- `routeLocationKey` from vue-router injects a reactive route, not a ref: `route.path`,
+  not `route.value.path`.
 - jsdom cannot evaluate colour contrast; that is covered by Storybook's a11y addon.

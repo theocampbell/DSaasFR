@@ -23,12 +23,17 @@ content, and the ability to preview a document or item without leaving the list.
 ## Draft layout
 
 ```
-┌──────────────── header (DSFR, bloc-marque kept) ─────────────────┐
-│ sidebar  │ breadcrumb row                         │ preview      │
-│ (primary │ toolbar row: actions / filters         │ panel        │
-│  nav)    │ main content (full width, no container)│ (optional)   │
-└──────────┴────────────────────────────────────────┴──────────────┘
+┌─────────────┬────────────────────────────────────────┬──────────────┐
+│ bloc-marque │ breadcrumb row                         │ preview      │
+│ service     │ toolbar row: actions / filters         │ panel        │
+│─────────────│ main content (full width, no container)│ (optional)   │
+│ primary nav │ only `main` scrolls                    │              │
+│ footer      │                                        │              │
+└─────────────┴────────────────────────────────────────┴──────────────┘
 ```
+
+The DSFR header is replaced by the sidebar brand block: see
+[0003](0003-brand-in-sidebar.md).
 
 - **Breadcrumb row** = location (DsfrBreadcrumb, margins removed).
 - **Toolbar row** = page-level actions and filters (inspired by Linear).
@@ -45,8 +50,7 @@ content, and the ability to preview a document or item without leaving the list.
 
 ## Open questions
 
-1. Does the header stay full height, or can a compact application header keep the
-   bloc-marque while freeing vertical space?
+1. ~~Header height~~ → resolved by 0003 (no header).
 2. Secondary navigation: second sidebar level, tabs in the toolbar row, or both?
 3. Preview panel: fixed width, resizable, or expandable to full width?
 4. Mobile: sidebar as drawer (DSFR modal-like), preview as full-screen view?

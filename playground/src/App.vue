@@ -1,46 +1,35 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import type { DsfsSidebarItem } from 'dsaasfr'
 
-const collapsed = ref(false)
+const route = useRoute()
 const preview = ref(false)
-const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers' }, { text: 'Dossier #2041' }]
+
+const items: DsfsSidebarItem[] = [
+  { text: 'Tableau de bord', to: '/' },
+  { text: 'Dossiers', to: '/dossiers' },
+  { text: 'Usagers', to: '/usagers' },
+  {
+    text: 'Administration',
+    menuItems: [
+      { text: 'Agents', to: '/admin/agents' },
+      { text: 'Paramètres', to: '/admin/parametres' },
+    ],
+  },
+]
+
+const links = computed(() => [{ to: '/', text: 'Accueil' }, { text: route.path }])
 </script>
 
 <template>
-  <DsfsAppShell
-    v-model:sidebar-collapsed="collapsed"
-    v-model:preview-open="preview"
-  >
-    <template #header>
-      <DsfrHeader
+  <DsfsAppShell v-model:preview-open="preview">
+    <template #sidebar>
+      <DsfsSidebar
         service-title="Démarches Pro"
         service-description="Back-office instructeurs"
-        :logo-text="['République', 'Française']"
+        :items="items"
       />
-    </template>
-
-    <template #sidebar>
-      <ul class="fr-sidemenu__list fr-p-1w">
-        <li class="fr-sidemenu__item fr-sidemenu__item--active">
-          <a
-            class="fr-sidemenu__link"
-            href="#"
-            aria-current="page"
-          >Dossiers</a>
-        </li>
-        <li class="fr-sidemenu__item">
-          <a
-            class="fr-sidemenu__link"
-            href="#"
-          >Usagers</a>
-        </li>
-        <li class="fr-sidemenu__item">
-          <a
-            class="fr-sidemenu__link"
-            href="#"
-          >Statistiques</a>
-        </li>
-      </ul>
     </template>
 
     <template #breadcrumb>
@@ -61,7 +50,7 @@ const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers'
     </template>
 
     <h1 class="fr-h3">
-      Dossier #2041
+      {{ route.path }}
     </h1>
     <p>Playground : une fausse application de back-office pour tester les composants en conditions réelles.</p>
 

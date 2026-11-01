@@ -2,33 +2,37 @@
 /**
  * DsfsAppShell — DRAFT layout skeleton.
  *
- * Regions (see docs/decisions/0002-app-shell-layout.md):
+ * Regions (see docs/decisions/0002 and 0003):
  *
- *   ┌──────────────────────── header (DSFR, required bloc-marque) ─────────────────┐
- *   │ sidebar │ breadcrumb row                                    │ preview (opt.) │
- *   │ (nav)   │ toolbar row: actions / filters                    │                │
- *   │         │ main                                              │                │
- *   └─────────┴───────────────────────────────────────────────────┴────────────────┘
+ *   ┌─────────────┬──────────────────────────────────────┬────────────────┐
+ *   │ sidebar     │ breadcrumb row                       │ preview (opt.) │
+ *   │ (bloc-marque│ toolbar row: actions / filters       │                │
+ *   │  + nav,     │ main (the only scrolling region)     │                │
+ *   │  DsfsSidebar│                                      │                │
+ *   └─────────────┴──────────────────────────────────────┴────────────────┘
+ *
+ * There is no DSFR header: the bloc-marque lives at the top of DsfsSidebar, which
+ * also provides the banner and navigation landmarks. The optional `header` slot
+ * remains for apps that want a classic DsfrHeader above everything.
  *
  * The shell owns layout and landmarks only. Content comes from slots, so teams
- * keep using Vue DSFR components (DsfrHeader, DsfrBreadcrumb, DsfrButton...).
+ * keep using Vue DSFR components (DsfrBreadcrumb, DsfrButton...).
  */
+import { DsfrSkipLinks } from '@gouvminint/vue-dsfr'
 import { computed, useSlots } from 'vue'
 import type { DsfsAppShellProps } from './DsfsAppShell.types'
 
 const props = withDefaults(defineProps<DsfsAppShellProps>(), {
-  sidebarLabel: 'Navigation principale',
   previewLabel: 'Aperçu',
   mainId: 'dsfs-main',
   hideSkipLinks: false,
 })
 
-const sidebarCollapsed = defineModel<boolean>('sidebarCollapsed', { default: false })
 const previewOpen = defineModel<boolean>('previewOpen', { default: false })
 
 defineSlots<{
   header?: () => unknown
-  sidebar?: (scope: { collapsed: boolean }) => unknown
+  sidebar?: () => unknown
   breadcrumb?: () => unknown
   toolbar?: () => unknown
   default?: () => unknown
@@ -38,6 +42,10 @@ defineSlots<{
 const slots = useSlots()
 const sidebarId = computed(() => `${props.mainId}-sidebar`)
 const hasPreview = computed(() => previewOpen.value && !!slots.preview)
+const skipLinks = computed(() => [
+  { id: props.mainId, text: 'Contenu' },
+  ...(slots.sidebar ? [{ id: sidebarId.value, text: 'Menu' }] : []),
+])
 
 function closePreview() {
   previewOpen.value = false
@@ -47,36 +55,12 @@ function closePreview() {
 <template>
   <div
     class="dsfs-app-shell"
-    :class="{
-      'dsfs-app-shell--sidebar-collapsed': sidebarCollapsed,
-      'dsfs-app-shell--preview-open': hasPreview,
-    }"
+    :class="{ 'dsfs-app-shell--preview-open': hasPreview }"
   >
-    <div
+    <DsfrSkipLinks
       v-if="!hideSkipLinks"
-      class="fr-skiplinks"
-    >
-      <nav
-        class="fr-container"
-        role="navigation"
-        aria-label="Accès rapide"
-      >
-        <ul class="fr-skiplinks__list">
-          <li>
-            <a
-              class="fr-link"
-              :href="`#${mainId}`"
-            >Contenu</a>
-          </li>
-          <li v-if="$slots.sidebar">
-            <a
-              class="fr-link"
-              :href="`#${sidebarId}`"
-            >Menu</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+      :links="skipLinks"
+    />
 
     <div
       v-if="$slots.header"
@@ -86,17 +70,14 @@ function closePreview() {
     </div>
 
     <div class="dsfs-app-shell__body">
-      <nav
+      <div
         v-if="$slots.sidebar"
         :id="sidebarId"
         class="dsfs-app-shell__sidebar"
-        :aria-label="sidebarLabel"
+        tabindex="-1"
       >
-        <slot
-          name="sidebar"
-          :collapsed="sidebarCollapsed"
-        />
-      </nav>
+        <slot name="sidebar" />
+      </div>
 
       <div class="dsfs-app-shell__content">
         <div
@@ -138,7 +119,9 @@ function closePreview() {
 .dsfs-app-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   background-color: var(--background-default-grey);
   color: var(--text-default-grey);
 }
@@ -150,31 +133,26 @@ function closePreview() {
   min-height: 0;
 }
 
-.dsfs-app-shell--sidebar-collapsed .dsfs-app-shell__body {
-  grid-template-columns: var(--dsfs-shell-sidebar-width-collapsed) minmax(0, 1fr);
-}
-
 .dsfs-app-shell--preview-open .dsfs-app-shell__body {
   grid-template-columns: var(--dsfs-shell-sidebar-width) minmax(0, 1fr) var(--dsfs-shell-preview-width);
 }
 
-.dsfs-app-shell--sidebar-collapsed.dsfs-app-shell--preview-open .dsfs-app-shell__body {
-  grid-template-columns:
-    var(--dsfs-shell-sidebar-width-collapsed)
-    minmax(0, 1fr)
-    var(--dsfs-shell-preview-width);
-}
-
 .dsfs-app-shell__sidebar {
+  min-height: 0;
   overflow-y: auto;
   border-right: var(--dsfs-shell-border-width) solid var(--border-default-grey);
   background-color: var(--background-alt-grey);
+}
+
+.dsfs-app-shell__sidebar:focus {
+  outline: none;
 }
 
 .dsfs-app-shell__content {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
 }
 
 .dsfs-app-shell__breadcrumb,
@@ -210,10 +188,14 @@ function closePreview() {
 
 /* Responsive behaviour is a DRAFT: below 62em (DSFR "lg") the preview stacks. */
 @media (width < 62em) {
+  .dsfs-app-shell {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
   .dsfs-app-shell__body,
-  .dsfs-app-shell--preview-open .dsfs-app-shell__body,
-  .dsfs-app-shell--sidebar-collapsed .dsfs-app-shell__body,
-  .dsfs-app-shell--sidebar-collapsed.dsfs-app-shell--preview-open .dsfs-app-shell__body {
+  .dsfs-app-shell--preview-open .dsfs-app-shell__body {
     grid-template-columns: minmax(0, 1fr);
   }
 

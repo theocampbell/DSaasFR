@@ -28,8 +28,10 @@
 
   /* App shell dimensions (DRAFT: to be validated in docs/decisions/0002). */
   --dsfs-shell-sidebar-width: 16rem;
-  --dsfs-shell-sidebar-width-collapsed: 3.5rem;
   --dsfs-shell-preview-width: clamp(20rem, 35vw, 40rem);
   --dsfs-shell-row-height: 3rem;
   --dsfs-shell-border-width: 1px;
+
+  /* DSFR focus ring offset (2px), used to pull it inside clipped containers. */
+  --dsfs-focus-offset: 2px;
 }

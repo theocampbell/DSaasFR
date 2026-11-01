@@ -6,7 +6,7 @@ import DsfsAppShell from './DsfsAppShell.vue'
 
 const slots = {
   header: '<header><p>Header</p></header>',
-  sidebar: '<ul><li><a href="/dossiers" aria-current="page">Dossiers</a></li></ul>',
+  sidebar: '<nav aria-label="Navigation principale"><ul><li><a href="/dossiers" aria-current="page">Dossiers</a></li></ul></nav>',
   breadcrumb: '<nav aria-label="vous êtes ici :"><span>Accueil</span></nav>',
   toolbar: '<button type="button">Nouveau dossier</button>',
   default: '<h1>Dossiers</h1>',
