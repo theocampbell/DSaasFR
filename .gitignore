@@ -1,0 +1,9 @@
+node_modules
+dist
+types
+storybook-static
+coverage
+*.log
+.DS_Store
+.vite
+*.tsbuildinfo

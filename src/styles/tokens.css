@@ -1,0 +1,35 @@
+/*
+ * DSaaSFR tokens.
+ *
+ * This is the ONLY file allowed to declare raw lengths (enforced by stylelint).
+ * Colours are never declared here: always use the DSFR CSS variables shipped by
+ * @gouvfr/dsfr (e.g. var(--background-default-grey), var(--border-default-grey)),
+ * which also give us light/dark themes for free.
+ *
+ * Spacing mirrors the DSFR scale: 1v = 0.25rem, 1w = 0.5rem.
+ * https://www.systeme-de-design.gouv.fr/fondamentaux/espacements
+ */
+:root {
+  --dsfs-space-0: 0;
+  --dsfs-space-1v: 0.25rem;
+  --dsfs-space-2v: 0.5rem;
+  --dsfs-space-3v: 0.75rem;
+  --dsfs-space-1w: 0.5rem;
+  --dsfs-space-2w: 1rem;
+  --dsfs-space-3w: 1.5rem;
+  --dsfs-space-4w: 2rem;
+  --dsfs-space-5w: 2.5rem;
+  --dsfs-space-6w: 3rem;
+  --dsfs-space-7w: 3.5rem;
+  --dsfs-space-8w: 4rem;
+  --dsfs-space-9w: 4.5rem;
+  --dsfs-space-12w: 6rem;
+  --dsfs-space-15w: 7.5rem;
+
+  /* App shell dimensions (DRAFT: to be validated in docs/decisions/0002). */
+  --dsfs-shell-sidebar-width: 16rem;
+  --dsfs-shell-sidebar-width-collapsed: 3.5rem;
+  --dsfs-shell-preview-width: clamp(20rem, 35vw, 40rem);
+  --dsfs-shell-row-height: 3rem;
+  --dsfs-shell-border-width: 1px;
+}
