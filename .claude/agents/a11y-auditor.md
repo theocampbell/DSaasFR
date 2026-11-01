@@ -16,7 +16,8 @@ For each changed component:
    on close.
 4. Names: every interactive element has an accessible name; icon-only buttons have a label;
    `aria-current="page"` on the active nav item; state changes announced when needed.
-5. Responsive / zoom: usable at 320 CSS px wide and 200% zoom (RGAA 10.11), no content loss.
+5. Responsive / zoom: usable at 320 CSS px wide (= 1280px at 400% zoom, RGAA 10.11) and at
+   200% text zoom, no content loss. Users are desktop-only: 320px means high zoom, not phones.
 6. Motion: transitions respect `prefers-reduced-motion`.
 7. Run the tests (`pnpm test`) and, if Storybook is built, you can run Playwright + axe
    against `storybook-static` for colour contrast, which jsdom cannot check.

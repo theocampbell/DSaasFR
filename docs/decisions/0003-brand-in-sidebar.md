@@ -55,8 +55,8 @@ government apps already place the bloc-marque at the top of a sidebar.
 - Custom content in the `brand` slot must contain exactly one link (the block is an
   `fr-enlarge-link`).
 - Skip links use Vue DSFR's `DsfrSkipLinks`.
-- **Collapsing the sidebar is not offered** until open question 1 is decided: a collapsed
-  rail would crop the bloc-marque.
+- **Collapsing the sidebar is not offered** (see 0004): a collapsed rail would crop the
+  bloc-marque.
 
 ## Accessibility consequences
 
@@ -73,10 +73,8 @@ government apps already place the bloc-marque at the top of a sidebar.
 
 ## Open questions
 
-1. Collapsed sidebar: the bloc-marque cannot be cropped. Hide it when collapsed, or
-   disallow collapsing on this pattern?
-2. Mobile: the sidebar currently stacks above content. Proposed: a top bar with the
-   bloc-marque + a menu button opening the sidebar as a drawer (DSFR header mobile pattern).
+1. ~~Collapsed sidebar~~ → rejected, see [0004](0004-narrow-screens.md).
+2. ~~Mobile~~ → DSFR mobile header pattern below 62em, see [0004](0004-narrow-screens.md).
 3. Where do "Paramètres d'affichage" (theme switch) and the DSFR footer live? Proposed:
    sidebar footer for the former; the footer is often omitted in back-offices — to validate.
 4. Is this an acceptable use of the bloc-marque for the DSFR team?

@@ -69,6 +69,8 @@ import { DsfsAppShell } from 'dsaasfr'
 - DSFR CSS variables only for colours, DSFR scale for spacing, DSFR classes for type
   (enforced by Stylelint).
 - RGAA 4.1 / WCAG 2.1 AA, WAI-ARIA APG patterns, axe in every test.
+- Desktop-first, but usable at 400% zoom (RGAA 10.11): below 62em the sidebar becomes the
+  DSFR mobile header ([decision 0004](docs/decisions/0004-narrow-screens.md)).
 - Every interpretation of the DSFR is written down in [`docs/decisions`](docs/decisions).
 
 ## Development

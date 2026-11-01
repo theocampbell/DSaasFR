@@ -14,11 +14,19 @@
  *   │ footer slot           │  account, settings, display parameters…
  *   └───────────────────────┘
  *
- * See docs/decisions/0003-brand-in-sidebar.md.
+ * Below the DSFR lg breakpoint (narrow window or high zoom) it turns into the DSFR
+ * mobile header pattern: a bar with bloc-marque + service name + "Menu" button opening
+ * the navigation in a modal. Two experimental implementations (see `narrowVariant`).
+ *
+ * See docs/decisions/0003-brand-in-sidebar.md and 0004-narrow-screens.md.
  */
-import { DsfrLogo, DsfrSideMenuList } from '@gouvminint/vue-dsfr'
-import { computed, inject, ref, watch } from 'vue'
-import { RouterLink, routeLocationKey, routerKey } from 'vue-router'
+import { DsfrHeader } from '@gouvminint/vue-dsfr'
+import { computed, inject, nextTick, ref, useTemplateRef, watch } from 'vue'
+import type { Component } from 'vue'
+import { routeLocationKey, routerKey } from 'vue-router'
+import { useNarrowViewport } from '../../composables/useNarrowViewport'
+import SidebarBrand from './SidebarBrand.vue'
+import SidebarNav from './SidebarNav.vue'
 import type { RouteLocationRaw } from 'vue-router'
 import type { DsfsSidebarItem, DsfsSidebarProps } from './DsfsSidebar.types'
 
@@ -29,7 +37,10 @@ const props = withDefaults(defineProps<DsfsSidebarProps>(), {
   items: () => [],
   navLabel: 'Navigation principale',
   footerLabel: 'Mon espace',
+  menuLabel: 'Menu',
+  closeMenuLabel: 'Fermer',
   id: 'dsfs-sidebar',
+  narrowVariant: 'dsfr-header',
 })
 
 defineSlots<{
@@ -87,6 +98,16 @@ function decorate(items: DsfsSidebarItem[], prefix: string): DsfsSidebarItem[] {
   })
 }
 
+const brandProps = computed(() => ({
+  logoText: props.logoText,
+  serviceTitle: props.serviceTitle,
+  serviceDescription: props.serviceDescription,
+  homeTo: props.homeTo,
+  homeHref: homeHref.value,
+  homeTitle: homeTitle.value,
+  homeIsRouterLink: homeIsRouterLink.value,
+}))
+
 const menuItems = ref<DsfsSidebarItem[]>([])
 watch(
   () => [props.items, route?.path] as const,
@@ -95,50 +116,60 @@ watch(
   },
   { immediate: true, deep: true },
 )
+
+// ── Narrow screens ────────────────────────────────────────────────────────────
+const narrow = useNarrowViewport()
+
+/** Close the menu modal when the user follows a link inside it. */
+function closeOnLink(event: MouseEvent, close: () => void) {
+  if ((event.target as HTMLElement | null)?.closest('a[href]')) close()
+}
+
+// Vue DSFR passes { hidemodal } to its `mainnav` slot at runtime, but types the slot
+// without props (to report upstream). Loosen the component type so we can read it.
+const AppHeader = DsfrHeader as unknown as Component
+function hideModalOf(scope: unknown): () => void {
+  return (scope as { hidemodal?: () => void } | undefined)?.hidemodal ?? (() => {})
+}
+
+// Variant "dialog": native <dialog> gives modality (inert page), Escape, and focus
+// return to the opener on close.
+const dialog = useTemplateRef<HTMLDialogElement>('dialog')
+const menuOpen = ref(false)
+const dialogId = computed(() => `${props.id}-menu`)
+
+async function openMenu() {
+  menuOpen.value = true
+  await nextTick()
+  dialog.value?.showModal()
+}
+function closeMenu() {
+  dialog.value?.close()
+}
+watch(() => route?.path, closeMenu)
 </script>
 
 <template>
+  <!-- Wide: full-height sidebar -->
   <div
+    v-if="!narrow"
     :id="id"
     class="dsfs-sidebar"
   >
     <header class="dsfs-sidebar__brand fr-enlarge-link">
       <slot name="brand">
-        <DsfrLogo
-          :logo-text="logoText"
-          small
-        />
-        <div class="dsfs-sidebar__service">
-          <component
-            :is="homeIsRouterLink ? RouterLink : 'a'"
-            v-bind="homeIsRouterLink ? { to: homeTo } : { href: homeHref }"
-            :title="homeTitle"
-          >
-            <p class="dsfs-sidebar__service-title fr-text--lg fr-text--bold fr-mb-0">
-              {{ serviceTitle }}
-            </p>
-          </component>
-          <p
-            v-if="serviceDescription"
-            class="fr-text--sm fr-mb-0 dsfs-sidebar__service-description"
-          >
-            {{ serviceDescription }}
-          </p>
-        </div>
+        <SidebarBrand v-bind="brandProps" />
       </slot>
     </header>
 
-    <nav
-      class="dsfs-sidebar__nav fr-sidemenu"
-      :aria-label="navLabel"
+    <SidebarNav
+      :id="`${id}-list`"
+      class="dsfs-sidebar__nav"
+      :label="navLabel"
+      :items="menuItems"
     >
-      <slot>
-        <DsfrSideMenuList
-          :id="`${id}-list`"
-          :menu-items="menuItems"
-        />
-      </slot>
-    </nav>
+      <slot v-if="$slots.default" />
+    </SidebarNav>
 
     <section
       v-if="$slots.footer"
@@ -147,6 +178,101 @@ watch(
     >
       <slot name="footer" />
     </section>
+  </div>
+
+  <!-- Narrow, variant A: Vue DSFR's own header and its mobile menu modal -->
+  <div
+    v-else-if="narrowVariant === 'dsfr-header'"
+    :id="id"
+    class="dsfs-sidebar dsfs-sidebar--narrow"
+  >
+    <AppHeader
+      :service-title="serviceTitle"
+      :service-description="serviceDescription"
+      :logo-text="logoText"
+      :home-to="homeHref"
+      :menu-label="menuLabel"
+      :menu-modal-label="menuLabel"
+      :close-menu-modal-label="closeMenuLabel"
+    >
+      <template #mainnav="mainnavScope">
+        <div @click="closeOnLink($event, hideModalOf(mainnavScope))">
+          <SidebarNav
+            :id="`${id}-list`"
+            :label="navLabel"
+            :items="menuItems"
+          >
+            <slot v-if="$slots.default" />
+          </SidebarNav>
+          <section
+            v-if="$slots.footer"
+            class="dsfs-sidebar__footer dsfs-sidebar__footer--modal"
+            :aria-label="footerLabel"
+          >
+            <slot name="footer" />
+          </section>
+        </div>
+      </template>
+    </AppHeader>
+  </div>
+
+  <!-- Narrow, variant B: our bar + native <dialog> keeping the sidebar look -->
+  <div
+    v-else
+    :id="id"
+    class="dsfs-sidebar dsfs-sidebar--narrow"
+  >
+    <header class="dsfs-sidebar__bar">
+      <div class="dsfs-sidebar__bar-brand fr-enlarge-link">
+        <slot name="brand">
+          <SidebarBrand v-bind="brandProps" />
+        </slot>
+      </div>
+      <button
+        type="button"
+        class="fr-btn fr-btn--tertiary-no-outline fr-icon-menu-fill fr-btn--icon-left"
+        aria-haspopup="dialog"
+        :aria-controls="dialogId"
+        :aria-expanded="menuOpen"
+        @click="openMenu"
+      >
+        {{ menuLabel }}
+      </button>
+    </header>
+
+    <dialog
+      :id="dialogId"
+      ref="dialog"
+      class="dsfs-sidebar__dialog"
+      :aria-label="menuLabel"
+      @close="menuOpen = false"
+      @click="closeOnLink($event, closeMenu)"
+    >
+      <div class="dsfs-sidebar__dialog-header">
+        <button
+          type="button"
+          class="fr-btn--close fr-btn"
+          @click="closeMenu"
+        >
+          {{ closeMenuLabel }}
+        </button>
+      </div>
+      <SidebarNav
+        v-if="menuOpen"
+        :id="`${id}-list`"
+        :label="navLabel"
+        :items="menuItems"
+      >
+        <slot v-if="$slots.default" />
+      </SidebarNav>
+      <section
+        v-if="menuOpen && $slots.footer"
+        class="dsfs-sidebar__footer"
+        :aria-label="footerLabel"
+      >
+        <slot name="footer" />
+      </section>
+    </dialog>
   </div>
 </template>
 
@@ -174,7 +300,8 @@ watch(
 
 /* As in the DSFR header: keep the enlarged link focus ring inside the block,
    otherwise the scrolling sidebar clips it. */
-.dsfs-sidebar__brand.fr-enlarge-link :deep(a[href])::before {
+.dsfs-sidebar__brand.fr-enlarge-link :deep(a[href])::before,
+.dsfs-sidebar__bar-brand.fr-enlarge-link :deep(a[href])::before {
   outline-offset: calc(-1 * var(--dsfs-focus-offset));
 }
 
@@ -182,22 +309,66 @@ watch(
   color: var(--text-title-grey);
 }
 
-/* Application nav: drop the in-page sidemenu offsets, keep DSFR items as-is. */
 .dsfs-sidebar__nav {
   flex: 1;
   overflow-y: auto;
   padding: var(--dsfs-space-1w) var(--dsfs-space-1w) var(--dsfs-space-2w);
 }
 
-.dsfs-sidebar__nav.fr-sidemenu {
-  margin: 0;
-
-  /* Below 48em DSFR draws inset borders for the in-page mobile sidemenu. */
-  box-shadow: none;
-}
-
 .dsfs-sidebar__footer {
   padding: var(--dsfs-space-2w) var(--dsfs-space-3w);
   border-top: var(--dsfs-shell-border-width) solid var(--border-default-grey);
+}
+
+.dsfs-sidebar--narrow {
+  height: auto;
+}
+
+.dsfs-sidebar__footer--modal {
+  border-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Variant B: bar */
+.dsfs-sidebar__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dsfs-space-2w);
+  padding: var(--dsfs-space-2w);
+  background-color: var(--background-default-grey);
+  border-bottom: var(--dsfs-shell-border-width) solid var(--border-default-grey);
+}
+
+.dsfs-sidebar__bar-brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--dsfs-space-2w);
+  min-width: 0;
+
+  --idle: transparent;
+  --hover: var(--background-default-grey-hover);
+  --active: var(--background-default-grey-active);
+}
+
+/* Variant B: full-screen menu dialog */
+.dsfs-sidebar__dialog {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: var(--dsfs-space-2w);
+  border: 0;
+  background-color: var(--background-default-grey);
+  color: var(--text-default-grey);
+}
+
+.dsfs-sidebar__dialog-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--dsfs-space-2w);
 }
 </style>

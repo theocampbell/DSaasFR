@@ -37,17 +37,17 @@ export const navItems: DsfsSidebarItem[] = [
   },
 ]
 
-const template = (previewOpen: boolean) => ({
+const template = (previewOpen: boolean, narrowVariant: 'dsfr-header' | 'dialog' = 'dsfr-header') => ({
   components: { DsfsAppShell, DsfsSidebar },
   setup() {
     const preview = ref(previewOpen)
     const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers' }, { text: 'Dossier #2041' }]
-    return { preview, links, navItems }
+    return { preview, links, navItems, narrowVariant }
   },
   template: `
     <DsfsAppShell v-model:preview-open="preview">
       <template #sidebar>
-        <DsfsSidebar service-title="Démarches Pro" service-description="Back-office instructeurs" :items="navItems">
+        <DsfsSidebar service-title="Démarches Pro" service-description="Back-office instructeurs" :items="navItems" :narrow-variant="narrowVariant">
           <template #footer>
             <p class="fr-text--sm fr-mb-0">Camille Martin</p>
             <p class="fr-text--xs fr-mb-0">Instructrice · DDT 33</p>
@@ -84,4 +84,17 @@ export const WithPreview: Story = { render: () => template(true) }
 export const SecondaryNavigation: Story = {
   parameters: { route: '/admin/agents' },
   render: () => template(false),
+}
+
+/**
+ * Narrow screens (< 62em: small window or high zoom). Shrink the browser window or
+ * zoom to 400% to see them. Two implementations under evaluation, see decision 0004.
+ */
+export const NarrowVariantDsfrHeader: Story = {
+  name: 'Narrow — A: DsfrHeader',
+  render: () => template(false, 'dsfr-header'),
+}
+export const NarrowVariantDialog: Story = {
+  name: 'Narrow — B: dialog',
+  render: () => template(false, 'dialog'),
 }

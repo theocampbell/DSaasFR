@@ -38,7 +38,8 @@ The DSFR header is replaced by the sidebar brand block: see
 - **Breadcrumb row** = location (DsfrBreadcrumb, margins removed).
 - **Toolbar row** = page-level actions and filters (inspired by Linear).
 - **Preview panel** = optional `aside`, opened by the app (`v-model:preview-open`).
-- Below the DSFR `lg` breakpoint (62em) regions stack; the mobile pattern is not designed yet.
+- Below the DSFR `lg` breakpoint (62em, i.e. high zoom) the sidebar becomes the DSFR
+  mobile header and the other regions stack: see [0004](0004-narrow-screens.md).
 
 ## Accessibility consequences
 
@@ -56,4 +57,4 @@ The DSFR header is replaced by the sidebar brand block: see
 1. ~~Header height~~ → resolved by 0003 (no header).
 2. Secondary navigation: second sidebar level, tabs in the toolbar row, or both?
 3. Preview panel: fixed width, resizable, or expandable to full width?
-4. Mobile: sidebar as drawer (DSFR modal-like), preview as full-screen view?
+4. ~~Mobile~~ → see 0004. The preview panel on narrow screens is still open.

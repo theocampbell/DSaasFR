@@ -30,6 +30,16 @@ export interface DsfsSidebarProps {
   navLabel?: string
   /** Accessible name of the footer region (account, settings). */
   footerLabel?: string
+  /** Label of the button opening the menu on narrow screens. */
+  menuLabel?: string
+  /** Label of the button closing the menu on narrow screens. */
+  closeMenuLabel?: string
   /** Base id, used for generated ids. */
   id?: string
+  /**
+   * EXPERIMENTAL — narrow-screen implementation being evaluated (decision 0004):
+   * - `dsfr-header`: Vue DSFR's DsfrHeader and its mobile menu modal
+   * - `dialog`: our own bar + native <dialog>, keeping the sidebar look
+   */
+  narrowVariant?: 'dsfr-header' | 'dialog'
 }

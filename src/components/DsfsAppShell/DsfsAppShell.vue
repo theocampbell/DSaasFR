@@ -233,11 +233,14 @@ watch(previewOpen, async (open) => {
   .dsfs-app-shell__body,
   .dsfs-app-shell--preview-open .dsfs-app-shell__body {
     grid-template-columns: minmax(0, 1fr);
+    align-content: start;
   }
 
+  /* The sidebar becomes a header bar (DSFR mobile header pattern), see 0004. */
   .dsfs-app-shell__sidebar {
+    overflow: visible;
     border-right: 0;
-    border-bottom: var(--dsfs-shell-border-width) solid var(--border-default-grey);
+    background-color: transparent;
   }
 
   .dsfs-app-shell__preview {

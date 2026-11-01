@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import VueDsfr from '@gouvminint/vue-dsfr'
 import { createMemoryHistory, createRouter } from 'vue-router'
+import { afterEach, vi } from 'vitest'
 import { expectNoA11yViolations } from '@/test-utils/axe'
 import DsfsSidebar from './DsfsSidebar.vue'
 import type { DsfsSidebarItem } from './DsfsSidebar.types'
@@ -122,5 +123,50 @@ describe('DsfsSidebar', () => {
     const { container } = await renderSidebar('/admin/agents')
 
     await expectNoA11yViolations(container)
+  })
+})
+
+function mockNarrowViewport(narrow: boolean) {
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    matches: narrow,
+    media: query,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  }))
+}
+
+describe('DsfsSidebar on narrow screens (< 62em, high zoom)', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('variant dsfr-header: renders the DSFR header with a menu button', async () => {
+    mockNarrowViewport(true)
+    await renderSidebar('/dossiers', { narrowVariant: 'dsfr-header' })
+
+    const banner = await screen.findByRole('banner')
+    expect(within(banner).getByText('Démarches Pro')).toBeTruthy()
+    const menu = within(banner).getByRole('button', { name: 'Menu' })
+    expect(menu.getAttribute('aria-haspopup')).toBe('dialog')
+  })
+
+  it('variant dialog: renders a bar whose menu button controls the dialog', async () => {
+    mockNarrowViewport(true)
+    const { container } = await renderSidebar('/dossiers', { narrowVariant: 'dialog' })
+
+    const banner = await screen.findByRole('banner')
+    const menu = within(banner).getByRole('button', { name: 'Menu' })
+    expect(menu.getAttribute('aria-expanded')).toBe('false')
+    const dialog = container.querySelector(`#${menu.getAttribute('aria-controls')}`)
+    expect(dialog?.tagName).toBe('DIALOG')
+  })
+
+  it('has a single banner in each layout', async () => {
+    for (const variant of ['dsfr-header', 'dialog'] as const) {
+      mockNarrowViewport(true)
+      const { unmount } = await renderSidebar('/', { narrowVariant: variant })
+      expect(await screen.findAllByRole('banner')).toHaveLength(1)
+      unmount()
+    }
   })
 })
