@@ -63,7 +63,12 @@ government apps already place the bloc-marque at the top of a sidebar.
 - Landmarks: banner (sidebar header), navigation, main, complementary (preview).
   One banner per page: apps must not also render `DsfrHeader`.
 - Active page: `aria-current="page"` derived from the route (prefix match for nested
-  pages). Groups: `aria-expanded` + `aria-controls` from DsfrSideMenuList.
+  pages), on exactly one link. Groups get `aria-expanded` + `aria-controls` but are never
+  marked `active`, because Vue DSFR would then add `aria-current="page"` to the group
+  button (two "current pages"). Worth raising upstream: DSFR markup uses `"true"` there.
+- The footer is a labelled region ("Mon espace").
+- The service baseline uses the default text colour: `--text-mention-grey` fails contrast
+  (4.0:1) on the dark-theme hover background.
 - The "Menu" skip link targets the sidebar.
 
 ## Open questions

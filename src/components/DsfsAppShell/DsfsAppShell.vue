@@ -19,8 +19,8 @@
  * keep using Vue DSFR components (DsfrBreadcrumb, DsfrButton...).
  */
 import { DsfrSkipLinks } from '@gouvminint/vue-dsfr'
-import { computed, useSlots } from 'vue'
-import type { DsfsAppShellProps } from './DsfsAppShell.types'
+import { computed, nextTick, useSlots, watch } from 'vue'
+import type { DsfsAppShellPreviewScope, DsfsAppShellProps } from './DsfsAppShell.types'
 
 const props = withDefaults(defineProps<DsfsAppShellProps>(), {
   previewLabel: 'Aperçu',
@@ -34,9 +34,9 @@ defineSlots<{
   header?: () => unknown
   sidebar?: () => unknown
   breadcrumb?: () => unknown
-  toolbar?: () => unknown
+  toolbar?: (scope: DsfsAppShellPreviewScope) => unknown
   default?: () => unknown
-  preview?: (scope: { close: () => void }) => unknown
+  preview?: (scope: DsfsAppShellPreviewScope) => unknown
 }>()
 
 const slots = useSlots()
@@ -47,9 +47,41 @@ const skipLinks = computed(() => [
   ...(slots.sidebar ? [{ id: sidebarId.value, text: 'Menu' }] : []),
 ])
 
+const previewId = computed(() => `${props.mainId}-preview`)
+
 function closePreview() {
   previewOpen.value = false
 }
+
+function togglePreview() {
+  previewOpen.value = !previewOpen.value
+}
+
+const previewScope = computed<DsfsAppShellPreviewScope>(() => ({
+  previewId: previewId.value,
+  previewOpen: previewOpen.value,
+  closePreview,
+  togglePreview,
+  // Spread on the button that toggles the preview.
+  previewToggleAttrs: { 'aria-controls': previewId.value, 'aria-expanded': previewOpen.value },
+}))
+
+// Focus management (RGAA 12.8): remember what opened the preview and, when it
+// closes while focus is inside it (or lost), give focus back to that element.
+let opener: HTMLElement | null = null
+watch(previewOpen, async (open) => {
+  if (typeof document === 'undefined') return
+  if (open) {
+    opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    return
+  }
+  const panel = document.getElementById(previewId.value)
+  const focusWasInPanel = !!panel && panel.contains(document.activeElement)
+  await nextTick()
+  const focusLost = document.activeElement === document.body
+  if ((focusWasInPanel || focusLost) && opener?.isConnected) opener.focus()
+  opener = null
+})
 </script>
 
 <template>
@@ -90,7 +122,10 @@ function closePreview() {
           v-if="$slots.toolbar"
           class="dsfs-app-shell__toolbar"
         >
-          <slot name="toolbar" />
+          <slot
+            name="toolbar"
+            v-bind="previewScope"
+          />
         </div>
         <main
           :id="mainId"
@@ -103,12 +138,13 @@ function closePreview() {
 
       <aside
         v-if="hasPreview"
+        :id="previewId"
         class="dsfs-app-shell__preview"
         :aria-label="previewLabel"
       >
         <slot
           name="preview"
-          :close="closePreview"
+          v-bind="previewScope"
         />
       </aside>
     </div>

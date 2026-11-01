@@ -36,16 +36,17 @@ const links = computed(() => [{ to: '/', text: 'Accueil' }, { text: route.path }
       <DsfrBreadcrumb :links="links" />
     </template>
 
-    <template #toolbar>
+    <template #toolbar="{ togglePreview, previewToggleAttrs }">
       <DsfrButton
         label="Nouveau dossier"
         size="sm"
       />
       <DsfrButton
-        :label="preview ? 'Masquer l’aperçu' : 'Afficher l’aperçu'"
+        label="Aperçu"
         secondary
         size="sm"
-        @click="preview = !preview"
+        v-bind="previewToggleAttrs"
+        @click="togglePreview"
       />
     </template>
 
@@ -54,7 +55,7 @@ const links = computed(() => [{ to: '/', text: 'Accueil' }, { text: route.path }
     </h1>
     <p>Playground : une fausse application de back-office pour tester les composants en conditions réelles.</p>
 
-    <template #preview="{ close }">
+    <template #preview="{ closePreview }">
       <div class="fr-p-3w">
         <h2 class="fr-h5">
           Aperçu
@@ -64,7 +65,7 @@ const links = computed(() => [{ to: '/', text: 'Accueil' }, { text: route.path }
           label="Fermer l’aperçu"
           tertiary
           size="sm"
-          @click="close"
+          @click="closePreview"
         />
       </div>
     </template>

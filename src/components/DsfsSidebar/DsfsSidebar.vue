@@ -28,6 +28,7 @@ const props = withDefaults(defineProps<DsfsSidebarProps>(), {
   homeTo: '/',
   items: () => [],
   navLabel: 'Navigation principale',
+  footerLabel: 'Mon espace',
   id: 'dsfs-sidebar',
 })
 
@@ -76,7 +77,9 @@ function decorate(items: DsfsSidebarItem[], prefix: string): DsfsSidebarItem[] {
         ...item,
         id,
         menuItems: children,
-        active: item.active ?? hasActiveChild,
+        // Not `active`: Vue DSFR would put aria-current="page" on the group button,
+        // announcing two current pages. The open group + active child are enough.
+        active: item.active ?? false,
         expanded: item.expanded ?? hasActiveChild,
       }
     }
@@ -137,12 +140,13 @@ watch(
       </slot>
     </nav>
 
-    <div
+    <section
       v-if="$slots.footer"
       class="dsfs-sidebar__footer"
+      :aria-label="footerLabel"
     >
       <slot name="footer" />
-    </div>
+    </section>
   </div>
 </template>
 
@@ -176,10 +180,6 @@ watch(
 
 .dsfs-sidebar__service a {
   color: var(--text-title-grey);
-}
-
-.dsfs-sidebar__service-description {
-  color: var(--text-mention-grey);
 }
 
 /* Application nav: drop the in-page sidemenu offsets, keep DSFR items as-is. */

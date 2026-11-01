@@ -28,6 +28,8 @@ export interface DsfsSidebarProps {
   items?: DsfsSidebarItem[]
   /** Accessible name of the navigation landmark. */
   navLabel?: string
+  /** Accessible name of the footer region (account, settings). */
+  footerLabel?: string
   /** Base id, used for generated ids. */
   id?: string
 }

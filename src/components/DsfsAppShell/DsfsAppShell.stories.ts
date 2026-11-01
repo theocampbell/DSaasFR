@@ -59,20 +59,20 @@ const template = (previewOpen: boolean) => ({
         <DsfrBreadcrumb :links="links" />
       </template>
 
-      <template #toolbar>
+      <template #toolbar="{ togglePreview, previewToggleAttrs }">
         <DsfrButton label="Nouveau dossier" size="sm" />
         <DsfrButton label="Filtrer" secondary size="sm" />
-        <DsfrButton :label="preview ? 'Masquer l’aperçu' : 'Afficher l’aperçu'" tertiary size="sm" @click="preview = !preview" />
+        <DsfrButton label="Aperçu" tertiary size="sm" v-bind="previewToggleAttrs" @click="togglePreview" />
       </template>
 
       <h1 class="fr-h3">Dossier #2041</h1>
       <p>Contenu principal de l’application.</p>
 
-      <template #preview="{ close }">
+      <template #preview="{ closePreview }">
         <div class="fr-p-3w">
           <h2 class="fr-h5">Aperçu</h2>
           <p>Pièce justificative.pdf</p>
-          <DsfrButton label="Fermer l’aperçu" tertiary size="sm" @click="close" />
+          <DsfrButton label="Fermer l’aperçu" tertiary size="sm" @click="closePreview" />
         </div>
       </template>
     </DsfsAppShell>

@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { defineComponent, h, ref } from 'vue'
 import { expectNoA11yViolations } from '@/test-utils/axe'
 import DsfsAppShell from './DsfsAppShell.vue'
+import type { DsfsAppShellPreviewScope } from './DsfsAppShell.types'
 
 const slots = {
   header: '<header><p>Header</p></header>',
@@ -47,8 +48,8 @@ describe('DsfsAppShell', () => {
             { previewOpen: open.value, 'onUpdate:previewOpen': (v: boolean) => (open.value = v) },
             {
               default: () => h('h1', 'Dossiers'),
-              preview: ({ close }: { close: () => void }) =>
-                h('button', { type: 'button', onClick: close }, 'Fermer l’aperçu'),
+              preview: ({ closePreview }: DsfsAppShellPreviewScope) =>
+                h('button', { type: 'button', onClick: closePreview }, 'Fermer l’aperçu'),
             },
           )
       },
@@ -59,6 +60,40 @@ describe('DsfsAppShell', () => {
 
     await user.click(screen.getByRole('button', { name: 'Fermer l’aperçu' }))
     expect(screen.queryByRole('complementary')).toBeNull()
+  })
+
+  it('wires the preview toggle and returns focus to it when the preview closes', async () => {
+    const user = userEvent.setup()
+    const Host = defineComponent({
+      setup() {
+        const open = ref(false)
+        return () =>
+          h(
+            DsfsAppShell,
+            { previewOpen: open.value, 'onUpdate:previewOpen': (v: boolean) => (open.value = v) },
+            {
+              toolbar: ({ togglePreview, previewToggleAttrs }: DsfsAppShellPreviewScope) =>
+                h('button', { type: 'button', ...previewToggleAttrs, onClick: togglePreview }, 'Aperçu'),
+              default: () => h('h1', 'Dossiers'),
+              preview: ({ closePreview }: DsfsAppShellPreviewScope) =>
+                h('button', { type: 'button', onClick: closePreview }, 'Fermer l’aperçu'),
+            },
+          )
+      },
+    })
+
+    render(Host)
+    const toggle = screen.getByRole('button', { name: 'Aperçu' })
+    expect(toggle.getAttribute('aria-expanded')).toBe('false')
+
+    await user.click(toggle)
+    const panel = screen.getByRole('complementary', { name: 'Aperçu' })
+    expect(toggle.getAttribute('aria-expanded')).toBe('true')
+    expect(toggle.getAttribute('aria-controls')).toBe(panel.id)
+
+    await user.click(screen.getByRole('button', { name: 'Fermer l’aperçu' }))
+    expect(screen.queryByRole('complementary')).toBeNull()
+    expect(document.activeElement).toBe(toggle)
   })
 
   it('has no detectable accessibility violations', async () => {

@@ -52,7 +52,7 @@ import { DsfsAppShell } from 'dsaasfr'
 
   <h1 class="fr-h3">Dossiers</h1>
 
-  <template #preview="{ close }">…</template>
+  <template #preview="{ closePreview }">…</template>
 </DsfsAppShell>
 ```
 

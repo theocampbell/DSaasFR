@@ -45,7 +45,10 @@ The DSFR header is replaced by the sidebar brand block: see
 - Landmarks: `header` (from DsfrHeader), `nav` "Navigation principale", breadcrumb `nav`,
   `main` (focus target of the skip link), `aside` "Aperçu".
 - Skip links: "Contenu" and "Menu".
-- To decide: focus management when the preview opens/closes; whether the toolbar is a
+- Preview: the toggle gets `aria-controls` + `aria-expanded` via the `previewToggleAttrs`
+  slot prop; focus stays on the toggle when the panel opens and returns to it when the
+  panel closes from inside (RGAA 12.8).
+- To decide: whether the toolbar is a
   plain group or an APG toolbar (arrow-key navigation); collapsed sidebar labelling.
 
 ## Open questions

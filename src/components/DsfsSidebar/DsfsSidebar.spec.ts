@@ -77,6 +77,13 @@ describe('DsfsSidebar', () => {
     expect(screen.getByRole('link', { name: 'Agents' }).getAttribute('aria-current')).toBe('page')
   })
 
+  it('announces exactly one current page, never the group', async () => {
+    const { container } = await renderSidebar('/admin/agents')
+
+    expect(container.querySelectorAll('[aria-current="page"]')).toHaveLength(1)
+    expect(screen.getByRole('button', { name: 'Administration' }).getAttribute('aria-current')).toBeNull()
+  })
+
   it('toggles a group with the keyboard', async () => {
     const user = userEvent.setup()
     await renderSidebar('/')
@@ -107,7 +114,8 @@ describe('DsfsSidebar', () => {
       global: { plugins: [router, VueDsfr] },
     })
 
-    expect(screen.getByRole('button', { name: 'Mon compte' })).toBeTruthy()
+    const region = screen.getByRole('region', { name: 'Mon espace' })
+    expect(within(region).getByRole('button', { name: 'Mon compte' })).toBeTruthy()
   })
 
   it('has no detectable accessibility violations', async () => {

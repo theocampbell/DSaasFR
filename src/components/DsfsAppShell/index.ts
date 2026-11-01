@@ -1,2 +1,2 @@
 export { default as DsfsAppShell } from './DsfsAppShell.vue'
-export type { DsfsAppShellProps } from './DsfsAppShell.types'
+export type { DsfsAppShellPreviewScope, DsfsAppShellProps } from './DsfsAppShell.types'

@@ -15,4 +15,8 @@ export default defineConfigWithVueTs(
       'vue/no-v-html': 'error',
     },
   },
+  {
+    files: ['**/*.spec.ts', '**/*.stories.ts'],
+    rules: { 'vue/one-component-per-file': 'off' },
+  },
 )
