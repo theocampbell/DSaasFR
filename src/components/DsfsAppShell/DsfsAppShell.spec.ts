@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/vue'
+import { vi } from 'vitest'
 import userEvent from '@testing-library/user-event'
 import { defineComponent, h, ref } from 'vue'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import { expectNoA11yViolations } from '@/test-utils/axe'
 import DsfsAppShell from './DsfsAppShell.vue'
 import type { DsfsAppShellPreviewScope } from './DsfsAppShell.types'
@@ -94,6 +96,26 @@ describe('DsfsAppShell', () => {
     await user.click(screen.getByRole('button', { name: 'Fermer l’aperçu' }))
     expect(screen.queryByRole('complementary')).toBeNull()
     expect(document.activeElement).toBe(toggle)
+  })
+
+  it('scrolls main back to the top when the page changes', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:pathMatch(.*)*', component: { render: () => null } }],
+    })
+    await router.push('/dossiers')
+    await router.isReady()
+    render(DsfsAppShell, { slots, global: { plugins: [router] } })
+
+    const main = screen.getByRole('main')
+    const scrollTo = vi.fn()
+    main.scrollTo = scrollTo as unknown as typeof main.scrollTo
+
+    await router.push('/dossiers?tri=date')
+    expect(scrollTo).not.toHaveBeenCalled()
+
+    await router.push('/usagers')
+    await vi.waitFor(() => expect(scrollTo).toHaveBeenCalledWith({ top: 0 }))
   })
 
   it('has no detectable accessibility violations', async () => {

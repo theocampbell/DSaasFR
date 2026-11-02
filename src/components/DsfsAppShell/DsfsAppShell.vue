@@ -19,7 +19,8 @@
  * keep using Vue DSFR components (DsfrBreadcrumb, DsfrButton...).
  */
 import { DsfrSkipLinks } from '@gouvminint/vue-dsfr'
-import { computed, nextTick, useSlots, watch } from 'vue'
+import { computed, inject, nextTick, useSlots, watch } from 'vue'
+import { routeLocationKey } from 'vue-router'
 import type { DsfsAppShellPreviewScope, DsfsAppShellProps } from './DsfsAppShell.types'
 
 const props = withDefaults(defineProps<DsfsAppShellProps>(), {
@@ -65,6 +66,18 @@ const previewScope = computed<DsfsAppShellPreviewScope>(() => ({
   // Spread on the button that toggles the preview.
   previewToggleAttrs: { 'aria-controls': previewId.value, 'aria-expanded': previewOpen.value },
 }))
+
+// Only <main> scrolls in the shell, so the router's scroll reset (which acts on the
+// window) does nothing: reset <main> ourselves when the page (path) changes.
+const route = inject(routeLocationKey, null)
+watch(
+  () => route?.path,
+  async (path, previous) => {
+    if (path === previous || typeof document === 'undefined') return
+    await nextTick()
+    document.getElementById(props.mainId)?.scrollTo({ top: 0 })
+  },
+)
 
 // Focus management (RGAA 12.8): remember what opened the preview and, when it
 // closes while focus is inside it (or lost), give focus back to that element.

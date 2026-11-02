@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { DsfsSidebarItem } from 'dsaasfr'
+import PageBody from './PageBody.vue'
 
 const route = useRoute()
 const preview = ref(false)
@@ -80,7 +81,7 @@ const links = computed(() =>
     <h1 class="fr-h3">
       {{ pageTitle }}
     </h1>
-    <p>Playground : une fausse application de back-office pour tester les composants en conditions réelles.</p>
+    <PageBody :path="route.path" />
 
     <template #preview="{ closePreview }">
       <div class="fr-p-3w">
