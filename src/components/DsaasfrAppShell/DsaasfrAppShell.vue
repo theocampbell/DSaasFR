@@ -4,12 +4,16 @@
  *
  * Regions (see docs/decisions/0002 and 0003):
  *
- *   ┌─────────────┬──────────────────────────────────────┬────────────────┐
- *   │ sidebar     │ breadcrumb row                       │ preview (opt.) │
- *   │ (bloc-marque│ toolbar row: actions / filters       │                │
- *   │  + nav,     │ main (the only scrolling region)     │                │
- *   │  DsaasfrSidebar│                                      │                │
- *   └─────────────┴──────────────────────────────────────┴────────────────┘
+ *   ┌──────────────┬──────────────────────────────────────┬────────────────┐
+ *   │ sidebar      │ breadcrumb row      ┐ pinned (sticky) │ preview (opt.) │
+ *   │ (pinned)     │ toolbar row         ┘                 │ (pinned)       │
+ *   │ bloc-marque, │ main                                  │                │
+ *   │ nav, footer  │ (the page scrolls)                    │                │
+ *   └──────────────┴──────────────────────────────────────┴────────────────┘
+ *
+ * The document scrolls (not an inner box), so keyboard scrolling, find-in-page and
+ * scroll restoration work natively; the sidebar, the two rows and the preview are
+ * pinned with position: sticky. Below 62em (high zoom) nothing is pinned.
  *
  * There is no DSFR header: the bloc-marque lives at the top of DsaasfrSidebar, which
  * also provides the banner and navigation landmarks. The optional `header` slot
@@ -19,7 +23,7 @@
  * keep using Vue DSFR components (DsfrBreadcrumb, DsfrButton...).
  */
 import { DsfrSkipLinks } from '@gouvminint/vue-dsfr'
-import { computed, inject, nextTick, useSlots, watch } from 'vue'
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, useSlots, useTemplateRef, watch } from 'vue'
 import { routeLocationKey } from 'vue-router'
 import type { DsaasfrAppShellPreviewScope, DsaasfrAppShellProps } from './DsaasfrAppShell.types'
 
@@ -67,17 +71,35 @@ const previewScope = computed<DsaasfrAppShellPreviewScope>(() => ({
   previewToggleAttrs: { 'aria-controls': previewId.value, 'aria-expanded': previewOpen.value },
 }))
 
-// Only <main> scrolls in the shell, so the router's scroll reset (which acts on the
-// window) does nothing: reset <main> ourselves when the page (path) changes.
+// A new page starts at the top (query/hash changes keep the position). Apps may also
+// set the router's scrollBehavior; doing both is harmless.
 const route = inject(routeLocationKey, null)
 watch(
   () => route?.path,
   async (path, previous) => {
-    if (path === previous || typeof document === 'undefined') return
+    if (path === previous || typeof window === 'undefined') return
     await nextTick()
-    document.getElementById(props.mainId)?.scrollTo({ top: 0 })
+    window.scrollTo({ top: 0 })
   },
 )
+
+// WCAG 2.4.11 (focus not obscured): keep focused elements and anchor targets below
+// the pinned rows by mirroring their height into the page's scroll-padding-top.
+const bars = useTemplateRef<HTMLElement>('bars')
+let observer: ResizeObserver | undefined
+onMounted(() => {
+  if (!bars.value || typeof ResizeObserver === 'undefined') return
+  const root = document.documentElement
+  observer = new ResizeObserver(() => {
+    const pinned = bars.value && getComputedStyle(bars.value).position === 'sticky'
+    root.style.setProperty('scroll-padding-top', pinned ? `${bars.value!.offsetHeight}px` : '')
+  })
+  observer.observe(bars.value)
+})
+onBeforeUnmount(() => {
+  observer?.disconnect()
+  document.documentElement.style.removeProperty('scroll-padding-top')
+})
 
 // Focus management (RGAA 12.8): remember what opened the preview and, when it
 // closes while focus is inside it (or lost), give focus back to that element.
@@ -126,19 +148,25 @@ watch(previewOpen, async (open) => {
 
       <div class="dsaasfr-app-shell__content">
         <div
-          v-if="$slots.breadcrumb"
-          class="dsaasfr-app-shell__breadcrumb"
+          v-if="$slots.breadcrumb || $slots.toolbar"
+          ref="bars"
+          class="dsaasfr-app-shell__bars"
         >
-          <slot name="breadcrumb" />
-        </div>
-        <div
-          v-if="$slots.toolbar"
-          class="dsaasfr-app-shell__toolbar"
-        >
-          <slot
-            name="toolbar"
-            v-bind="previewScope"
-          />
+          <div
+            v-if="$slots.breadcrumb"
+            class="dsaasfr-app-shell__breadcrumb"
+          >
+            <slot name="breadcrumb" />
+          </div>
+          <div
+            v-if="$slots.toolbar"
+            class="dsaasfr-app-shell__toolbar"
+          >
+            <slot
+              name="toolbar"
+              v-bind="previewScope"
+            />
+          </div>
         </div>
         <main
           :id="mainId"
@@ -168,9 +196,7 @@ watch(previewOpen, async (open) => {
 .dsaasfr-app-shell {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
+  min-height: 100vh;
   background-color: var(--background-default-grey);
   color: var(--text-default-grey);
 }
@@ -179,16 +205,23 @@ watch(previewOpen, async (open) => {
   display: grid;
   flex: 1;
   grid-template-columns: var(--dsaasfr-shell-sidebar-width) minmax(0, 1fr);
-  min-height: 0;
+  align-items: start;
 }
 
 .dsaasfr-app-shell--preview-open .dsaasfr-app-shell__body {
   grid-template-columns: var(--dsaasfr-shell-sidebar-width) minmax(0, 1fr) var(--dsaasfr-shell-preview-width);
 }
 
-.dsaasfr-app-shell__sidebar {
-  min-height: 0;
+.dsaasfr-app-shell__sidebar,
+.dsaasfr-app-shell__preview {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
   overflow-y: auto;
+}
+
+.dsaasfr-app-shell__sidebar {
   border-right: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
   background-color: var(--background-alt-grey);
 }
@@ -201,7 +234,14 @@ watch(previewOpen, async (open) => {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: 0;
+  min-height: 100vh;
+}
+
+.dsaasfr-app-shell__bars {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  background-color: var(--background-default-grey);
 }
 
 .dsaasfr-app-shell__breadcrumb,
@@ -236,7 +276,6 @@ watch(previewOpen, async (open) => {
 .dsaasfr-app-shell__main {
   flex: 1;
   padding: var(--dsaasfr-space-3w);
-  overflow-y: auto;
 }
 
 .dsaasfr-app-shell__main:focus {
@@ -244,17 +283,22 @@ watch(previewOpen, async (open) => {
 }
 
 .dsaasfr-app-shell__preview {
-  overflow-y: auto;
   border-left: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
   background-color: var(--background-default-grey);
 }
 
-/* Responsive behaviour is a DRAFT: below 62em (DSFR "lg") the preview stacks. */
+/* Below 62em (DSFR "lg", i.e. high zoom) nothing is pinned: pinned areas would eat the
+   little screen space left at 400% zoom. The preview stacks under the content. */
 @media (width < 62em) {
-  .dsaasfr-app-shell {
+  .dsaasfr-app-shell__sidebar,
+  .dsaasfr-app-shell__preview,
+  .dsaasfr-app-shell__bars {
+    position: static;
     height: auto;
-    min-height: 100vh;
-    overflow: visible;
+  }
+
+  .dsaasfr-app-shell__content {
+    min-height: 0;
   }
 
   .dsaasfr-app-shell__body,
@@ -281,6 +325,7 @@ watch(previewOpen, async (open) => {
   }
 
   .dsaasfr-app-shell__preview {
+    overflow: visible;
     border-left: 0;
     border-top: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
   }

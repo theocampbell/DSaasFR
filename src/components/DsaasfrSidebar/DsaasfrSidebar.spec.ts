@@ -148,9 +148,9 @@ describe('DsaasfrSidebar on narrow screens (< 62em, high zoom)', () => {
     vi.unstubAllGlobals()
   })
 
-  it('variant dsfr-header: renders the DSFR header with a menu button', async () => {
+  it('renders the DSFR header with a menu button', async () => {
     mockNarrowViewport(true)
-    await renderSidebar('/dossiers', { narrowVariant: 'dsfr-header' })
+    await renderSidebar('/dossiers')
 
     const banner = await screen.findByRole('banner')
     expect(within(banner).getByText('Démarches Pro')).toBeTruthy()
@@ -158,23 +158,10 @@ describe('DsaasfrSidebar on narrow screens (< 62em, high zoom)', () => {
     expect(menu.getAttribute('aria-haspopup')).toBe('dialog')
   })
 
-  it('variant dialog: renders a bar whose menu button controls the dialog', async () => {
+
+  it('has a single banner', async () => {
     mockNarrowViewport(true)
-    const { container } = await renderSidebar('/dossiers', { narrowVariant: 'dialog' })
-
-    const banner = await screen.findByRole('banner')
-    const menu = within(banner).getByRole('button', { name: 'Menu' })
-    expect(menu.getAttribute('aria-expanded')).toBe('false')
-    const dialog = container.querySelector(`#${menu.getAttribute('aria-controls')}`)
-    expect(dialog?.tagName).toBe('DIALOG')
-  })
-
-  it('has a single banner in each layout', async () => {
-    for (const variant of ['dsfr-header', 'dialog'] as const) {
-      mockNarrowViewport(true)
-      const { unmount } = await renderSidebar('/', { narrowVariant: variant })
-      expect(await screen.findAllByRole('banner')).toHaveLength(1)
-      unmount()
-    }
+    await renderSidebar('/')
+    expect(await screen.findAllByRole('banner')).toHaveLength(1)
   })
 })

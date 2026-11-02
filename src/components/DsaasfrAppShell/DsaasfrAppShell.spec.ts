@@ -98,7 +98,7 @@ describe('DsaasfrAppShell', () => {
     expect(document.activeElement).toBe(toggle)
   })
 
-  it('scrolls main back to the top when the page changes', async () => {
+  it('scrolls the page back to the top when the page changes', async () => {
     const router = createRouter({
       history: createMemoryHistory(),
       routes: [{ path: '/:pathMatch(.*)*', component: { render: () => null } }],
@@ -107,15 +107,14 @@ describe('DsaasfrAppShell', () => {
     await router.isReady()
     render(DsaasfrAppShell, { slots, global: { plugins: [router] } })
 
-    const main = screen.getByRole('main')
-    const scrollTo = vi.fn()
-    main.scrollTo = scrollTo as unknown as typeof main.scrollTo
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
 
     await router.push('/dossiers?tri=date')
     expect(scrollTo).not.toHaveBeenCalled()
 
     await router.push('/usagers')
     await vi.waitFor(() => expect(scrollTo).toHaveBeenCalledWith({ top: 0 }))
+    scrollTo.mockRestore()
   })
 
   it('has no detectable accessibility violations', async () => {

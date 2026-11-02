@@ -27,7 +27,8 @@ content, and the ability to preview a document or item without leaving the list.
 │ bloc-marque │ breadcrumb row                         │ preview      │
 │ service     │ toolbar row: actions / filters         │ panel        │
 │─────────────│ main content (full width, no container)│ (optional)   │
-│ primary nav │ only `main` scrolls                    │              │
+│ primary nav │ the page scrolls; sidebar, both rows  │              │
+│             │ and preview are pinned (sticky)        │              │
 │ footer      │                                        │              │
 └─────────────┴────────────────────────────────────────┴──────────────┘
 ```
@@ -40,6 +41,17 @@ The DSFR header is replaced by the sidebar brand block: see
 - **Preview panel** = optional `aside`, opened by the app (`v-model:preview-open`).
 - Below the DSFR `lg` breakpoint (62em, i.e. high zoom) the sidebar becomes the DSFR
   mobile header and the other regions stack: see [0004](0004-narrow-screens.md).
+
+## Scrolling
+
+The **page** scrolls; the sidebar, the breadcrumb + toolbar rows and the preview panel are
+pinned with `position: sticky`. An earlier version scrolled an inner `<main>` box: same
+look, but keyboard users could not scroll text-only pages without first focusing the box
+(axe `scrollable-region-focusable`, WCAG 2.1.1), and the router's scroll reset did not
+apply. With page scrolling, Page Down / Space, find-in-page and scroll restoration work
+natively. The pinned rows' height is mirrored into `scroll-padding-top` so focused
+elements are never hidden under them (WCAG 2.4.11). Below 62em (high zoom) nothing is
+pinned, to keep the little screen space for content.
 
 ## Accessibility consequences
 

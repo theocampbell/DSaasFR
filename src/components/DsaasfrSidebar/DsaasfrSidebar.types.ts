@@ -36,10 +36,4 @@ export interface DsaasfrSidebarProps {
   closeMenuLabel?: string
   /** Base id, used for generated ids. */
   id?: string
-  /**
-   * EXPERIMENTAL — narrow-screen implementation being evaluated (decision 0004):
-   * - `dsfr-header`: Vue DSFR's DsfrHeader and its mobile menu modal
-   * - `dialog`: our own bar + native <dialog>, keeping the sidebar look
-   */
-  narrowVariant?: 'dsfr-header' | 'dialog'
 }

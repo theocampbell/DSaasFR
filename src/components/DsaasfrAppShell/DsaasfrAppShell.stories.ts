@@ -39,17 +39,17 @@ export const navItems: DsaasfrSidebarItem[] = [
   },
 ]
 
-const template = (previewOpen: boolean, narrowVariant: 'dsfr-header' | 'dialog' = 'dsfr-header') => ({
+const template = (previewOpen: boolean) => ({
   components: { DsaasfrAppShell, DsaasfrSidebar, DsaasfrUserMenu },
   setup() {
     const preview = ref(previewOpen)
     const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers' }, { text: 'Dossier #2041' }]
-    return { preview, links, navItems, narrowVariant, accountItems }
+    return { preview, links, navItems, accountItems }
   },
   template: `
     <DsaasfrAppShell v-model:preview-open="preview">
       <template #sidebar>
-        <DsaasfrSidebar service-title="Démarches Pro" service-description="Back-office instructeurs" :items="navItems" :narrow-variant="narrowVariant">
+        <DsaasfrSidebar service-title="Démarches Pro" service-description="Back-office instructeurs" :items="navItems">
           <template #footer>
             <DsaasfrUserMenu name="Camille Martin" description="Instructrice · DDT 33" :items="accountItems" />
           </template>
@@ -88,14 +88,6 @@ export const SecondaryNavigation: Story = {
 }
 
 /**
- * Narrow screens (< 62em: small window or high zoom). Shrink the browser window or
- * zoom to 400% to see them. Two implementations under evaluation, see decision 0004.
+ * Narrow screens (< 62em: small window or high zoom) switch the sidebar to the DSFR
+ * mobile header. Shrink the browser window or zoom to 400% to see it (decision 0004).
  */
-export const NarrowVariantDsfrHeader: Story = {
-  name: 'Narrow — A: DsfrHeader',
-  render: () => template(false, 'dsfr-header'),
-}
-export const NarrowVariantDialog: Story = {
-  name: 'Narrow — B: dialog',
-  render: () => template(false, 'dialog'),
-}

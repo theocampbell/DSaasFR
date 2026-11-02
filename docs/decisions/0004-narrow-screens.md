@@ -1,6 +1,6 @@
 # 0004 — Narrow screens and high zoom: DSFR mobile header pattern
 
-- **Status**: Proposed — variant to choose (A or B)
+- **Status**: Proposed — variant A chosen by the product owner (2026-11-02)
 - **Date**: 2026-11-01
 - **Components**: DsaasfrSidebar, DsaasfrAppShell
 
@@ -30,7 +30,7 @@ are counted as desktop in analytics. The target of this decision is high zoom, n
    same navigation and the "Mon espace" footer. The bloc-marque is always visible, never
    cropped. Same `DsaasfrSidebar` props drive both layouts.
 
-## Two implementations under evaluation (`narrowVariant`, experimental)
+## Two implementations evaluated
 
 | | A — `dsfr-header` | B — `dialog` |
 |---|---|---|
@@ -43,8 +43,10 @@ are counted as desktop in analytics. The target of this decision is high zoom, n
 Both were checked at 320px: focus moves to "Fermer" on open, Escape closes and returns
 focus to "Menu", following a link closes the menu, exactly one banner landmark.
 
-Recommendation: **A**. It is the official pattern, so there is nothing to justify to the
-DSFR community, and it keeps us within rule 1. Variant B is removed once a choice is made.
+**Chosen: A** — the official pattern, nothing to justify to the DSFR community, keeps
+us within rule 1 (reuse Vue DSFR). Users are desktop-only, so the narrow layout only has
+to be correct and familiar at high zoom, not polished. Variant B and the experimental
+`narrowVariant` prop were removed.
 
 ## Accessibility consequences
 

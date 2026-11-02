@@ -5,11 +5,6 @@ are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can 
 
 ## 1. Finish the shell (base for v0.1.0)
 
-- [ ] 👤🤖 **Scrolling**: let the page scroll with the sidebar, breadcrumb row and
-      toolbar row pinned (fixes keyboard scrolling on long text pages, WCAG 2.1.1;
-      removes the scroll-reset workaround). *Waiting for your go-ahead.*
-- [ ] 👤 **Narrow screens**: choose variant A (DsfrHeader, recommended) or B (dialog)
-      — see docs/decisions/0004. 🤖 then remove the other one and the `narrowVariant` prop.
 - [ ] 🤖 **Breadcrumb row** (first row): built from the router — each route declares
       its title once → breadcrumb, `<h1>`, browser tab title, page-change announcement for
       screen readers. Page actions on the right (Linear-style). 👤 design input welcome.
@@ -70,5 +65,8 @@ are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can 
       display settings modal (`useScheme`).
 - [x] Public sandbox on GitHub Pages (Storybook + playground), demo notice.
 - [x] Summary of the AI usage rules (State guide, MTE roadmap, PIAG).
+- [x] Scrolling: the page scrolls, sidebar + breadcrumb/toolbar rows + preview pinned
+      (keyboard scrolling fixed, WCAG 2.1.1; focus never hidden under pinned rows, 2.4.11).
+- [x] Narrow screens: variant A (DsfrHeader) kept, variant B and `narrowVariant` removed.
 - [x] Component prefix renamed `Dsfs` → `Dsaasfr` (CSS `dsaasfr-`): one name everywhere,
       clearly distinct from Vue DSFR's `Dsfr`, mirrors its convention.
