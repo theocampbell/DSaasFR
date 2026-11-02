@@ -20,8 +20,8 @@ const props = withDefaults(defineProps<DsaasfrBreadcrumbBarProps>(), {
   id: undefined,
 })
 
-const listId = computed(() => props.id ?? `dsaasfr-breadcrumb-${uid}`)
 const uid = useId()
+const listId = computed(() => props.id ?? `dsaasfr-breadcrumb-${uid}`)
 
 defineSlots<{ actions?: () => unknown }>()
 
@@ -99,6 +99,8 @@ watch(entries, () => void measure(), { flush: 'post' })
         ref="list"
         class="fr-breadcrumb__list dsaasfr-breadcrumb-bar__list"
         :class="{ 'dsaasfr-breadcrumb-bar__list--wrapped': wrapped }"
+        @focusin="measure"
+        @focusout="measure"
       >
         <li
           v-for="(entry, position) in entries"
@@ -137,7 +139,7 @@ watch(entries, () => void measure(), { flush: 'post' })
           <!-- Ancestor without a destination: plain text, never "current page". -->
           <span
             v-else
-            class="dsaasfr-breadcrumb-bar__label dsaasfr-breadcrumb-bar__text"
+            class="dsaasfr-breadcrumb-bar__label fr-text--xs fr-mb-0"
           >{{ entry.item.text }}</span>
         </li>
       </ol>
@@ -210,17 +212,14 @@ watch(entries, () => void measure(), { flush: 'post' })
   vertical-align: middle;
 }
 
-/* Keyboard users see the full label of the focused level. */
+/* Keyboard users see the full label of the focused level (the trail is re-measured on
+   focusin/focusout, so it wraps if the wider label no longer fits). */
 .dsaasfr-breadcrumb-bar__label:focus-visible {
   max-width: none;
 }
 
 .dsaasfr-breadcrumb-bar__list > li:last-child .dsaasfr-breadcrumb-bar__label {
   max-width: 100%;
-}
-
-.dsaasfr-breadcrumb-bar__text {
-  color: var(--text-mention-grey);
 }
 
 /* Room for the DSFR forced-colors underline (text-underline-offset) inside overflow:hidden. */

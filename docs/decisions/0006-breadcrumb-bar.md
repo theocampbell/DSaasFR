@@ -40,7 +40,8 @@ breadcrumb on every page.
   tooltip (on the `li`, because the DSFR gives the current page `pointer-events: none`);
   a focused link shows its full text (`:focus-visible`), since tooltips are not reachable
   by keyboard or touch. The current page's full text is also the page `<h1>`.
-- Ancestors without a destination render as plain text; only the last level gets
+- Ancestors without a destination render as plain text (breadcrumb mention grey, no
+  underline, `fr-text--xs` like the links) — a state the DSFR does not define; only the last level gets
   `aria-current="page"` (links use a `custom` RouterLink so vue-router does not add its
   own `aria-current`).
 - **Narrow screens / high zoom**: the DSFR hides the trail behind "Voir le fil d'Ariane"
