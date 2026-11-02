@@ -63,6 +63,7 @@ import { DsaasfrAppShell } from 'dsaasfr'
 | `DsaasfrAppShell` | Draft — see [decision 0002](docs/decisions/0002-app-shell-layout.md) |
 | `DsaasfrSidebar` | Draft — see [decision 0003](docs/decisions/0003-brand-in-sidebar.md) |
 | `DsaasfrUserMenu` | Draft — see [decision 0005](docs/decisions/0005-user-menu.md) |
+| `DsaasfrBreadcrumbBar` | Draft — see [decision 0006](docs/decisions/0006-breadcrumb-bar.md) |
 
 ## Principles
 

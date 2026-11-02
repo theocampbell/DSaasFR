@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
+import { DsaasfrBreadcrumbBar } from '../DsaasfrBreadcrumbBar'
 import { DsaasfrSidebar } from '../DsaasfrSidebar'
 import { DsaasfrUserMenu } from '../DsaasfrUserMenu'
 import { accountItems } from '../DsaasfrUserMenu/DsaasfrUserMenu.stories'
@@ -40,7 +41,7 @@ export const navItems: DsaasfrSidebarItem[] = [
 ]
 
 const template = (previewOpen: boolean) => ({
-  components: { DsaasfrAppShell, DsaasfrSidebar, DsaasfrUserMenu },
+  components: { DsaasfrAppShell, DsaasfrBreadcrumbBar, DsaasfrSidebar, DsaasfrUserMenu },
   setup() {
     const preview = ref(previewOpen)
     const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers' }, { text: 'Dossier #2041' }]
@@ -57,11 +58,14 @@ const template = (previewOpen: boolean) => ({
       </template>
 
       <template #breadcrumb>
-        <DsfrBreadcrumb :links="links" />
+        <DsaasfrBreadcrumbBar :items="links">
+          <template #actions>
+            <DsfrButton label="Nouveau dossier" icon="fr-icon-add-line" size="sm" />
+          </template>
+        </DsaasfrBreadcrumbBar>
       </template>
 
       <template #toolbar="{ togglePreview, previewToggleAttrs }">
-        <DsfrButton label="Nouveau dossier" size="sm" />
         <DsfrButton label="Filtrer" secondary size="sm" />
         <DsfrButton label="Aperçu" tertiary size="sm" v-bind="previewToggleAttrs" @click="togglePreview" />
       </template>

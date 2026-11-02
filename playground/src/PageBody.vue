@@ -48,13 +48,89 @@ const stats = [
     </ul>
   </template>
 
-  <!-- Dossiers -->
-  <DsfrTable
+  <!-- Dossiers: DSFR table markup so the case number can be a link -->
+  <div
     v-else-if="path === '/dossiers'"
-    title="Dossiers en cours (40)"
-    :headers="['N°', 'Demandeur', 'Type', 'Commune', 'Statut', 'Dépôt']"
-    :rows="dossiers"
-  />
+    class="fr-table"
+  >
+    <div class="fr-table__wrapper">
+      <div class="fr-table__container">
+        <div class="fr-table__content">
+          <table>
+            <caption>Dossiers en cours (40)</caption>
+            <thead>
+              <tr>
+                <th
+                  v-for="header in ['N°', 'Demandeur', 'Type', 'Commune', 'Statut', 'Dépôt']"
+                  :key="header"
+                  scope="col"
+                >
+                  {{ header }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="row in dossiers"
+                :key="row[0]"
+              >
+                <td>
+                  <RouterLink
+                    class="fr-link"
+                    :to="`/dossiers/${row[0]}`"
+                  >
+                    {{ row[0] }}
+                  </RouterLink>
+                </td>
+                <td
+                  v-for="cell in row.slice(1)"
+                  :key="cell"
+                >
+                  {{ cell }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dossier detail -->
+  <template v-else-if="/^\/dossiers\/[^/]+$/.test(path)">
+    <p>Demande de permis de construire déposée le 01/01/2026 — commune de Pessac.</p>
+    <ul class="fr-btns-group fr-btns-group--inline fr-mb-4w">
+      <li>
+        <RouterLink
+          class="fr-btn fr-btn--secondary"
+          :to="`${path}/pieces`"
+        >
+          Pièces justificatives
+        </RouterLink>
+      </li>
+    </ul>
+    <p
+      v-for="paragraph in lorem"
+      :key="paragraph"
+    >
+      {{ paragraph }}
+    </p>
+  </template>
+
+  <!-- Pièces justificatives -->
+  <ul v-else-if="/^\/dossiers\/[^/]+\/pieces$/.test(path)">
+    <li
+      v-for="piece in [1, 2, 3]"
+      :key="piece"
+    >
+      <RouterLink
+        class="fr-link"
+        :to="`${path}/${piece}`"
+      >
+        Pièce {{ piece }}
+      </RouterLink>
+    </li>
+  </ul>
 
   <!-- Usagers -->
   <DsfrTable

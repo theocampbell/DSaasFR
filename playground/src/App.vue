@@ -2,6 +2,7 @@
 import { useScheme } from '@gouvminint/vue-dsfr'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useRouteBreadcrumb } from 'dsaasfr'
 import type { DsaasfrSidebarItem, DsaasfrUserMenuItem } from 'dsaasfr'
 import PageBody from './PageBody.vue'
 
@@ -21,12 +22,9 @@ const items: DsaasfrSidebarItem[] = [
   },
 ]
 
-// Page title from the navigation item matching the URL (flattening groups).
-const flat = (list: DsaasfrSidebarItem[]): DsaasfrSidebarItem[] =>
-  list.flatMap(item => (item.menuItems ? flat(item.menuItems) : [item]))
-const pageTitle = computed(() =>
-  [...flat(items), ...accountItems].find(item => item.to === route.path)?.text ?? 'Page introuvable',
-)
+// Page <h1> = current level of the breadcrumb, both coming from the route titles.
+const trail = useRouteBreadcrumb()
+const pageTitle = computed(() => trail.value[trail.value.length - 1]?.text ?? '')
 // DSFR "Paramètres d'affichage": a modal with light / dark / system, backed by
 // Vue DSFR's useScheme (sets data-fr-scheme/theme and remembers the choice).
 // useScheme() is typed as possibly undefined (it returns nothing outside a browser).
@@ -46,9 +44,6 @@ const accountItems: DsaasfrUserMenuItem[] = [
   { text: 'Se déconnecter', icon: 'fr-icon-logout-box-r-line', separated: true, action: () => alert('Démonstration : déconnexion simulée.') },
 ]
 
-const links = computed(() =>
-  route.path === '/' ? [{ text: 'Tableau de bord' }] : [{ to: '/', text: 'Tableau de bord' }, { text: pageTitle.value }],
-)
 </script>
 
 <template>
@@ -70,14 +65,21 @@ const links = computed(() =>
     </template>
 
     <template #breadcrumb>
-      <DsfrBreadcrumb :links="links" />
+      <DsaasfrBreadcrumbBar>
+        <template
+          v-if="route.path.startsWith('/dossiers')"
+          #actions
+        >
+          <DsfrButton
+            label="Nouveau dossier"
+            icon="fr-icon-add-line"
+            size="sm"
+          />
+        </template>
+      </DsaasfrBreadcrumbBar>
     </template>
 
     <template #toolbar="{ togglePreview, previewToggleAttrs }">
-      <DsfrButton
-        label="Nouveau dossier"
-        size="sm"
-      />
       <DsfrButton
         label="Aperçu"
         secondary

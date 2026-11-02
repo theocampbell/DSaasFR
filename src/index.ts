@@ -3,6 +3,8 @@ import * as components from './components'
 import './styles/index.css'
 
 export * from './components'
+export { useRouteBreadcrumb } from './composables/useRouteBreadcrumb'
+export type { DsaasfrRouteBreadcrumb } from './composables/useRouteBreadcrumb'
 
 export interface DSaaSFROptions {
   /** Register every Dsaasfr* component globally (default: true). */
