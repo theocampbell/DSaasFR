@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
 import { DsfsSidebar } from '../DsfsSidebar'
+import { DsfsUserMenu } from '../DsfsUserMenu'
+import { accountItems } from '../DsfsUserMenu/DsfsUserMenu.stories'
 import type { DsfsSidebarItem } from '../DsfsSidebar'
 import DsfsAppShell from './DsfsAppShell.vue'
 
@@ -38,19 +40,18 @@ export const navItems: DsfsSidebarItem[] = [
 ]
 
 const template = (previewOpen: boolean, narrowVariant: 'dsfr-header' | 'dialog' = 'dsfr-header') => ({
-  components: { DsfsAppShell, DsfsSidebar },
+  components: { DsfsAppShell, DsfsSidebar, DsfsUserMenu },
   setup() {
     const preview = ref(previewOpen)
     const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers' }, { text: 'Dossier #2041' }]
-    return { preview, links, navItems, narrowVariant }
+    return { preview, links, navItems, narrowVariant, accountItems }
   },
   template: `
     <DsfsAppShell v-model:preview-open="preview">
       <template #sidebar>
         <DsfsSidebar service-title="Démarches Pro" service-description="Back-office instructeurs" :items="navItems" :narrow-variant="narrowVariant">
           <template #footer>
-            <p class="fr-text--sm fr-mb-0">Camille Martin</p>
-            <p class="fr-text--xs fr-mb-0">Instructrice · DDT 33</p>
+            <DsfsUserMenu name="Camille Martin" description="Instructrice · DDT 33" :items="accountItems" />
           </template>
         </DsfsSidebar>
       </template>

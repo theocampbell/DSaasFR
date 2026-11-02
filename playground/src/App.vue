@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import type { DsfsSidebarItem } from 'dsaasfr'
+import type { DsfsSidebarItem, DsfsUserMenuItem } from 'dsaasfr'
 import PageBody from './PageBody.vue'
 
 const route = useRoute()
@@ -23,7 +23,25 @@ const items: DsfsSidebarItem[] = [
 // Page title from the navigation item matching the URL (flattening groups).
 const flat = (list: DsfsSidebarItem[]): DsfsSidebarItem[] =>
   list.flatMap(item => (item.menuItems ? flat(item.menuItems) : [item]))
-const pageTitle = computed(() => flat(items).find(item => item.to === route.path)?.text ?? 'Page introuvable')
+const pageTitle = computed(() =>
+  [...flat(items), ...accountItems].find(item => item.to === route.path)?.text ?? 'Page introuvable',
+)
+// Demo only: cycles the DSFR theme (the real DSFR "Paramètres d'affichage" is a modal).
+function toggleTheme() {
+  const html = document.documentElement
+  const dark = html.getAttribute('data-fr-theme') === 'dark'
+  html.setAttribute('data-fr-scheme', dark ? 'light' : 'dark')
+  html.setAttribute('data-fr-theme', dark ? 'light' : 'dark')
+}
+
+const accountItems: DsfsUserMenuItem[] = [
+  { text: 'Mon profil', to: '/profil', icon: 'fr-icon-user-line' },
+  { text: 'Préférences', to: '/preferences', icon: 'fr-icon-settings-5-line' },
+  { text: 'Notifications', to: '/notifications', icon: 'fr-icon-notification-3-line' },
+  { text: 'Thème clair / sombre', icon: 'fr-icon-theme-fill', action: toggleTheme },
+  { text: 'Se déconnecter', icon: 'fr-icon-logout-box-r-line', separated: true, action: () => alert('Démonstration : déconnexion simulée.') },
+]
+
 const links = computed(() =>
   route.path === '/' ? [{ text: 'Tableau de bord' }] : [{ to: '/', text: 'Tableau de bord' }, { text: pageTitle.value }],
 )
@@ -38,17 +56,10 @@ const links = computed(() =>
         :items="items"
       >
         <template #footer>
-          <p class="fr-text--sm fr-text--bold fr-mb-0">
-            Camille Martin
-          </p>
-          <p class="fr-text--xs fr-mb-1w">
-            Instructrice · DDT 33
-          </p>
-          <DsfrButton
-            label="Se déconnecter"
-            tertiary
-            no-outline
-            size="sm"
+          <DsfsUserMenu
+            name="Camille Martin"
+            description="Instructrice · DDT 33"
+            :items="accountItems"
           />
         </template>
       </DsfsSidebar>

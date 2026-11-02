@@ -316,7 +316,8 @@ watch(() => route?.path, closeMenu)
 }
 
 .dsfs-sidebar__footer {
-  padding: var(--dsfs-space-2w) var(--dsfs-space-3w);
+  /* 1w + the user menu trigger's own 1w padding line up with the nav labels. */
+  padding: var(--dsfs-space-1w) var(--dsfs-space-2w);
   border-top: var(--dsfs-shell-border-width) solid var(--border-default-grey);
 }
 

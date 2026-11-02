@@ -62,6 +62,7 @@ import { DsfsAppShell } from 'dsaasfr'
 |---|---|
 | `DsfsAppShell` | Draft — see [decision 0002](docs/decisions/0002-app-shell-layout.md) |
 | `DsfsSidebar` | Draft — see [decision 0003](docs/decisions/0003-brand-in-sidebar.md) |
+| `DsfsUserMenu` | Draft — see [decision 0005](docs/decisions/0005-user-menu.md) |
 
 ## Principles
 
