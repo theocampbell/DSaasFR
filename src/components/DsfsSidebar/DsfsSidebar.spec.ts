@@ -78,6 +78,14 @@ describe('DsfsSidebar', () => {
     expect(screen.getByRole('link', { name: 'Agents' }).getAttribute('aria-current')).toBe('page')
   })
 
+  it('does not mark the home link as current page on the home page', async () => {
+    await renderSidebar('/')
+
+    const home = screen.getByRole('link', { name: /Démarches Pro/ })
+    expect(home.getAttribute('aria-current')).toBeNull()
+    expect(screen.getByRole('link', { name: 'Tableau de bord' }).getAttribute('aria-current')).toBe('page')
+  })
+
   it('announces exactly one current page, never the group', async () => {
     const { container } = await renderSidebar('/admin/agents')
 

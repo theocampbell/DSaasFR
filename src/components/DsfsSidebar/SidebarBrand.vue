@@ -21,15 +21,29 @@ defineProps<{
     small
   />
   <div class="dsfs-sidebar-brand__service">
-    <component
-      :is="homeIsRouterLink ? RouterLink : 'a'"
-      v-bind="homeIsRouterLink ? { to: homeTo } : { href: homeHref }"
+    <!-- `custom` RouterLink: no automatic aria-current="page" on the home link (the
+         current page is announced once, by the navigation), like the DSFR header. -->
+    <RouterLink
+      v-if="homeIsRouterLink"
+      v-slot="{ href, navigate }"
+      :to="homeTo"
+      custom
+    >
+      <a
+        :href="href"
+        :title="homeTitle"
+        @click="navigate"
+      >
+        <p class="fr-text--lg fr-text--bold fr-mb-0">{{ serviceTitle }}</p>
+      </a>
+    </RouterLink>
+    <a
+      v-else
+      :href="homeHref"
       :title="homeTitle"
     >
-      <p class="fr-text--lg fr-text--bold fr-mb-0">
-        {{ serviceTitle }}
-      </p>
-    </component>
+      <p class="fr-text--lg fr-text--bold fr-mb-0">{{ serviceTitle }}</p>
+    </a>
     <p
       v-if="serviceDescription"
       class="fr-text--sm fr-mb-0"
