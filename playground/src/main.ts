@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import VueDsfr from '@gouvminint/vue-dsfr'
 import DSaaSFR from 'dsaasfr'
 import '@gouvfr/dsfr/dist/core/core.main.min.css'
@@ -12,7 +12,8 @@ import App from './App.vue'
 
 // This is the exact install sequence a consuming app follows (see README).
 const router = createRouter({
-  history: createWebHistory(),
+  // Hash history: works on static hosting (GitHub Pages) without server rewrites.
+  history: createWebHashHistory(),
   // Every path renders App's content; the sidebar derives its active item from the URL.
   routes: [{ path: '/:pathMatch(.*)*', component: { render: () => null } }],
 })

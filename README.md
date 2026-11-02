@@ -75,12 +75,28 @@ import { DsfsAppShell } from 'dsaasfr'
 
 ## Development
 
+Prerequisites: Node 22+ and pnpm (`corepack enable` installs the pinned pnpm version).
+
 ```bash
+git clone https://github.com/theocampbell/DSaasFR.git
+cd DSaasFR
+git checkout claude/dsaasfr-component-library-vthch4
+corepack enable
 pnpm install
-pnpm dev          # playground app
-pnpm storybook    # documentation
+
+pnpm storybook    # http://localhost:6006 — every component and state, light/dark toggle
+pnpm dev          # http://localhost:5173 — playground: a fake back-office to click around
 pnpm check        # lint + typecheck + test + build
 ```
+
+Tip: to see the narrow / high-zoom layout, zoom the browser to 400% or make the window
+narrower than ~990px.
+
+## Sandbox
+
+`.github/workflows/deploy-sandbox.yml` publishes Storybook (`/`) and the playground
+(`/playground/`) to GitHub Pages on every push. One-time setup: repo Settings → Pages →
+Source: **GitHub Actions**.
 
 This repo is set up to be developed with Claude Code: see [CLAUDE.md](CLAUDE.md) and the
 specialised agents in [.claude/agents](.claude/agents).

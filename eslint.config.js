@@ -2,7 +2,7 @@ import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescri
 import pluginVue from 'eslint-plugin-vue'
 
 export default defineConfigWithVueTs(
-  { ignores: ['dist/**', 'types/**', 'storybook-static/**', 'coverage/**'] },
+  { ignores: ['dist/**', 'dist-playground/**', '_site/**', 'types/**', 'storybook-static/**', 'coverage/**'] },
   pluginVue.configs['flat/recommended'],
   vueTsConfigs.recommended,
   {

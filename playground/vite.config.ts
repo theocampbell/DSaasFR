@@ -6,6 +6,12 @@ import { defineConfig } from 'vite'
 // consume the published package (same import path: "dsaasfr").
 export default defineConfig({
   root: fileURLToPath(new URL('.', import.meta.url)),
+  // Sub-path when deployed (e.g. /DSaasFR/playground/ on GitHub Pages).
+  base: process.env.PLAYGROUND_BASE ?? '/',
+  build: {
+    outDir: fileURLToPath(new URL('../dist-playground', import.meta.url)),
+    emptyOutDir: true,
+  },
   plugins: [vue()],
   resolve: {
     alias: {
