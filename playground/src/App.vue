@@ -19,7 +19,13 @@ const items: DsfsSidebarItem[] = [
   },
 ]
 
-const links = computed(() => [{ to: '/', text: 'Accueil' }, { text: route.path }])
+// Page title from the navigation item matching the URL (flattening groups).
+const flat = (list: DsfsSidebarItem[]): DsfsSidebarItem[] =>
+  list.flatMap(item => (item.menuItems ? flat(item.menuItems) : [item]))
+const pageTitle = computed(() => flat(items).find(item => item.to === route.path)?.text ?? 'Page introuvable')
+const links = computed(() =>
+  route.path === '/' ? [{ text: 'Tableau de bord' }] : [{ to: '/', text: 'Tableau de bord' }, { text: pageTitle.value }],
+)
 </script>
 
 <template>
@@ -29,7 +35,22 @@ const links = computed(() => [{ to: '/', text: 'Accueil' }, { text: route.path }
         service-title="Démarches Pro"
         service-description="Back-office instructeurs"
         :items="items"
-      />
+      >
+        <template #footer>
+          <p class="fr-text--sm fr-text--bold fr-mb-0">
+            Camille Martin
+          </p>
+          <p class="fr-text--xs fr-mb-1w">
+            Instructrice · DDT 33
+          </p>
+          <DsfrButton
+            label="Se déconnecter"
+            tertiary
+            no-outline
+            size="sm"
+          />
+        </template>
+      </DsfsSidebar>
     </template>
 
     <template #breadcrumb>
@@ -57,7 +78,7 @@ const links = computed(() => [{ to: '/', text: 'Accueil' }, { text: route.path }
     />
 
     <h1 class="fr-h3">
-      {{ route.path }}
+      {{ pageTitle }}
     </h1>
     <p>Playground : une fausse application de back-office pour tester les composants en conditions réelles.</p>
 
