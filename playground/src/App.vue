@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useScheme } from '@gouvminint/vue-dsfr'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { DsfsSidebarItem, DsfsUserMenuItem } from 'dsaasfr'
@@ -26,19 +27,22 @@ const flat = (list: DsfsSidebarItem[]): DsfsSidebarItem[] =>
 const pageTitle = computed(() =>
   [...flat(items), ...accountItems].find(item => item.to === route.path)?.text ?? 'Page introuvable',
 )
-// Demo only: cycles the DSFR theme (the real DSFR "Paramètres d'affichage" is a modal).
-function toggleTheme() {
-  const html = document.documentElement
-  const dark = html.getAttribute('data-fr-theme') === 'dark'
-  html.setAttribute('data-fr-scheme', dark ? 'light' : 'dark')
-  html.setAttribute('data-fr-theme', dark ? 'light' : 'dark')
-}
+// DSFR "Paramètres d'affichage": a modal with light / dark / system, backed by
+// Vue DSFR's useScheme (sets data-fr-scheme/theme and remembers the choice).
+// useScheme() is typed as possibly undefined (it returns nothing outside a browser).
+const { scheme, setScheme } = useScheme()!
+const displaySettingsOpen = ref(false)
+const schemeOptions = [
+  { label: 'Thème clair', value: 'light' },
+  { label: 'Thème sombre', value: 'dark' },
+  { label: 'Système', value: 'system', hint: 'Utilise les paramètres système.' },
+]
 
 const accountItems: DsfsUserMenuItem[] = [
   { text: 'Mon profil', to: '/profil', icon: 'fr-icon-user-line' },
   { text: 'Préférences', to: '/preferences', icon: 'fr-icon-settings-5-line' },
   { text: 'Notifications', to: '/notifications', icon: 'fr-icon-notification-3-line' },
-  { text: 'Thème clair / sombre', icon: 'fr-icon-theme-fill', action: toggleTheme },
+  { text: 'Paramètres d’affichage', icon: 'fr-icon-theme-fill', action: () => (displaySettingsOpen.value = true) },
   { text: 'Se déconnecter', icon: 'fr-icon-logout-box-r-line', separated: true, action: () => alert('Démonstration : déconnexion simulée.') },
 ]
 
@@ -109,4 +113,18 @@ const links = computed(() =>
       </div>
     </template>
   </DsfsAppShell>
+
+  <DsfrModal
+    :opened="displaySettingsOpen"
+    title="Paramètres d’affichage"
+    @close="displaySettingsOpen = false"
+  >
+    <DsfrRadioButtonSet
+      name="fr-radios-theme"
+      legend="Choisissez un thème pour personnaliser l’apparence du site."
+      :model-value="scheme"
+      :options="schemeOptions"
+      @update:model-value="(value: string | number | boolean | undefined) => setScheme(String(value))"
+    />
+  </DsfrModal>
 </template>

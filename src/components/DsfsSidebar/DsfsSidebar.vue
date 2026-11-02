@@ -318,6 +318,12 @@ watch(() => route?.path, closeMenu)
 .dsfs-sidebar__footer {
   /* 1w + the user menu trigger's own 1w padding line up with the nav labels. */
   padding: var(--dsfs-space-1w) var(--dsfs-space-2w);
+
+  /* Hover pair for controls in the footer (e.g. DsfsUserMenu), on the alt-grey sidebar. */
+  --idle: transparent;
+  --hover: var(--background-alt-grey-hover);
+  --active: var(--background-alt-grey-active);
+
   border-top: var(--dsfs-shell-border-width) solid var(--border-default-grey);
 }
 
@@ -326,6 +332,9 @@ watch(() => route?.path, closeMenu)
 }
 
 .dsfs-sidebar__footer--modal {
+  --hover: var(--background-default-grey-hover);
+  --active: var(--background-default-grey-active);
+
   border-top: 0;
   padding-left: 0;
   padding-right: 0;

@@ -101,13 +101,15 @@ const itemClass = (item: DsfsUserMenuItem) => [
       />
     </button>
 
+    <!-- Official DSFR menu markup (as in fr-translate / fr-nav): fr-menu > fr-menu__list
+         brings the overlap background, hover pair, drop shadow and high-contrast outline. -->
     <div
       v-show="open"
       :id="panelId"
-      class="dsfs-user-menu__panel"
+      class="fr-menu dsfs-user-menu__panel"
     >
       <ul
-        class="dsfs-user-menu__list"
+        class="fr-menu__list dsfs-user-menu__list"
         :aria-label="menuLabel"
       >
         <li
@@ -149,6 +151,9 @@ const itemClass = (item: DsfsUserMenuItem) => [
   position: relative;
 }
 
+/* Custom trigger (two-line name + role does not fit fr-btn). It inherits the
+   --idle/--hover/--active pair from its container, like DSFR tertiary buttons,
+   and copies the fr-translate__btn expanded state. See 0005. */
 .dsfs-user-menu__trigger {
   display: flex;
   align-items: center;
@@ -157,12 +162,6 @@ const itemClass = (item: DsfsUserMenuItem) => [
   padding: var(--dsfs-space-1w);
   text-align: left;
   color: var(--text-default-grey);
-
-  /* Same hover/active feedback as DSFR tertiary controls. */
-  --idle: transparent;
-  --hover: var(--background-default-grey-hover);
-  --active: var(--background-default-grey-active);
-
   background-color: var(--idle);
 }
 
@@ -174,8 +173,32 @@ const itemClass = (item: DsfsUserMenuItem) => [
   background-color: var(--active);
 }
 
-.dsfs-user-menu__avatar {
+.dsfs-user-menu__trigger[aria-expanded="true"] {
+  --idle: transparent;
+  --hover: var(--background-open-blue-france-hover);
+  --active: var(--background-open-blue-france-active);
+
+  background-color: var(--background-open-blue-france);
+  color: var(--text-active-blue-france);
+}
+
+.dsfs-user-menu__trigger[aria-expanded="true"]:hover {
+  background-color: var(--hover);
+}
+
+.dsfs-user-menu__avatar,
+.dsfs-user-menu__chevron {
   color: var(--text-action-high-blue-france);
+}
+
+.dsfs-user-menu__trigger[aria-expanded="true"] .dsfs-user-menu__chevron {
+  transform: rotate(-180deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dsfs-user-menu__chevron {
+    transition: transform 0.3s;
+  }
 }
 
 .dsfs-user-menu__identity {
@@ -191,31 +214,29 @@ const itemClass = (item: DsfsUserMenuItem) => [
   overflow-wrap: anywhere;
 }
 
-.dsfs-user-menu__chevron {
-  color: var(--text-action-high-blue-france);
-}
-
-.dsfs-user-menu__panel {
-  position: absolute;
-  z-index: 10;
+/* Layout-only overrides of fr-menu: it is designed to drop below a header nav item
+   (top: 100%, 20rem wide). Here it spans the sidebar and opens upwards. */
+.dsfs-user-menu__panel.fr-menu {
   right: 0;
   left: 0;
-  padding: var(--dsfs-space-1w) 0;
-  background-color: var(--background-overlap-grey);
-  box-shadow: var(--lifted-shadow);
+  width: auto;
+  margin: 0;
+  padding: 0;
 }
 
-.dsfs-user-menu--top .dsfs-user-menu__panel {
+.dsfs-user-menu--top .dsfs-user-menu__panel.fr-menu {
+  top: auto;
   bottom: calc(100% + var(--dsfs-space-1v));
 }
 
-.dsfs-user-menu--bottom .dsfs-user-menu__panel {
+.dsfs-user-menu--bottom .dsfs-user-menu__panel.fr-menu {
   top: calc(100% + var(--dsfs-space-1v));
 }
 
-.dsfs-user-menu__list {
+.dsfs-user-menu__list.fr-menu__list {
+  width: auto;
   margin: 0;
-  padding: 0;
+  padding: var(--dsfs-space-1w) 0;
   list-style: none;
 }
 
