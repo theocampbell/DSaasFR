@@ -22,13 +22,13 @@ const items: DsaasfrSidebarItem[] = [
   },
 ]
 
-// One key action per page, top right of the breadcrumb row (demo: buttons do nothing).
+// Key action, top right of the breadcrumb row, only on pages that have one
+// (demo: buttons do nothing).
 const keyAction = computed(() => {
   const path = route.path
   if (/^\/dossiers\/[^/]+\/pieces/.test(path)) return { label: 'Ajouter une pièce', icon: 'fr-icon-attachment-line' }
   if (/^\/dossiers\/[^/]+$/.test(path)) return { label: 'Rendre une décision', icon: 'fr-icon-check-line' }
-  if (path === '/' || path === '/dossiers') return { label: 'Nouveau dossier', icon: 'fr-icon-add-line' }
-  if (path === '/usagers') return { label: 'Inviter un usager', icon: 'fr-icon-user-add-line' }
+  if (path === '/dossiers') return { label: 'Nouveau dossier', icon: 'fr-icon-add-line' }
   if (path === '/admin/agents') return { label: 'Ajouter un agent', icon: 'fr-icon-user-add-line' }
   return undefined
 })
