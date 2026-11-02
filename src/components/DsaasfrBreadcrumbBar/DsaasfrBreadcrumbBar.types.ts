@@ -16,6 +16,6 @@ export interface DsaasfrBreadcrumbBarProps {
   navigationLabel?: string
   /** Accessible name of the "…" button revealing the hidden levels. */
   expandLabel?: string
-  /** Id of the breadcrumb list (unique by default). */
+  /** Optional id of the breadcrumb list. */
   id?: string
 }

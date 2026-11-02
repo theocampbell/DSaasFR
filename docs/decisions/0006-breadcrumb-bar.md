@@ -37,9 +37,11 @@ breadcrumb on every page.
   at 16rem); only the current page shrinks, down to 10rem. If the trail still does not fit
   on one line — narrow window, 200% text zoom — it **wraps**, and the current page wraps its
   text, so no level is ever cut to a fragment. Labels that are actually truncated get a
-  tooltip (on the `li`, because the DSFR gives the current page `pointer-events: none`);
-  a focused link shows its full text (`:focus-visible`), since tooltips are not reachable
-  by keyboard or touch. The current page's full text is also the page `<h1>`.
+  tooltip (on the `li`, because the DSFR gives the current page `pointer-events: none`).
+  Tooltips are not reachable by keyboard or touch, so a **focused** link whose label is
+  cut wraps its text in place (and the trail wraps) instead of widening off-screen;
+  labels that fit do not move. The current page is not focusable: its full text must be
+  the page `<h1>` (**required** of apps using the bar).
 - Ancestors without a destination render as plain text (breadcrumb mention grey, no
   underline, `fr-text--xs` like the links) — a state the DSFR does not define; only the last level gets
   `aria-current="page"` (links use a `custom` RouterLink so vue-router does not add its
@@ -57,7 +59,7 @@ breadcrumb on every page.
   `aria-expanded`: it disappears on activation, and focus moves to the first revealed
   level, so focus is never lost. Its target is small: fine for WCAG 2.1 AA, below the
   WCAG 2.2 target-size minimum (2.5.8).
-- Unique list id per instance (`useId`).
+- No list id unless the app passes one (nothing references it), so no duplicate ids.
 - The key action is outside the navigation landmark, after the trail in reading order.
 
 ## Open questions

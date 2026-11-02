@@ -7,7 +7,7 @@
  * fr-breadcrumb__link). Vue DSFR's DsfrBreadcrumb only takes links, so it cannot
  * host the "…" button nor the actions. See docs/decisions/0006-breadcrumb-bar.md.
  */
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useRouteBreadcrumb } from '../../composables/useRouteBreadcrumb'
 import type { DsaasfrBreadcrumbBarProps, DsaasfrBreadcrumbItem } from './DsaasfrBreadcrumbBar.types'
@@ -20,8 +20,6 @@ const props = withDefaults(defineProps<DsaasfrBreadcrumbBarProps>(), {
   id: undefined,
 })
 
-const uid = useId()
-const listId = computed(() => props.id ?? `dsaasfr-breadcrumb-${uid}`)
 
 defineSlots<{ actions?: () => unknown }>()
 
@@ -49,7 +47,34 @@ const list = useTemplateRef<HTMLOListElement>('list')
 async function expand() {
   expanded.value = true
   await nextTick()
-  list.value?.querySelectorAll<HTMLElement>('a[href]')[1]?.focus()
+  // First focusable element from the second level on (a plain-text level is skipped).
+  const levels = [...(list.value?.children ?? [])].slice(1)
+  for (const level of levels) {
+    const target = level.querySelector<HTMLElement>('a[href], button')
+    if (target) {
+      target.focus()
+      break
+    }
+  }
+}
+
+/*
+ * Keyboard users must be able to read a truncated label: when the focused label is cut,
+ * its level wraps its text (and the trail wraps) instead of widening past the screen.
+ * Labels that fit are left alone, so tabbing through the trail does not move the layout.
+ */
+const focusReveal = ref(false)
+function onFocusIn(event: FocusEvent) {
+  const label = (event.target as HTMLElement).closest<HTMLElement>('.dsaasfr-breadcrumb-bar__label')
+  const li = label?.closest('li')
+  list.value?.querySelectorAll('li.dsaasfr-breadcrumb-bar__level--reveal').forEach(el => el.classList.remove('dsaasfr-breadcrumb-bar__level--reveal'))
+  focusReveal.value = !!label && !!li && label.scrollWidth > label.clientWidth + 1
+  if (focusReveal.value) li!.classList.add('dsaasfr-breadcrumb-bar__level--reveal')
+}
+function onFocusOut(event: FocusEvent) {
+  if (list.value?.contains(event.relatedTarget as Node)) return
+  list.value?.querySelectorAll('li.dsaasfr-breadcrumb-bar__level--reveal').forEach(el => el.classList.remove('dsaasfr-breadcrumb-bar__level--reveal'))
+  focusReveal.value = false
 }
 
 /*
@@ -95,12 +120,14 @@ watch(entries, () => void measure(), { flush: 'post' })
       :aria-label="navigationLabel"
     >
       <ol
-        :id="listId"
+        :id="id"
         ref="list"
         class="fr-breadcrumb__list dsaasfr-breadcrumb-bar__list"
-        :class="{ 'dsaasfr-breadcrumb-bar__list--wrapped': wrapped }"
-        @focusin="measure"
-        @focusout="measure"
+        :class="{
+          'dsaasfr-breadcrumb-bar__list--wrapped': wrapped || focusReveal,
+        }"
+        @focusin="onFocusIn"
+        @focusout="onFocusOut"
       >
         <li
           v-for="(entry, position) in entries"
@@ -212,12 +239,6 @@ watch(entries, () => void measure(), { flush: 'post' })
   vertical-align: middle;
 }
 
-/* Keyboard users see the full label of the focused level (the trail is re-measured on
-   focusin/focusout, so it wraps if the wider label no longer fits). */
-.dsaasfr-breadcrumb-bar__label:focus-visible {
-  max-width: none;
-}
-
 .dsaasfr-breadcrumb-bar__list > li:last-child .dsaasfr-breadcrumb-bar__label {
   max-width: 100%;
 }
@@ -248,6 +269,16 @@ watch(entries, () => void measure(), { flush: 'post' })
     max-width: 100%;
     white-space: normal;
   }
+}
+
+/* Focused label that was cut: wrap its text within the row (see onFocusIn). */
+.dsaasfr-breadcrumb-bar__list > li.dsaasfr-breadcrumb-bar__level--reveal {
+  flex-shrink: 1;
+  white-space: normal;
+}
+
+.dsaasfr-breadcrumb-bar__list > li.dsaasfr-breadcrumb-bar__level--reveal .dsaasfr-breadcrumb-bar__label {
+  max-width: 100%;
 }
 
 .dsaasfr-breadcrumb-bar__actions {

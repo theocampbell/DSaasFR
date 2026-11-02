@@ -90,17 +90,33 @@ describe('DsaasfrBreadcrumbBar', () => {
     expect(within(nav).getByText('Rubrique').tagName).toBe('SPAN')
   })
 
-  it('gives each instance a unique list id', async () => {
+  it('renders no list id unless one is given (no duplicate ids)', async () => {
     const router = createRouter({ history: createMemoryHistory(), routes })
     await router.push('/dossiers')
     render({
       components: { DsaasfrBreadcrumbBar },
-      template: '<div><DsaasfrBreadcrumbBar /><DsaasfrBreadcrumbBar /></div>',
+      template: '<div><DsaasfrBreadcrumbBar /><DsaasfrBreadcrumbBar id="fil-2" /></div>',
     }, { global: { plugins: [router] } })
 
-    const ids = [...document.querySelectorAll('ol')].map(ol => ol.id)
-    expect(ids).toHaveLength(2)
-    expect(new Set(ids).size).toBe(2)
+    expect([...document.querySelectorAll('ol')].map(ol => ol.id)).toEqual(['', 'fil-2'])
+  })
+
+  it('after "…", focuses the first revealed link even if a level is plain text', async () => {
+    const { nav, user } = await setup('/', {
+      props: {
+        items: [
+          { text: 'Accueil', to: '/' },
+          { text: 'Rubrique' },
+          { text: 'Dossiers', to: '/dossiers' },
+          { text: 'Dossier 2041', to: '/dossiers/2041' },
+          { text: 'Pièce 7' },
+        ],
+      },
+    })
+
+    await user.click(within(nav).getByRole('button', { name: /Afficher tous les niveaux/ }))
+
+    expect(document.activeElement?.textContent?.trim()).toBe('Dossiers')
   })
 
   it('renders the key action on the right, outside the navigation', async () => {
