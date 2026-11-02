@@ -254,6 +254,11 @@ watch(previewOpen, async (open) => {
   border-bottom: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
 }
 
+/* Room above/below when the breadcrumb bar's actions wrap. */
+.dsaasfr-app-shell__breadcrumb {
+  padding-block: var(--dsaasfr-space-1w);
+}
+
 /* Toolbar items keep their natural width and wrap onto a new line as a whole,
    instead of being squeezed until their labels break (e.g. "Nouveau dossier").
    max-width keeps a single very long label inside the row at 320px (RGAA 10.11). */

@@ -33,22 +33,36 @@ breadcrumb on every page.
 - **Long trails**: above `maxItems` (default 4) levels, the middle ones collapse into a
   "…" button (first level, "…", last levels kept). It reveals the full trail; a new page
   starts collapsed again.
-- **Long labels**: truncated at 16rem with an ellipsis; the full text stays in the DOM
-  (read by screen readers) and long labels get a `title` tooltip.
-- **Narrow screens / high zoom**: no DSFR "Voir le fil d'Ariane" collapse; the trail wraps
-  over several lines instead of truncating, so every level stays readable at 320px.
+- **Long labels** (measured in the browser, after review): ancestors never shrink (capped
+  at 16rem); only the current page shrinks, down to 10rem. If the trail still does not fit
+  on one line — narrow window, 200% text zoom — it **wraps**, and the current page wraps its
+  text, so no level is ever cut to a fragment. Labels that are actually truncated get a
+  tooltip (on the `li`, because the DSFR gives the current page `pointer-events: none`);
+  a focused link shows its full text (`:focus-visible`), since tooltips are not reachable
+  by keyboard or touch. The current page's full text is also the page `<h1>`.
+- Ancestors without a destination render as plain text; only the last level gets
+  `aria-current="page"` (links use a `custom` RouterLink so vue-router does not add its
+  own `aria-current`).
+- **Narrow screens / high zoom**: the DSFR hides the trail behind "Voir le fil d'Ariane"
+  below 48em; we keep it visible and wrapping below 62em, so every level stays readable.
+- **Key action**: one primary button per view, size `sm` in the shell bars (toolbar uses
+  secondary / tertiary buttons).
 
 ## Accessibility consequences
 
 - Same landmark and labels as the DSFR breadcrumb (`nav` "vous êtes ici :", `aria-current`).
-- "…" is a real button: name "Afficher tous les niveaux du fil d'Ariane (n)",
-  `aria-expanded`/`aria-controls`; after activation it disappears and focus moves to the
-  first revealed level, so focus is never lost.
+- "…" is a real `<button>` (styled with `fr-breadcrumb__link`; `fr-breadcrumb__button` is
+  hidden from md up): name "Afficher tous les niveaux du fil d'Ariane (n)". No
+  `aria-expanded`: it disappears on activation, and focus moves to the first revealed
+  level, so focus is never lost. Its target is small: fine for WCAG 2.1 AA, below the
+  WCAG 2.2 target-size minimum (2.5.8).
+- Unique list id per instance (`useId`).
 - The key action is outside the navigation landmark, after the trail in reading order.
 
 ## Open questions
 
 1. Should a page be able to put more than one action on the right, or one primary action
    plus an overflow menu (to be designed with the toolbar row)?
-2. Should `document.title` (browser tab) and a page-change announcement for screen
-   readers come from the same route titles? (Proposed for the next iteration.)
+2. `document.title` (browser tab, RGAA 8.6) and a page-change announcement for screen
+   readers should come from the same route titles — flagged by the a11y review, next item
+   in TODO.md.

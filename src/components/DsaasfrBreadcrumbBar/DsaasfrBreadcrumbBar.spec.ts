@@ -80,12 +80,27 @@ describe('DsaasfrBreadcrumbBar', () => {
     expect(labels(nav)).toEqual(['Accueil', 'Recherche'])
   })
 
-  it('shows a tooltip with the full text on long labels only', async () => {
-    const long = 'Autorisation environnementale — parc éolien des Landes de Gascogne'
-    const { nav } = await setup('/', { props: { items: [{ text: 'Accueil', to: '/' }, { text: long }] } })
+  it('marks only the last level as current; ancestors without a link are plain text', async () => {
+    const { nav } = await setup('/', {
+      props: { items: [{ text: 'Accueil', to: '/' }, { text: 'Rubrique' }, { text: 'Page' }] },
+    })
 
-    expect(within(nav).getByText(long).getAttribute('title')).toBe(long)
-    expect(within(nav).getByRole('link', { name: 'Accueil' }).getAttribute('title')).toBeNull()
+    expect(nav.querySelectorAll('[aria-current="page"]')).toHaveLength(1)
+    expect(within(nav).getByText('Page').getAttribute('aria-current')).toBe('page')
+    expect(within(nav).getByText('Rubrique').tagName).toBe('SPAN')
+  })
+
+  it('gives each instance a unique list id', async () => {
+    const router = createRouter({ history: createMemoryHistory(), routes })
+    await router.push('/dossiers')
+    render({
+      components: { DsaasfrBreadcrumbBar },
+      template: '<div><DsaasfrBreadcrumbBar /><DsaasfrBreadcrumbBar /></div>',
+    }, { global: { plugins: [router] } })
+
+    const ids = [...document.querySelectorAll('ol')].map(ol => ol.id)
+    expect(ids).toHaveLength(2)
+    expect(new Set(ids).size).toBe(2)
   })
 
   it('renders the key action on the right, outside the navigation', async () => {

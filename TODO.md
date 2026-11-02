@@ -5,9 +5,9 @@ are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can 
 
 ## 1. Finish the shell (base for v0.1.0)
 
-- [ ] 🤖 **Breadcrumb row** (first row): built from the router — each route declares
-      its title once → breadcrumb, `<h1>`, browser tab title, page-change announcement for
-      screen readers. Page actions on the right (Linear-style). 👤 design input welcome.
+- [ ] 🤖 **Page title & announcement**: browser tab title (`document.title`, RGAA 8.6)
+      and a page-change announcement for screen readers, from the same route titles as
+      the breadcrumb.
 - [ ] 🤖 **Toolbar row** (second row): actions and filters, shown only when the page
       needs them; overflow "…" menu when there are too many actions. 👤 design input welcome.
 - [ ] 🤖 **Preview panel**: push the content on wide screens, overlay on narrower ones;
@@ -68,5 +68,8 @@ are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can 
 - [x] Scrolling: the page scrolls, sidebar + breadcrumb/toolbar rows + preview pinned
       (keyboard scrolling fixed, WCAG 2.1.1; focus never hidden under pinned rows, 2.4.11).
 - [x] Narrow screens: variant A (DsfrHeader) kept, variant B and `narrowVariant` removed.
+- [x] `DsaasfrBreadcrumbBar`: router-driven breadcrumb (DSFR markup) + key action on the
+      right, "…" collapse for deep trails, no label cut to fragments (wraps instead);
+      reviewed by dsfr-guardian + a11y-auditor.
 - [x] Component prefix renamed `Dsfs` → `Dsaasfr` (CSS `dsaasfr-`): one name everywhere,
       clearly distinct from Vue DSFR's `Dsfr`, mirrors its convention.

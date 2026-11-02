@@ -30,8 +30,11 @@
   --dsaasfr-shell-sidebar-width: 16rem;
   --dsaasfr-shell-preview-width: clamp(20rem, 35vw, 40rem);
   --dsaasfr-shell-row-height: 3rem;
-  --dsaasfr-breadcrumb-label-max-width: 16rem;
   --dsaasfr-shell-border-width: 1px;
+
+  /* Breadcrumb bar (docs/decisions/0006). */
+  --dsaasfr-breadcrumb-label-max-width: 16rem;
+  --dsaasfr-breadcrumb-current-min-width: 10rem;
 
   /* DSFR focus ring offset (2px), used to pull it inside clipped containers. */
   --dsaasfr-focus-offset: 2px;
