@@ -13,7 +13,7 @@ government applications. It is a POC, a community proposal, NOT an official DSFR
    - Colours: DSFR CSS variables only (`var(--background-default-grey)`,
      `var(--text-action-high-blue-france)`, `var(--border-default-grey)`…). No hex,
      rgb(), hsl() or named colours. This gives light/dark themes for free.
-   - Spacing: `var(--dsfs-space-*)` (DSFR scale: 1v = 0.25rem, 1w = 0.5rem) or DSFR
+   - Spacing: `var(--dsaasfr-space-*)` (DSFR scale: 1v = 0.25rem, 1w = 0.5rem) or DSFR
      utility classes (`fr-p-2w`, `fr-mb-1v`…).
    - Typography: DSFR classes (`fr-h3`, `fr-text--sm`…). Never set font-size or
      font-family in our CSS. Marianne only.
@@ -30,13 +30,13 @@ government applications. It is a POC, a community proposal, NOT an official DSFR
 
 ## Component conventions (mirror Vue DSFR)
 
-- Prefix `Dsfs`, folder per component:
+- Prefix `Dsaasfr`, folder per component:
   ```
-  src/components/DsfsThing/
-    DsfsThing.vue           # <script setup lang="ts">, scoped styles, BEM `dsfs-thing__el--mod`
-    DsfsThing.types.ts      # exported props interface, documented with JSDoc
-    DsfsThing.spec.ts       # Vitest + Testing Library + expectNoA11yViolations
-    DsfsThing.stories.ts    # Storybook, tags: ['autodocs']
+  src/components/DsaasfrThing/
+    DsaasfrThing.vue           # <script setup lang="ts">, scoped styles, BEM `dsaasfr-thing__el--mod`
+    DsaasfrThing.types.ts      # exported props interface, documented with JSDoc
+    DsaasfrThing.spec.ts       # Vitest + Testing Library + expectNoA11yViolations
+    DsaasfrThing.stories.ts    # Storybook, tags: ['autodocs']
     index.ts                # re-exports component + types
   ```
 - Export from `src/components/index.ts`; the plugin registers everything exported there.

@@ -13,7 +13,7 @@ Check every changed component against:
   Flag invented variables. Check the token is semantically right (e.g. `--text-mention-grey`
   for secondary text, `--background-action-high-blue-france` only for primary actions).
 - **Typography**: DSFR classes only, Marianne only, heading hierarchy coherent.
-- **Spacing**: `--dsfs-space-*` or `fr-*` utility classes only; on the DSFR 1v/1w scale.
+- **Spacing**: `--dsaasfr-space-*` or `fr-*` utility classes only; on the DSFR 1v/1w scale.
 - **Markup**: where a DSFR component exists, its official structure and `fr-*` classes are
   used (compare with `node_modules/@gouvfr/dsfr/dist/component/<name>/` and the Vue DSFR
   source). No re-styling of `fr-*` classes beyond layout adjustments, each one justified.

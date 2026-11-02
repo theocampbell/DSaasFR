@@ -1,6 +1,6 @@
 import type { RouteLocationRaw } from 'vue-router'
 
-export interface DsfsUserMenuItem {
+export interface DsaasfrUserMenuItem {
   /** Visible label. */
   text: string
   /** Internal route (RouterLink). */
@@ -15,13 +15,13 @@ export interface DsfsUserMenuItem {
   separated?: boolean
 }
 
-export interface DsfsUserMenuProps {
+export interface DsaasfrUserMenuProps {
   /** Name of the signed-in person (trigger label). */
   name: string
   /** Secondary line under the name: role, service… */
   description?: string
   /** Account-related entries. */
-  items?: DsfsUserMenuItem[]
+  items?: DsaasfrUserMenuItem[]
   /** Accessible name of the list of account actions. */
   menuLabel?: string
   /** Where the panel opens relative to the trigger. */

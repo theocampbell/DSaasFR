@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * DsfsUserMenu — the signed-in person, as a trigger opening account actions.
+ * DsaasfrUserMenu — the signed-in person, as a trigger opening account actions.
  *
  * Pattern: disclosure (button + aria-expanded/aria-controls + list of links and
  * buttons), like the DSFR header menus and DsfrLanguageSelector — not an ARIA
@@ -10,17 +10,17 @@
  */
 import { computed, onBeforeUnmount, useTemplateRef, watch } from 'vue'
 import { RouterLink } from 'vue-router'
-import type { DsfsUserMenuItem, DsfsUserMenuProps } from './DsfsUserMenu.types'
+import type { DsaasfrUserMenuItem, DsaasfrUserMenuProps } from './DsaasfrUserMenu.types'
 
-const props = withDefaults(defineProps<DsfsUserMenuProps>(), {
+const props = withDefaults(defineProps<DsaasfrUserMenuProps>(), {
   description: undefined,
   items: () => [],
   menuLabel: 'Mon compte',
   placement: 'top',
-  id: 'dsfs-user-menu',
+  id: 'dsaasfr-user-menu',
 })
 
-const emit = defineEmits<{ select: [item: DsfsUserMenuItem] }>()
+const emit = defineEmits<{ select: [item: DsaasfrUserMenuItem] }>()
 
 const open = defineModel<boolean>('open', { default: false })
 const root = useTemplateRef<HTMLElement>('root')
@@ -32,7 +32,7 @@ function close(returnFocus = false) {
   if (returnFocus) trigger.value?.focus()
 }
 
-function select(item: DsfsUserMenuItem) {
+function select(item: DsaasfrUserMenuItem) {
   emit('select', item)
   item.action?.()
   close()
@@ -61,8 +61,8 @@ watch(open, (isOpen) => {
 })
 onBeforeUnmount(() => document.removeEventListener('pointerdown', onPointerDownOutside))
 
-const itemClass = (item: DsfsUserMenuItem) => [
-  'fr-btn fr-btn--tertiary-no-outline fr-btn--sm dsfs-user-menu__item',
+const itemClass = (item: DsaasfrUserMenuItem) => [
+  'fr-btn fr-btn--tertiary-no-outline fr-btn--sm dsaasfr-user-menu__item',
   item.icon ? `fr-btn--icon-left ${item.icon}` : '',
 ]
 </script>
@@ -70,32 +70,32 @@ const itemClass = (item: DsfsUserMenuItem) => [
 <template>
   <div
     ref="root"
-    class="dsfs-user-menu"
-    :class="`dsfs-user-menu--${placement}`"
+    class="dsaasfr-user-menu"
+    :class="`dsaasfr-user-menu--${placement}`"
     @keydown="onKeydown"
     @focusout="onFocusOut"
   >
     <button
       ref="trigger"
       type="button"
-      class="dsfs-user-menu__trigger"
+      class="dsaasfr-user-menu__trigger"
       :aria-expanded="open"
       :aria-controls="panelId"
       @click="open = !open"
     >
       <span
-        class="dsfs-user-menu__avatar fr-icon-account-circle-line"
+        class="dsaasfr-user-menu__avatar fr-icon-account-circle-line"
         aria-hidden="true"
       />
-      <span class="dsfs-user-menu__identity">
-        <span class="fr-text--sm fr-text--bold dsfs-user-menu__name">{{ name }}</span>
+      <span class="dsaasfr-user-menu__identity">
+        <span class="fr-text--sm fr-text--bold dsaasfr-user-menu__name">{{ name }}</span>
         <span
           v-if="description"
-          class="fr-text--xs dsfs-user-menu__description"
+          class="fr-text--xs dsaasfr-user-menu__description"
         >{{ description }}</span>
       </span>
       <span
-        class="dsfs-user-menu__chevron"
+        class="dsaasfr-user-menu__chevron"
         :class="placement === 'top' ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'"
         aria-hidden="true"
       />
@@ -106,16 +106,16 @@ const itemClass = (item: DsfsUserMenuItem) => [
     <div
       v-show="open"
       :id="panelId"
-      class="fr-menu dsfs-user-menu__panel"
+      class="fr-menu dsaasfr-user-menu__panel"
     >
       <ul
-        class="fr-menu__list dsfs-user-menu__list"
+        class="fr-menu__list dsaasfr-user-menu__list"
         :aria-label="menuLabel"
       >
         <li
           v-for="item in items"
           :key="item.text"
-          :class="{ 'dsfs-user-menu__entry--separated': item.separated }"
+          :class="{ 'dsaasfr-user-menu__entry--separated': item.separated }"
         >
           <RouterLink
             v-if="item.to"
@@ -147,33 +147,33 @@ const itemClass = (item: DsfsUserMenuItem) => [
 </template>
 
 <style scoped>
-.dsfs-user-menu {
+.dsaasfr-user-menu {
   position: relative;
 }
 
 /* Custom trigger (two-line name + role does not fit fr-btn). It inherits the
    --idle/--hover/--active pair from its container, like DSFR tertiary buttons,
    and copies the fr-translate__btn expanded state. See 0005. */
-.dsfs-user-menu__trigger {
+.dsaasfr-user-menu__trigger {
   display: flex;
   align-items: center;
-  gap: var(--dsfs-space-3v);
+  gap: var(--dsaasfr-space-3v);
   width: 100%;
-  padding: var(--dsfs-space-1w);
+  padding: var(--dsaasfr-space-1w);
   text-align: left;
   color: var(--text-default-grey);
   background-color: var(--idle);
 }
 
-.dsfs-user-menu__trigger:hover {
+.dsaasfr-user-menu__trigger:hover {
   background-color: var(--hover);
 }
 
-.dsfs-user-menu__trigger:active {
+.dsaasfr-user-menu__trigger:active {
   background-color: var(--active);
 }
 
-.dsfs-user-menu__trigger[aria-expanded="true"] {
+.dsaasfr-user-menu__trigger[aria-expanded="true"] {
   --idle: transparent;
   --hover: var(--background-open-blue-france-hover);
   --active: var(--background-open-blue-france-active);
@@ -182,41 +182,41 @@ const itemClass = (item: DsfsUserMenuItem) => [
   color: var(--text-active-blue-france);
 }
 
-.dsfs-user-menu__trigger[aria-expanded="true"]:hover {
+.dsaasfr-user-menu__trigger[aria-expanded="true"]:hover {
   background-color: var(--hover);
 }
 
-.dsfs-user-menu__avatar,
-.dsfs-user-menu__chevron {
+.dsaasfr-user-menu__avatar,
+.dsaasfr-user-menu__chevron {
   color: var(--text-action-high-blue-france);
 }
 
-.dsfs-user-menu__trigger[aria-expanded="true"] .dsfs-user-menu__chevron {
+.dsaasfr-user-menu__trigger[aria-expanded="true"] .dsaasfr-user-menu__chevron {
   transform: rotate(-180deg);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .dsfs-user-menu__chevron {
+  .dsaasfr-user-menu__chevron {
     transition: transform 0.3s;
   }
 }
 
-.dsfs-user-menu__identity {
+.dsaasfr-user-menu__identity {
   display: flex;
   flex: 1;
   flex-direction: column;
   min-width: 0;
 }
 
-.dsfs-user-menu__name,
-.dsfs-user-menu__description {
+.dsaasfr-user-menu__name,
+.dsaasfr-user-menu__description {
   margin: 0;
   overflow-wrap: anywhere;
 }
 
 /* Layout-only overrides of fr-menu: it is designed to drop below a header nav item
    (top: 100%, 20rem wide). Here it spans the sidebar and opens upwards. */
-.dsfs-user-menu__panel.fr-menu {
+.dsaasfr-user-menu__panel.fr-menu {
   right: 0;
   left: 0;
   width: auto;
@@ -224,33 +224,33 @@ const itemClass = (item: DsfsUserMenuItem) => [
   padding: 0;
 }
 
-.dsfs-user-menu--top .dsfs-user-menu__panel.fr-menu {
+.dsaasfr-user-menu--top .dsaasfr-user-menu__panel.fr-menu {
   top: auto;
-  bottom: calc(100% + var(--dsfs-space-1v));
+  bottom: calc(100% + var(--dsaasfr-space-1v));
 }
 
-.dsfs-user-menu--bottom .dsfs-user-menu__panel.fr-menu {
-  top: calc(100% + var(--dsfs-space-1v));
+.dsaasfr-user-menu--bottom .dsaasfr-user-menu__panel.fr-menu {
+  top: calc(100% + var(--dsaasfr-space-1v));
 }
 
-.dsfs-user-menu__list.fr-menu__list {
+.dsaasfr-user-menu__list.fr-menu__list {
   width: auto;
   margin: 0;
-  padding: var(--dsfs-space-1w) 0;
+  padding: var(--dsaasfr-space-1w) 0;
   list-style: none;
 }
 
-.dsfs-user-menu__list > li {
+.dsaasfr-user-menu__list > li {
   padding: 0;
 }
 
-.dsfs-user-menu__entry--separated {
-  margin-top: var(--dsfs-space-1w);
-  padding-top: var(--dsfs-space-1w);
-  border-top: var(--dsfs-shell-border-width) solid var(--border-default-grey);
+.dsaasfr-user-menu__entry--separated {
+  margin-top: var(--dsaasfr-space-1w);
+  padding-top: var(--dsaasfr-space-1w);
+  border-top: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
 }
 
-.dsfs-user-menu__item {
+.dsaasfr-user-menu__item {
   width: 100%;
   max-width: none;
 }

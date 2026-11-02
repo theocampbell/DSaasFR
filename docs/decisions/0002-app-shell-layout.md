@@ -2,7 +2,7 @@
 
 - **Status**: Proposed (draft — awaiting product owner design input)
 - **Date**: 2026-11-01
-- **Components**: DsfsAppShell (+ future DsfsSidebar, DsfsToolbar, DsfsPreviewPanel)
+- **Components**: DsaasfrAppShell (+ future DsaasfrSidebar, DsaasfrToolbar, DsaasfrPreviewPanel)
 
 ## DSFR starting point
 

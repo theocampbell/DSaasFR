@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event'
 import { defineComponent, h, ref } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { expectNoA11yViolations } from '@/test-utils/axe'
-import DsfsAppShell from './DsfsAppShell.vue'
-import type { DsfsAppShellPreviewScope } from './DsfsAppShell.types'
+import DsaasfrAppShell from './DsaasfrAppShell.vue'
+import type { DsaasfrAppShellPreviewScope } from './DsaasfrAppShell.types'
 
 const slots = {
   header: '<header><p>Header</p></header>',
@@ -15,9 +15,9 @@ const slots = {
   default: '<h1>Dossiers</h1>',
 }
 
-describe('DsfsAppShell', () => {
+describe('DsaasfrAppShell', () => {
   it('exposes the expected landmarks', () => {
-    render(DsfsAppShell, { slots })
+    render(DsaasfrAppShell, { slots })
 
     expect(screen.getByRole('main')).toBeTruthy()
     expect(screen.getByRole('navigation', { name: 'Navigation principale' })).toBeTruthy()
@@ -25,14 +25,14 @@ describe('DsfsAppShell', () => {
   })
 
   it('renders skip links that target main and the sidebar', () => {
-    render(DsfsAppShell, { slots, props: { mainId: 'contenu' } })
+    render(DsaasfrAppShell, { slots, props: { mainId: 'contenu' } })
 
     expect(screen.getByRole('link', { name: 'Contenu' }).getAttribute('href')).toBe('#contenu')
     expect(screen.getByRole('link', { name: 'Menu' }).getAttribute('href')).toBe('#contenu-sidebar')
   })
 
   it('does not render the preview panel unless it is open', () => {
-    render(DsfsAppShell, {
+    render(DsaasfrAppShell, {
       slots: { ...slots, preview: '<p>Aperçu du document</p>' },
     })
 
@@ -46,11 +46,11 @@ describe('DsfsAppShell', () => {
         const open = ref(true)
         return () =>
           h(
-            DsfsAppShell,
+            DsaasfrAppShell,
             { previewOpen: open.value, 'onUpdate:previewOpen': (v: boolean) => (open.value = v) },
             {
               default: () => h('h1', 'Dossiers'),
-              preview: ({ closePreview }: DsfsAppShellPreviewScope) =>
+              preview: ({ closePreview }: DsaasfrAppShellPreviewScope) =>
                 h('button', { type: 'button', onClick: closePreview }, 'Fermer l’aperçu'),
             },
           )
@@ -71,13 +71,13 @@ describe('DsfsAppShell', () => {
         const open = ref(false)
         return () =>
           h(
-            DsfsAppShell,
+            DsaasfrAppShell,
             { previewOpen: open.value, 'onUpdate:previewOpen': (v: boolean) => (open.value = v) },
             {
-              toolbar: ({ togglePreview, previewToggleAttrs }: DsfsAppShellPreviewScope) =>
+              toolbar: ({ togglePreview, previewToggleAttrs }: DsaasfrAppShellPreviewScope) =>
                 h('button', { type: 'button', ...previewToggleAttrs, onClick: togglePreview }, 'Aperçu'),
               default: () => h('h1', 'Dossiers'),
-              preview: ({ closePreview }: DsfsAppShellPreviewScope) =>
+              preview: ({ closePreview }: DsaasfrAppShellPreviewScope) =>
                 h('button', { type: 'button', onClick: closePreview }, 'Fermer l’aperçu'),
             },
           )
@@ -105,7 +105,7 @@ describe('DsfsAppShell', () => {
     })
     await router.push('/dossiers')
     await router.isReady()
-    render(DsfsAppShell, { slots, global: { plugins: [router] } })
+    render(DsaasfrAppShell, { slots, global: { plugins: [router] } })
 
     const main = screen.getByRole('main')
     const scrollTo = vi.fn()
@@ -119,7 +119,7 @@ describe('DsfsAppShell', () => {
   })
 
   it('has no detectable accessibility violations', async () => {
-    const { container } = render(DsfsAppShell, {
+    const { container } = render(DsaasfrAppShell, {
       slots: { ...slots, preview: '<p>Aperçu</p>' },
       props: { previewOpen: true },
     })

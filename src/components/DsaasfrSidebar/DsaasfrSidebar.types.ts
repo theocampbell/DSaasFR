@@ -1,6 +1,6 @@
 import type { RouteLocationRaw } from 'vue-router'
 
-export interface DsfsSidebarItem {
+export interface DsaasfrSidebarItem {
   /** Visible label. */
   text: string
   /** Destination. Internal routes use RouterLink, URLs starting with http use <a>. Ignored on groups. */
@@ -12,10 +12,10 @@ export interface DsfsSidebarItem {
   /** Id of the group's collapsible list (generated when omitted). */
   id?: string
   /** Sub-items: turns this item into a group (secondary navigation). */
-  menuItems?: DsfsSidebarItem[]
+  menuItems?: DsaasfrSidebarItem[]
 }
 
-export interface DsfsSidebarProps {
+export interface DsaasfrSidebarProps {
   /** Service (application) name, shown under the bloc-marque. */
   serviceTitle: string
   /** Optional baseline under the service name. */
@@ -25,7 +25,7 @@ export interface DsfsSidebarProps {
   /** Home destination of the brand link. */
   homeTo?: RouteLocationRaw
   /** Primary navigation items. Ignored when the default slot is used. */
-  items?: DsfsSidebarItem[]
+  items?: DsaasfrSidebarItem[]
   /** Accessible name of the navigation landmark. */
   navLabel?: string
   /** Accessible name of the footer region (account, settings). */

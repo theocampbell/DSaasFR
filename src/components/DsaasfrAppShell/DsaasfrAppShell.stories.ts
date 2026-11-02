@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
-import { DsfsSidebar } from '../DsfsSidebar'
-import { DsfsUserMenu } from '../DsfsUserMenu'
-import { accountItems } from '../DsfsUserMenu/DsfsUserMenu.stories'
-import type { DsfsSidebarItem } from '../DsfsSidebar'
-import DsfsAppShell from './DsfsAppShell.vue'
+import { DsaasfrSidebar } from '../DsaasfrSidebar'
+import { DsaasfrUserMenu } from '../DsaasfrUserMenu'
+import { accountItems } from '../DsaasfrUserMenu/DsaasfrUserMenu.stories'
+import type { DsaasfrSidebarItem } from '../DsaasfrSidebar'
+import DsaasfrAppShell from './DsaasfrAppShell.vue'
 
 const meta = {
-  title: 'Shell/DsfsAppShell',
-  component: DsfsAppShell,
+  title: 'Shell/DsaasfrAppShell',
+  component: DsaasfrAppShell,
   tags: ['autodocs'],
   parameters: {
     route: '/dossiers/2041',
@@ -19,12 +19,12 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof DsfsAppShell>
+} satisfies Meta<typeof DsaasfrAppShell>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const navItems: DsfsSidebarItem[] = [
+export const navItems: DsaasfrSidebarItem[] = [
   { text: 'Tableau de bord', to: '/' },
   { text: 'Dossiers', to: '/dossiers' },
   { text: 'Usagers', to: '/usagers' },
@@ -40,20 +40,20 @@ export const navItems: DsfsSidebarItem[] = [
 ]
 
 const template = (previewOpen: boolean, narrowVariant: 'dsfr-header' | 'dialog' = 'dsfr-header') => ({
-  components: { DsfsAppShell, DsfsSidebar, DsfsUserMenu },
+  components: { DsaasfrAppShell, DsaasfrSidebar, DsaasfrUserMenu },
   setup() {
     const preview = ref(previewOpen)
     const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers' }, { text: 'Dossier #2041' }]
     return { preview, links, navItems, narrowVariant, accountItems }
   },
   template: `
-    <DsfsAppShell v-model:preview-open="preview">
+    <DsaasfrAppShell v-model:preview-open="preview">
       <template #sidebar>
-        <DsfsSidebar service-title="Démarches Pro" service-description="Back-office instructeurs" :items="navItems" :narrow-variant="narrowVariant">
+        <DsaasfrSidebar service-title="Démarches Pro" service-description="Back-office instructeurs" :items="navItems" :narrow-variant="narrowVariant">
           <template #footer>
-            <DsfsUserMenu name="Camille Martin" description="Instructrice · DDT 33" :items="accountItems" />
+            <DsaasfrUserMenu name="Camille Martin" description="Instructrice · DDT 33" :items="accountItems" />
           </template>
-        </DsfsSidebar>
+        </DsaasfrSidebar>
       </template>
 
       <template #breadcrumb>
@@ -76,7 +76,7 @@ const template = (previewOpen: boolean, narrowVariant: 'dsfr-header' | 'dialog' 
           <DsfrButton label="Fermer l’aperçu" tertiary size="sm" @click="closePreview" />
         </div>
       </template>
-    </DsfsAppShell>
+    </DsaasfrAppShell>
   `,
 })
 

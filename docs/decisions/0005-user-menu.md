@@ -2,7 +2,7 @@
 
 - **Status**: Proposed
 - **Date**: 2026-11-02
-- **Components**: DsfsUserMenu (used in the DsfsSidebar `footer` slot)
+- **Components**: DsaasfrUserMenu (used in the DsaasfrSidebar `footer` slot)
 
 ## DSFR starting point
 
@@ -20,7 +20,7 @@ place. SaaS tools put it at the bottom of the sidebar.
 
 ## Decision
 
-- `DsfsUserMenu`: the person's name + role is the **trigger button**; it opens a panel
+- `DsaasfrUserMenu`: the person's name + role is the **trigger button**; it opens a panel
   (upwards in the sidebar footer) listing links (`to`/`href`) and actions (`action`).
 - **Disclosure pattern**, like the DSFR header menus — not ARIA `role="menu"`, which would
   require arrow-key navigation and is often misused for navigation links.
@@ -28,7 +28,7 @@ place. SaaS tools put it at the bottom of the sidebar.
   choosing an item.
 - **Reuse check (dsfr-guardian):** Vue DSFR has no account, avatar or dropdown component;
   DsfrNavigationMenu is tied to DsfrNavigation, DsfrLanguageSelector to languages, and
-  DsfrHeader quick links are flat. A Dsfs component is justified, but it uses the
+  DsfrHeader quick links are flat. A Dsaasfr component is justified, but it uses the
   **official DSFR menu markup** `fr-menu > fr-menu__list` (as in `fr-translate`), which
   brings the overlap background, hover pair, `--overlap-shadow` and high-contrast outline.
   Only layout overrides: full sidebar width and opening upwards.
@@ -49,7 +49,7 @@ place. SaaS tools put it at the bottom of the sidebar.
 
 The header used to host "Paramètres d'affichage". It moves to the user menu: the item
 opens a `DsfrModal` with light / dark / system radios (`DsfrRadioButtonSet`), backed by
-Vue DSFR's `useScheme`. Shown in the playground; could become a `DsfsDisplaySettings`
+Vue DSFR's `useScheme`. Shown in the playground; could become a `DsaasfrDisplaySettings`
 component if every app needs it.
 
 ## Open questions

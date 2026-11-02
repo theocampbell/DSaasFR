@@ -1,3 +1,3 @@
-export * from './DsfsAppShell'
-export * from './DsfsSidebar'
-export * from './DsfsUserMenu'
+export * from './DsaasfrAppShell'
+export * from './DsaasfrSidebar'
+export * from './DsaasfrUserMenu'

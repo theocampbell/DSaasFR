@@ -2,7 +2,7 @@
 
 - **Status**: Proposed — variant to choose (A or B)
 - **Date**: 2026-11-01
-- **Components**: DsfsSidebar, DsfsAppShell
+- **Components**: DsaasfrSidebar, DsaasfrAppShell
 
 ## DSFR starting point
 
@@ -28,7 +28,7 @@ are counted as desktop in analytics. The target of this decision is high zoom, n
 3. **Below 62em, switch to the DSFR mobile header pattern** (chosen): a bar with
    bloc-marque + service name + "Menu" button; the menu opens in a modal containing the
    same navigation and the "Mon espace" footer. The bloc-marque is always visible, never
-   cropped. Same `DsfsSidebar` props drive both layouts.
+   cropped. Same `DsaasfrSidebar` props drive both layouts.
 
 ## Two implementations under evaluation (`narrowVariant`, experimental)
 

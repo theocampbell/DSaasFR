@@ -36,16 +36,16 @@ createApp(App).use(VueDsfr).use(DSaaSFR).mount('#app')
 Or import components individually:
 
 ```ts
-import { DsfsAppShell } from 'dsaasfr'
+import { DsaasfrAppShell } from 'dsaasfr'
 ```
 
 ## Usage
 
 ```vue
-<DsfsAppShell v-model:preview-open="preview">
+<DsaasfrAppShell v-model:preview-open="preview">
   <template #sidebar>
     <!-- bloc-marque + service name + navigation: replaces the DSFR header -->
-    <DsfsSidebar service-title="Mon service" :items="items" />
+    <DsaasfrSidebar service-title="Mon service" :items="items" />
   </template>
   <template #breadcrumb><DsfrBreadcrumb :links="links" /></template>
   <template #toolbar><DsfrButton label="Nouveau" size="sm" /></template>
@@ -53,16 +53,16 @@ import { DsfsAppShell } from 'dsaasfr'
   <h1 class="fr-h3">Dossiers</h1>
 
   <template #preview="{ closePreview }">…</template>
-</DsfsAppShell>
+</DsaasfrAppShell>
 ```
 
 ## Components
 
 | Component | Status |
 |---|---|
-| `DsfsAppShell` | Draft — see [decision 0002](docs/decisions/0002-app-shell-layout.md) |
-| `DsfsSidebar` | Draft — see [decision 0003](docs/decisions/0003-brand-in-sidebar.md) |
-| `DsfsUserMenu` | Draft — see [decision 0005](docs/decisions/0005-user-menu.md) |
+| `DsaasfrAppShell` | Draft — see [decision 0002](docs/decisions/0002-app-shell-layout.md) |
+| `DsaasfrSidebar` | Draft — see [decision 0003](docs/decisions/0003-brand-in-sidebar.md) |
+| `DsaasfrUserMenu` | Draft — see [decision 0005](docs/decisions/0005-user-menu.md) |
 
 ## Principles
 

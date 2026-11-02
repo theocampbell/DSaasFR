@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import { navItems } from '../DsfsAppShell/DsfsAppShell.stories'
-import DsfsSidebar from './DsfsSidebar.vue'
+import { navItems } from '../DsaasfrAppShell/DsaasfrAppShell.stories'
+import DsaasfrSidebar from './DsaasfrSidebar.vue'
 
 const meta = {
-  title: 'Shell/DsfsSidebar',
-  component: DsfsSidebar,
+  title: 'Shell/DsaasfrSidebar',
+  component: DsaasfrSidebar,
   tags: ['autodocs'],
   args: {
     serviceTitle: 'Démarches Pro',
@@ -22,7 +22,7 @@ const meta = {
     },
   },
   decorators: [() => ({ template: '<div style="height: 100vh; width: 16rem; background: var(--background-alt-grey)"><story /></div>' })],
-} satisfies Meta<typeof DsfsSidebar>
+} satisfies Meta<typeof DsaasfrSidebar>
 
 export default meta
 type Story = StoryObj<typeof meta>

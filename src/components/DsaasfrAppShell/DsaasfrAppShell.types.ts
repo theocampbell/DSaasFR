@@ -1,4 +1,4 @@
-export interface DsfsAppShellProps {
+export interface DsaasfrAppShellProps {
   /** Accessible name of the preview panel (complementary landmark). */
   previewLabel?: string
   /** Id given to <main>, used by the skip link. */
@@ -7,7 +7,7 @@ export interface DsfsAppShellProps {
   hideSkipLinks?: boolean
 }
 
-export interface DsfsAppShellPreviewScope {
+export interface DsaasfrAppShellPreviewScope {
   /** Id of the preview <aside>, for aria-controls. */
   previewId: string
   previewOpen: boolean

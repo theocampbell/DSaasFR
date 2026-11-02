@@ -4,8 +4,8 @@ import VueDsfr from '@gouvminint/vue-dsfr'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { afterEach, vi } from 'vitest'
 import { expectNoA11yViolations } from '@/test-utils/axe'
-import DsfsSidebar from './DsfsSidebar.vue'
-import type { DsfsSidebarItem } from './DsfsSidebar.types'
+import DsaasfrSidebar from './DsaasfrSidebar.vue'
+import type { DsaasfrSidebarItem } from './DsaasfrSidebar.types'
 
 const Empty = { template: '<div />' }
 
@@ -19,7 +19,7 @@ async function makeRouter(path: string) {
   return router
 }
 
-const items: DsfsSidebarItem[] = [
+const items: DsaasfrSidebarItem[] = [
   { text: 'Tableau de bord', to: '/' },
   { text: 'Dossiers', to: '/dossiers' },
   {
@@ -33,13 +33,13 @@ const items: DsfsSidebarItem[] = [
 
 async function renderSidebar(path = '/', props: Record<string, unknown> = {}) {
   const router = await makeRouter(path)
-  return render(DsfsSidebar, {
+  return render(DsaasfrSidebar, {
     props: { serviceTitle: 'Démarches Pro', serviceDescription: 'Back-office', items, ...props },
     global: { plugins: [router, VueDsfr] },
   })
 }
 
-describe('DsfsSidebar', () => {
+describe('DsaasfrSidebar', () => {
   it('renders the bloc-marque and the service name in a banner', async () => {
     await renderSidebar()
 
@@ -107,7 +107,7 @@ describe('DsfsSidebar', () => {
   })
 
   it('works without vue-router (plain links)', () => {
-    render(DsfsSidebar, {
+    render(DsaasfrSidebar, {
       props: { serviceTitle: 'Démarches Pro' },
       slots: { default: '<ul><li><a href="/x">X</a></li></ul>' },
     })
@@ -117,7 +117,7 @@ describe('DsfsSidebar', () => {
 
   it('renders the footer slot', async () => {
     const router = await makeRouter('/')
-    render(DsfsSidebar, {
+    render(DsaasfrSidebar, {
       props: { serviceTitle: 'Démarches Pro', items },
       slots: { footer: '<button type="button">Mon compte</button>' },
       global: { plugins: [router, VueDsfr] },
@@ -143,7 +143,7 @@ function mockNarrowViewport(narrow: boolean) {
   }))
 }
 
-describe('DsfsSidebar on narrow screens (< 62em, high zoom)', () => {
+describe('DsaasfrSidebar on narrow screens (< 62em, high zoom)', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
   })

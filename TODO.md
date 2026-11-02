@@ -54,7 +54,7 @@ are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can 
 - [ ] Data table: sticky headers, sorting, row selection, bulk actions.
 - [ ] Combobox / autocomplete, multi-select, date range picker.
 - [ ] Toasts, empty states, loading skeletons.
-- [ ] `DsfsDisplaySettings` component (if every app needs the display settings modal).
+- [ ] `DsaasfrDisplaySettings` component (if every app needs the display settings modal).
 - [ ] User menu avatar: initials or photo.
 - [ ] Nuxt module (only if Nuxt teams ask for it).
 
@@ -62,11 +62,13 @@ are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can 
 
 - [x] Scaffold: Vite library, Storybook (light/dark), Vitest + axe, DSFR-only lint rules,
       playground, CI, Claude agents and lint hook.
-- [x] `DsfsAppShell`: layout, landmarks, skip links, preview slot with focus return.
-- [x] `DsfsSidebar`: bloc-marque + service name instead of the DSFR header, router-driven
+- [x] `DsaasfrAppShell`: layout, landmarks, skip links, preview slot with focus return.
+- [x] `DsaasfrSidebar`: bloc-marque + service name instead of the DSFR header, router-driven
       navigation with groups, footer slot.
 - [x] Narrow screens / 400% zoom: two variants built for comparison.
-- [x] `DsfsUserMenu`: name + role trigger, account actions, DSFR menu markup,
+- [x] `DsaasfrUserMenu`: name + role trigger, account actions, DSFR menu markup,
       display settings modal (`useScheme`).
 - [x] Public sandbox on GitHub Pages (Storybook + playground), demo notice.
 - [x] Summary of the AI usage rules (State guide, MTE roadmap, PIAG).
+- [x] Component prefix renamed `Dsfs` → `Dsaasfr` (CSS `dsaasfr-`): one name everywhere,
+      clearly distinct from Vue DSFR's `Dsfr`, mirrors its convention.

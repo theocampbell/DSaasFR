@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * DsfsSidebar — application sidebar replacing the DSFR header in the app shell.
+ * DsaasfrSidebar — application sidebar replacing the DSFR header in the app shell.
  *
  *   ┌───────────────────────┐
  *   │ bloc-marque (DsfrLogo)│  <header>  (banner landmark)
@@ -28,9 +28,9 @@ import { useNarrowViewport } from '../../composables/useNarrowViewport'
 import SidebarBrand from './SidebarBrand.vue'
 import SidebarNav from './SidebarNav.vue'
 import type { RouteLocationRaw } from 'vue-router'
-import type { DsfsSidebarItem, DsfsSidebarProps } from './DsfsSidebar.types'
+import type { DsaasfrSidebarItem, DsaasfrSidebarProps } from './DsaasfrSidebar.types'
 
-const props = withDefaults(defineProps<DsfsSidebarProps>(), {
+const props = withDefaults(defineProps<DsaasfrSidebarProps>(), {
   serviceDescription: undefined,
   logoText: () => ['République', 'Française'],
   homeTo: '/',
@@ -39,7 +39,7 @@ const props = withDefaults(defineProps<DsfsSidebarProps>(), {
   footerLabel: 'Mon espace',
   menuLabel: 'Menu',
   closeMenuLabel: 'Fermer',
-  id: 'dsfs-sidebar',
+  id: 'dsaasfr-sidebar',
   narrowVariant: 'dsfr-header',
 })
 
@@ -78,7 +78,7 @@ function isCurrent(to?: RouteLocationRaw): boolean {
  * Derive active/expanded states from the route. The result is kept in a ref because
  * DsfrSideMenuList toggles `expanded` directly on the items it receives.
  */
-function decorate(items: DsfsSidebarItem[], prefix: string): DsfsSidebarItem[] {
+function decorate(items: DsaasfrSidebarItem[], prefix: string): DsaasfrSidebarItem[] {
   return items.map((item, index) => {
     if (item.menuItems?.length) {
       const id = item.id ?? `${prefix}-group-${index}`
@@ -108,7 +108,7 @@ const brandProps = computed(() => ({
   homeIsRouterLink: homeIsRouterLink.value,
 }))
 
-const menuItems = ref<DsfsSidebarItem[]>([])
+const menuItems = ref<DsaasfrSidebarItem[]>([])
 watch(
   () => [props.items, route?.path] as const,
   () => {
@@ -154,9 +154,9 @@ watch(() => route?.path, closeMenu)
   <div
     v-if="!narrow"
     :id="id"
-    class="dsfs-sidebar"
+    class="dsaasfr-sidebar"
   >
-    <header class="dsfs-sidebar__brand fr-enlarge-link">
+    <header class="dsaasfr-sidebar__brand fr-enlarge-link">
       <slot name="brand">
         <SidebarBrand v-bind="brandProps" />
       </slot>
@@ -164,7 +164,7 @@ watch(() => route?.path, closeMenu)
 
     <SidebarNav
       :id="`${id}-list`"
-      class="dsfs-sidebar__nav"
+      class="dsaasfr-sidebar__nav"
       :label="navLabel"
       :items="menuItems"
     >
@@ -173,7 +173,7 @@ watch(() => route?.path, closeMenu)
 
     <section
       v-if="$slots.footer"
-      class="dsfs-sidebar__footer"
+      class="dsaasfr-sidebar__footer"
       :aria-label="footerLabel"
     >
       <slot name="footer" />
@@ -184,7 +184,7 @@ watch(() => route?.path, closeMenu)
   <div
     v-else-if="narrowVariant === 'dsfr-header'"
     :id="id"
-    class="dsfs-sidebar dsfs-sidebar--narrow"
+    class="dsaasfr-sidebar dsaasfr-sidebar--narrow"
   >
     <AppHeader
       :service-title="serviceTitle"
@@ -206,7 +206,7 @@ watch(() => route?.path, closeMenu)
           </SidebarNav>
           <section
             v-if="$slots.footer"
-            class="dsfs-sidebar__footer dsfs-sidebar__footer--modal"
+            class="dsaasfr-sidebar__footer dsaasfr-sidebar__footer--modal"
             :aria-label="footerLabel"
           >
             <slot name="footer" />
@@ -220,10 +220,10 @@ watch(() => route?.path, closeMenu)
   <div
     v-else
     :id="id"
-    class="dsfs-sidebar dsfs-sidebar--narrow"
+    class="dsaasfr-sidebar dsaasfr-sidebar--narrow"
   >
-    <header class="dsfs-sidebar__bar">
-      <div class="dsfs-sidebar__bar-brand fr-enlarge-link">
+    <header class="dsaasfr-sidebar__bar">
+      <div class="dsaasfr-sidebar__bar-brand fr-enlarge-link">
         <slot name="brand">
           <SidebarBrand v-bind="brandProps" />
         </slot>
@@ -243,12 +243,12 @@ watch(() => route?.path, closeMenu)
     <dialog
       :id="dialogId"
       ref="dialog"
-      class="dsfs-sidebar__dialog"
+      class="dsaasfr-sidebar__dialog"
       :aria-label="menuLabel"
       @close="menuOpen = false"
       @click="closeOnLink($event, closeMenu)"
     >
-      <div class="dsfs-sidebar__dialog-header">
+      <div class="dsaasfr-sidebar__dialog-header">
         <button
           type="button"
           class="fr-btn--close fr-btn"
@@ -267,7 +267,7 @@ watch(() => route?.path, closeMenu)
       </SidebarNav>
       <section
         v-if="menuOpen && $slots.footer"
-        class="dsfs-sidebar__footer"
+        class="dsaasfr-sidebar__footer"
         :aria-label="footerLabel"
       >
         <slot name="footer" />
@@ -277,20 +277,20 @@ watch(() => route?.path, closeMenu)
 </template>
 
 <style scoped>
-.dsfs-sidebar {
+.dsaasfr-sidebar {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
 }
 
-.dsfs-sidebar__brand {
+.dsaasfr-sidebar__brand {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--dsfs-space-2w);
-  padding: var(--dsfs-space-3w) var(--dsfs-space-3w) var(--dsfs-space-2w);
-  border-bottom: var(--dsfs-shell-border-width) solid var(--border-default-grey);
+  gap: var(--dsaasfr-space-2w);
+  padding: var(--dsaasfr-space-3w) var(--dsaasfr-space-3w) var(--dsaasfr-space-2w);
+  border-bottom: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
 
   /* Same hover/active feedback as .fr-header__brand.fr-enlarge-link. */
   --idle: transparent;
@@ -300,38 +300,38 @@ watch(() => route?.path, closeMenu)
 
 /* As in the DSFR header: keep the enlarged link focus ring inside the block,
    otherwise the scrolling sidebar clips it. */
-.dsfs-sidebar__brand.fr-enlarge-link :deep(a[href])::before,
-.dsfs-sidebar__bar-brand.fr-enlarge-link :deep(a[href])::before {
-  outline-offset: calc(-1 * var(--dsfs-focus-offset));
+.dsaasfr-sidebar__brand.fr-enlarge-link :deep(a[href])::before,
+.dsaasfr-sidebar__bar-brand.fr-enlarge-link :deep(a[href])::before {
+  outline-offset: calc(-1 * var(--dsaasfr-focus-offset));
 }
 
-.dsfs-sidebar__service a {
+.dsaasfr-sidebar__service a {
   color: var(--text-title-grey);
 }
 
-.dsfs-sidebar__nav {
+.dsaasfr-sidebar__nav {
   flex: 1;
   overflow-y: auto;
-  padding: var(--dsfs-space-1w) var(--dsfs-space-1w) var(--dsfs-space-2w);
+  padding: var(--dsaasfr-space-1w) var(--dsaasfr-space-1w) var(--dsaasfr-space-2w);
 }
 
-.dsfs-sidebar__footer {
+.dsaasfr-sidebar__footer {
   /* 1w + the user menu trigger's own 1w padding line up with the nav labels. */
-  padding: var(--dsfs-space-1w) var(--dsfs-space-2w);
+  padding: var(--dsaasfr-space-1w) var(--dsaasfr-space-2w);
 
-  /* Hover pair for controls in the footer (e.g. DsfsUserMenu), on the alt-grey sidebar. */
+  /* Hover pair for controls in the footer (e.g. DsaasfrUserMenu), on the alt-grey sidebar. */
   --idle: transparent;
   --hover: var(--background-alt-grey-hover);
   --active: var(--background-alt-grey-active);
 
-  border-top: var(--dsfs-shell-border-width) solid var(--border-default-grey);
+  border-top: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
 }
 
-.dsfs-sidebar--narrow {
+.dsaasfr-sidebar--narrow {
   height: auto;
 }
 
-.dsfs-sidebar__footer--modal {
+.dsaasfr-sidebar__footer--modal {
   --hover: var(--background-default-grey-hover);
   --active: var(--background-default-grey-active);
 
@@ -341,21 +341,21 @@ watch(() => route?.path, closeMenu)
 }
 
 /* Variant B: bar */
-.dsfs-sidebar__bar {
+.dsaasfr-sidebar__bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--dsfs-space-2w);
-  padding: var(--dsfs-space-2w);
+  gap: var(--dsaasfr-space-2w);
+  padding: var(--dsaasfr-space-2w);
   background-color: var(--background-default-grey);
-  border-bottom: var(--dsfs-shell-border-width) solid var(--border-default-grey);
+  border-bottom: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
 }
 
-.dsfs-sidebar__bar-brand {
+.dsaasfr-sidebar__bar-brand {
   position: relative;
   display: flex;
   align-items: center;
-  gap: var(--dsfs-space-2w);
+  gap: var(--dsaasfr-space-2w);
   min-width: 0;
 
   --idle: transparent;
@@ -364,21 +364,21 @@ watch(() => route?.path, closeMenu)
 }
 
 /* Variant B: full-screen menu dialog */
-.dsfs-sidebar__dialog {
+.dsaasfr-sidebar__dialog {
   width: 100%;
   max-width: none;
   height: 100%;
   max-height: none;
   margin: 0;
-  padding: var(--dsfs-space-2w);
+  padding: var(--dsaasfr-space-2w);
   border: 0;
   background-color: var(--background-default-grey);
   color: var(--text-default-grey);
 }
 
-.dsfs-sidebar__dialog-header {
+.dsaasfr-sidebar__dialog-header {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: var(--dsfs-space-2w);
+  margin-bottom: var(--dsaasfr-space-2w);
 }
 </style>

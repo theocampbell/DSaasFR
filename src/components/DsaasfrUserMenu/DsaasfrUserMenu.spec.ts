@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { vi } from 'vitest'
 import { expectNoA11yViolations } from '@/test-utils/axe'
-import DsfsUserMenu from './DsfsUserMenu.vue'
-import type { DsfsUserMenuItem } from './DsfsUserMenu.types'
+import DsaasfrUserMenu from './DsaasfrUserMenu.vue'
+import type { DsaasfrUserMenuItem } from './DsaasfrUserMenu.types'
 
-async function setup(extraItems: DsfsUserMenuItem[] = []) {
+async function setup(extraItems: DsaasfrUserMenuItem[] = []) {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [{ path: '/:pathMatch(.*)*', component: { render: () => null } }],
@@ -14,7 +14,7 @@ async function setup(extraItems: DsfsUserMenuItem[] = []) {
   await router.push('/')
   await router.isReady()
   const logout = vi.fn()
-  const items: DsfsUserMenuItem[] = [
+  const items: DsaasfrUserMenuItem[] = [
     { text: 'Mon profil', to: '/profil', icon: 'fr-icon-user-line' },
     { text: 'Aide', href: 'https://example.org/aide' },
     ...extraItems,
@@ -22,11 +22,11 @@ async function setup(extraItems: DsfsUserMenuItem[] = []) {
   ]
   const user = userEvent.setup()
   const result = render({
-    components: { DsfsUserMenu },
+    components: { DsaasfrUserMenu },
     setup: () => ({ items }),
     template: `
       <div>
-        <DsfsUserMenu name="Camille Martin" description="Instructrice · DDT 33" :items="items" />
+        <DsaasfrUserMenu name="Camille Martin" description="Instructrice · DDT 33" :items="items" />
         <button type="button">Ailleurs</button>
       </div>`,
   }, { global: { plugins: [router] } })
@@ -34,7 +34,7 @@ async function setup(extraItems: DsfsUserMenuItem[] = []) {
   return { ...result, user, logout, trigger, router }
 }
 
-describe('DsfsUserMenu', () => {
+describe('DsaasfrUserMenu', () => {
   it('is a disclosure button named after the person, closed by default', async () => {
     const { trigger } = await setup()
 

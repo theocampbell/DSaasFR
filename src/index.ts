@@ -5,7 +5,7 @@ import './styles/index.css'
 export * from './components'
 
 export interface DSaaSFROptions {
-  /** Register every Dsfs* component globally (default: true). */
+  /** Register every Dsaasfr* component globally (default: true). */
   registerComponents?: boolean
 }
 

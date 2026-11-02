@@ -2,13 +2,13 @@
 import { useScheme } from '@gouvminint/vue-dsfr'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import type { DsfsSidebarItem, DsfsUserMenuItem } from 'dsaasfr'
+import type { DsaasfrSidebarItem, DsaasfrUserMenuItem } from 'dsaasfr'
 import PageBody from './PageBody.vue'
 
 const route = useRoute()
 const preview = ref(false)
 
-const items: DsfsSidebarItem[] = [
+const items: DsaasfrSidebarItem[] = [
   { text: 'Tableau de bord', to: '/' },
   { text: 'Dossiers', to: '/dossiers' },
   { text: 'Usagers', to: '/usagers' },
@@ -22,7 +22,7 @@ const items: DsfsSidebarItem[] = [
 ]
 
 // Page title from the navigation item matching the URL (flattening groups).
-const flat = (list: DsfsSidebarItem[]): DsfsSidebarItem[] =>
+const flat = (list: DsaasfrSidebarItem[]): DsaasfrSidebarItem[] =>
   list.flatMap(item => (item.menuItems ? flat(item.menuItems) : [item]))
 const pageTitle = computed(() =>
   [...flat(items), ...accountItems].find(item => item.to === route.path)?.text ?? 'Page introuvable',
@@ -38,7 +38,7 @@ const schemeOptions = [
   { label: 'Système', value: 'system', hint: 'Utilise les paramètres système.' },
 ]
 
-const accountItems: DsfsUserMenuItem[] = [
+const accountItems: DsaasfrUserMenuItem[] = [
   { text: 'Mon profil', to: '/profil', icon: 'fr-icon-user-line' },
   { text: 'Préférences', to: '/preferences', icon: 'fr-icon-settings-5-line' },
   { text: 'Notifications', to: '/notifications', icon: 'fr-icon-notification-3-line' },
@@ -52,21 +52,21 @@ const links = computed(() =>
 </script>
 
 <template>
-  <DsfsAppShell v-model:preview-open="preview">
+  <DsaasfrAppShell v-model:preview-open="preview">
     <template #sidebar>
-      <DsfsSidebar
+      <DsaasfrSidebar
         service-title="Démarches Pro"
         service-description="Back-office instructeurs"
         :items="items"
       >
         <template #footer>
-          <DsfsUserMenu
+          <DsaasfrUserMenu
             name="Camille Martin"
             description="Instructrice · DDT 33"
             :items="accountItems"
           />
         </template>
-      </DsfsSidebar>
+      </DsaasfrSidebar>
     </template>
 
     <template #breadcrumb>
@@ -112,7 +112,7 @@ const links = computed(() =>
         />
       </div>
     </template>
-  </DsfsAppShell>
+  </DsaasfrAppShell>
 
   <DsfrModal
     :opened="displaySettingsOpen"

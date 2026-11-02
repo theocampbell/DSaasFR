@@ -3,7 +3,7 @@
  *
  * - Colours: only DSFR CSS variables (var(--background-*), var(--text-*), var(--border-*)).
  *   No hex, no named colours, no rgb()/hsl().
- * - Spacing: only the DSFR spacing scale, exposed as --dsfs-space-* in src/styles/tokens.css.
+ * - Spacing: only the DSFR spacing scale, exposed as --dsaasfr-space-* in src/styles/tokens.css.
  *   No raw px/rem/em on margin, padding, gap or inset properties.
  *
  * src/styles/tokens.css is the single place allowed to declare raw values.
@@ -23,8 +23,8 @@ export default {
     },
     'font-family-no-missing-generic-family-keyword': null,
     'selector-class-pattern': [
-      '^(dsfs|fr)-[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$',
-      { message: 'Use BEM with the dsfs- prefix (e.g. dsfs-app-shell__sidebar--collapsed)' },
+      '^(dsaasfr|fr)-[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$',
+      { message: 'Use BEM with the dsaasfr- prefix (e.g. dsaasfr-app-shell__sidebar--collapsed)' },
     ],
   },
   overrides: [

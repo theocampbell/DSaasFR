@@ -21,7 +21,7 @@ and they hesitate to interpret the DSFR on their own.
   a component Vue DSFR already ships.
 - Same consumption model as Vue DSFR: `app.use(DSaaSFR)` or per-component imports,
   `import 'dsaasfr/styles'`.
-- Same conventions: `Dsfs` prefix, props + `v-model` + slots, TypeScript types.
+- Same conventions: `Dsaasfr` prefix, props + `v-model` + slots, TypeScript types.
 - Styling uses DSFR CSS variables only (colours, themes) and the DSFR spacing scale,
   enforced by Stylelint.
 

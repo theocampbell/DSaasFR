@@ -10,28 +10,28 @@
  * https://www.systeme-de-design.gouv.fr/fondamentaux/espacements
  */
 :root {
-  --dsfs-space-0: 0;
-  --dsfs-space-1v: 0.25rem;
-  --dsfs-space-2v: 0.5rem;
-  --dsfs-space-3v: 0.75rem;
-  --dsfs-space-1w: 0.5rem;
-  --dsfs-space-2w: 1rem;
-  --dsfs-space-3w: 1.5rem;
-  --dsfs-space-4w: 2rem;
-  --dsfs-space-5w: 2.5rem;
-  --dsfs-space-6w: 3rem;
-  --dsfs-space-7w: 3.5rem;
-  --dsfs-space-8w: 4rem;
-  --dsfs-space-9w: 4.5rem;
-  --dsfs-space-12w: 6rem;
-  --dsfs-space-15w: 7.5rem;
+  --dsaasfr-space-0: 0;
+  --dsaasfr-space-1v: 0.25rem;
+  --dsaasfr-space-2v: 0.5rem;
+  --dsaasfr-space-3v: 0.75rem;
+  --dsaasfr-space-1w: 0.5rem;
+  --dsaasfr-space-2w: 1rem;
+  --dsaasfr-space-3w: 1.5rem;
+  --dsaasfr-space-4w: 2rem;
+  --dsaasfr-space-5w: 2.5rem;
+  --dsaasfr-space-6w: 3rem;
+  --dsaasfr-space-7w: 3.5rem;
+  --dsaasfr-space-8w: 4rem;
+  --dsaasfr-space-9w: 4.5rem;
+  --dsaasfr-space-12w: 6rem;
+  --dsaasfr-space-15w: 7.5rem;
 
   /* App shell dimensions (DRAFT: to be validated in docs/decisions/0002). */
-  --dsfs-shell-sidebar-width: 16rem;
-  --dsfs-shell-preview-width: clamp(20rem, 35vw, 40rem);
-  --dsfs-shell-row-height: 3rem;
-  --dsfs-shell-border-width: 1px;
+  --dsaasfr-shell-sidebar-width: 16rem;
+  --dsaasfr-shell-preview-width: clamp(20rem, 35vw, 40rem);
+  --dsaasfr-shell-row-height: 3rem;
+  --dsaasfr-shell-border-width: 1px;
 
   /* DSFR focus ring offset (2px), used to pull it inside clipped containers. */
-  --dsfs-focus-offset: 2px;
+  --dsaasfr-focus-offset: 2px;
 }

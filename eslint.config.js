@@ -7,7 +7,7 @@ export default defineConfigWithVueTs(
   vueTsConfigs.recommended,
   {
     rules: {
-      // Components are always prefixed (Dsfs*), single-word names never happen.
+      // Components are always prefixed (Dsaasfr*), single-word names never happen.
       'vue/multi-word-component-names': 'off',
       'vue/require-default-prop': 'off',
       // Accessibility is checked by axe in tests and by the a11y-auditor agent,

@@ -2,7 +2,7 @@
 
 - **Status**: Proposed | Accepted | Superseded by NNNN
 - **Date**: YYYY-MM-DD
-- **Components**: DsfsXxx
+- **Components**: DsaasfrXxx
 
 ## DSFR starting point
 

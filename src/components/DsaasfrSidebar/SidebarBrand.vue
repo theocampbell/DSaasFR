@@ -20,7 +20,7 @@ defineProps<{
     :logo-text="logoText"
     small
   />
-  <div class="dsfs-sidebar-brand__service">
+  <div class="dsaasfr-sidebar-brand__service">
     <!-- `custom` RouterLink: no automatic aria-current="page" on the home link (the
          current page is announced once, by the navigation), like the DSFR header. -->
     <RouterLink
@@ -54,7 +54,7 @@ defineProps<{
 </template>
 
 <style scoped>
-.dsfs-sidebar-brand__service a {
+.dsaasfr-sidebar-brand__service a {
   color: var(--text-title-grey);
 }
 </style>

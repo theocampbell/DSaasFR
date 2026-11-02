@@ -2,7 +2,7 @@
 
 - **Status**: Proposed
 - **Date**: 2026-11-01
-- **Components**: DsfsSidebar, DsfsAppShell
+- **Components**: DsaasfrSidebar, DsaasfrAppShell
 
 ## DSFR starting point
 
