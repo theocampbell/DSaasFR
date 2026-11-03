@@ -112,8 +112,8 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
       />
     </button>
 
-    <!-- Official DSFR menu surface: overlap background, hover pair, drop shadow,
-         high-contrast outline (fr-menu__list). -->
+    <!-- Official DSFR menu markup (fr-menu > fr-menu__list); its desktop-only rules are
+         applied at all widths in the styles below. -->
     <div
       v-show="open"
       :id="panelId"
@@ -190,8 +190,18 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
   padding: var(--dsaasfr-space-1w) 0;
   background-color: var(--background-overlap-grey);
 
+  /* No DSFR open-blue top line: it only exists from lg up; consistent at all widths. */
+  background-image: none;
+
   --idle: transparent;
   --hover: var(--background-overlap-grey-hover);
   --active: var(--background-overlap-grey-active);
+}
+
+/* DSFR adds the high-contrast edge to fr-menu__list only from lg up. */
+@media (forced-colors: active) {
+  .dsaasfr-dropdown__surface.fr-menu__list {
+    outline: var(--dsaasfr-shell-border-width) solid;
+  }
 }
 </style>

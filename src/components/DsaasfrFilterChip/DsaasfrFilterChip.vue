@@ -187,6 +187,5 @@ function setOpen(part: DsaasfrFilterChipPart, open: boolean) {
 .dsaasfr-filter-chip > :first-child :deep(.dsaasfr-filter-chip__button),
 .dsaasfr-filter-chip > .dsaasfr-filter-chip__text:first-child {
   border-radius: var(--dsaasfr-chip-radius) 0 0 var(--dsaasfr-chip-radius);
-  padding-left: var(--dsaasfr-space-3w);
 }
 </style>

@@ -29,12 +29,19 @@ Three layers:
    focus into the panel (option lists, forms); the panel is shifted to stay inside the
    viewport. Surface: official `fr-menu` / `fr-menu__list` markup; since `fr-menu` only
    floats from lg, the DSFR desktop rules (absolute, `--ground + 1000`, drop shadow,
-   overlap surface and hover pair) are applied at all widths. Shared by the user menu.
+   overlap surface and hover pair, high-contrast outline) are applied at all widths; the
+   desktop-only open-blue top line is dropped for consistency. Panel 1v below the
+   trigger, at most 22rem wide. Shared by the user menu.
 2. **DsaasfrFilterChip** (library, presentational): `[field] [operator] [values] [×]`. Each
    part with a slot becomes a dropdown trigger showing that slot's content; parts without a
    slot are plain text; × emits `remove`; `v-model:open-part` lets the app open "values"
    right after adding a filter. Looks like a **DSFR neutral tag split into segments** (same
-   surface, radius, height, text): one fr-tag cannot hold several actions.
+   surface, radius, height, text, padding, hover pair): one fr-tag cannot hold several
+   actions, so DsfrTag / fr-tag--dismiss are not reused. **Interpretation**: in the DSFR
+   the grey tag is the static one and clickable tags are blue (action-low); a chip made of
+   several buttons in blue would read as one big action, so it stays grey and each part
+   shows its affordance on hover and when open (open-blue, as `fr-translate__btn`). The ×
+   part has asymmetric padding to sit at the rounded end.
 3. **Filter logic** (app): fields, operators, values, applying them, URL sync if wanted.
    The playground shows an example (Dossiers): "Filtrer" (toolbar end) lists the fields;
    choosing one adds a chip (toolbar start) with its values open (DSFR checkboxes); the

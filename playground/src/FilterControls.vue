@@ -70,9 +70,11 @@ function changeField(id: number, key: string, close: () => void) {
             v-for="field in fields"
             :key="field.key"
           >
+            <!-- Current field: announced (aria-pressed) and shown (check icon). -->
             <button
               type="button"
               class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm"
+              :class="field.key === filter.field ? 'fr-btn--icon-right fr-icon-check-line' : ''"
               :aria-pressed="field.key === filter.field"
               @click="changeField(filter.id, field.key, close)"
             >
