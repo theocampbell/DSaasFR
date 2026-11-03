@@ -8,11 +8,9 @@ are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can 
 - [ ] 🤖 **Page title & announcement**: browser tab title (`document.title`, RGAA 8.6)
       and a page-change announcement for screen readers, from the same route titles as
       the breadcrumb.
-- [ ] 🤖 **Toolbar row** (second row): actions and filters, shown only when the page
-      needs them; overflow "…" menu when there are too many actions. 👤 design input welcome.
-- [ ] 🤖 **Preview panel**: push the content on wide screens, overlay on narrower ones;
-      linkable in the URL (back button closes it); focus management; behaviour on narrow
-      screens. Resizable only if keyboard-accessible.
+- [ ] 🤖 **Filters** (in the toolbar): dropdown/popover extracted from the user menu,
+      Linear-style filter chip (field / operator / values / remove, each part editable),
+      "Filtrer" trigger opening a dropdown; filter logic stays in the app (playground example).
 - [ ] 🤖 Review pass by `dsfr-guardian` + `a11y-auditor` on each component above.
 - [ ] 👤 Read the decision records (docs/decisions) and mark the ones you agree with
       **Accepted**.
@@ -71,5 +69,8 @@ are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can 
 - [x] `DsaasfrBreadcrumbBar`: router-driven breadcrumb (DSFR markup) + key action on the
       right, "…" collapse for deep trails, no label cut to fragments (wraps instead);
       reviewed by dsfr-guardian + a11y-auditor.
+- [x] `DsaasfrToolbar`: generic second row, `start` / `end` slots (decision 0007).
+- [x] `DsaasfrPreviewPanel` + shell layouts (push / overlay / full screen), focus, Escape,
+      in the URL with `usePreviewQuery` (decision 0008).
 - [x] Component prefix renamed `Dsfs` → `Dsaasfr` (CSS `dsaasfr-`): one name everywhere,
       clearly distinct from Vue DSFR's `Dsfr`, mirrors its convention.

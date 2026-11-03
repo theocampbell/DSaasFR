@@ -23,8 +23,10 @@
  * keep using Vue DSFR components (DsfrBreadcrumb, DsfrButton...).
  */
 import { DsfrSkipLinks } from '@gouvminint/vue-dsfr'
-import { computed, inject, nextTick, onBeforeUnmount, onMounted, useSlots, useTemplateRef, watch } from 'vue'
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, provide, ref, useSlots, useTemplateRef, watch } from 'vue'
 import { routeLocationKey } from 'vue-router'
+import { useNarrowViewport } from '../../composables/useNarrowViewport'
+import { previewContextKey } from './previewContext'
 import type { DsaasfrAppShellPreviewScope, DsaasfrAppShellProps } from './DsaasfrAppShell.types'
 
 const props = withDefaults(defineProps<DsaasfrAppShellProps>(), {
@@ -101,13 +103,41 @@ onBeforeUnmount(() => {
   document.documentElement.style.removeProperty('scroll-padding-top')
 })
 
-// Focus management (RGAA 12.8): remember what opened the preview and, when it
-// closes while focus is inside it (or lost), give focus back to that element.
+// Preview panel context: DsaasfrPreviewPanel registers its heading (region name and
+// focus target) and closes through the shell.
+const previewHeadingId = ref<string>()
+provide(previewContextKey, {
+  close: closePreview,
+  registerHeading: (id) => { previewHeadingId.value = id },
+})
+
+// Below 62em the preview covers the whole screen: the rest of the page is inert.
+const narrow = useNarrowViewport()
+const pageInert = computed(() => (narrow.value && hasPreview.value) || undefined)
+
+function onPreviewKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    event.stopPropagation()
+    closePreview()
+  }
+}
+
+// Focus management (RGAA 12.8): when the user opens the preview, move focus to the
+// panel (its heading when there is one) so it is announced and reachable; on close, while focus is inside it
+// (or lost), give focus back to the element that opened it.
 let opener: HTMLElement | null = null
-watch(previewOpen, async (open) => {
+watch(hasPreview, async (open) => {
   if (typeof document === 'undefined') return
   if (open) {
-    opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const active = document.activeElement
+    opener = active instanceof HTMLElement && active !== document.body ? active : null
+    // Opened from a shared link / page load (no user action): leave focus at the page
+    // start, the panel is announced by its region name when reached.
+    if (!opener) return
+    await nextTick()
+    const target = (previewHeadingId.value && document.getElementById(previewHeadingId.value))
+      || document.getElementById(previewId.value)
+    target?.focus()
     return
   }
   const panel = document.getElementById(previewId.value)
@@ -132,6 +162,7 @@ watch(previewOpen, async (open) => {
     <div
       v-if="$slots.header"
       class="dsaasfr-app-shell__header"
+      :inert="pageInert"
     >
       <slot name="header" />
     </div>
@@ -142,11 +173,15 @@ watch(previewOpen, async (open) => {
         :id="sidebarId"
         class="dsaasfr-app-shell__sidebar"
         tabindex="-1"
+        :inert="pageInert"
       >
         <slot name="sidebar" />
       </div>
 
-      <div class="dsaasfr-app-shell__content">
+      <div
+        class="dsaasfr-app-shell__content"
+        :inert="pageInert"
+      >
         <div
           v-if="$slots.breadcrumb || $slots.toolbar"
           ref="bars"
@@ -181,7 +216,10 @@ watch(previewOpen, async (open) => {
         v-if="hasPreview"
         :id="previewId"
         class="dsaasfr-app-shell__preview"
-        :aria-label="previewLabel"
+        :aria-labelledby="previewHeadingId"
+        :aria-label="previewHeadingId ? undefined : previewLabel"
+        tabindex="-1"
+        @keydown="onPreviewKeydown"
       >
         <slot
           name="preview"
@@ -292,11 +330,32 @@ watch(previewOpen, async (open) => {
   background-color: var(--background-default-grey);
 }
 
+.dsaasfr-app-shell__preview:focus {
+  outline: none;
+}
+
+/* 62em–78em (DSFR lg–xl): the preview slides over the content instead of squeezing it
+   into a thin column. Non-modal: the content stays usable around it. */
+@media (width < 78em) {
+  .dsaasfr-app-shell--preview-open .dsaasfr-app-shell__body {
+    grid-template-columns: var(--dsaasfr-shell-sidebar-width) minmax(0, 1fr);
+  }
+
+  .dsaasfr-app-shell__preview {
+    position: fixed;
+    z-index: calc(var(--ground) + 500);
+    top: 0;
+    right: 0;
+    width: var(--dsaasfr-shell-preview-width);
+    max-width: 100%;
+    box-shadow: var(--overlap-shadow);
+  }
+}
+
 /* Below 62em (DSFR "lg", i.e. high zoom) nothing is pinned: pinned areas would eat the
    little screen space left at 400% zoom. The preview stacks under the content. */
 @media (width < 62em) {
   .dsaasfr-app-shell__sidebar,
-  .dsaasfr-app-shell__preview,
   .dsaasfr-app-shell__bars {
     position: static;
     height: auto;
@@ -329,10 +388,11 @@ watch(previewOpen, async (open) => {
     padding: var(--dsaasfr-space-2w);
   }
 
+  /* Full screen; the rest of the page is inert (see pageInert). */
   .dsaasfr-app-shell__preview {
-    overflow: visible;
+    width: 100%;
     border-left: 0;
-    border-top: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
+    box-shadow: none;
   }
 }
 </style>

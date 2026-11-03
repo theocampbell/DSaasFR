@@ -65,6 +65,7 @@ import { DsaasfrAppShell } from 'dsaasfr'
 | `DsaasfrUserMenu` | Draft — see [decision 0005](docs/decisions/0005-user-menu.md) |
 | `DsaasfrBreadcrumbBar` | Draft — see [decision 0006](docs/decisions/0006-breadcrumb-bar.md) |
 | `DsaasfrToolbar` | Draft — see [decision 0007](docs/decisions/0007-toolbar.md) |
+| `DsaasfrPreviewPanel` | Draft — see [decision 0008](docs/decisions/0008-preview-panel.md) |
 
 ## Principles
 

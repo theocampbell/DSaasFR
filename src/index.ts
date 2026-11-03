@@ -4,6 +4,7 @@ import './styles/index.css'
 
 export * from './components'
 export { useRouteBreadcrumb } from './composables/useRouteBreadcrumb'
+export { usePreviewQuery } from './composables/usePreviewQuery'
 export type { DsaasfrRouteBreadcrumb } from './composables/useRouteBreadcrumb'
 
 export interface DSaaSFROptions {

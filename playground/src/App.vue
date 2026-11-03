@@ -2,12 +2,15 @@
 import { useScheme } from '@gouvminint/vue-dsfr'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useRouteBreadcrumb } from 'dsaasfr'
+import { usePreviewQuery, useRouteBreadcrumb } from 'dsaasfr'
 import type { DsaasfrSidebarItem, DsaasfrUserMenuItem } from 'dsaasfr'
 import PageBody from './PageBody.vue'
+import { describePreview } from './fakeData'
 
 const route = useRoute()
-const preview = ref(false)
+// Preview in the URL (?apercu=…): shareable, Back closes it.
+const preview = usePreviewQuery()
+const previewed = computed(() => describePreview(preview.item.value))
 
 const items: DsaasfrSidebarItem[] = [
   { text: 'Tableau de bord', to: '/' },
@@ -61,7 +64,7 @@ const accountItems: DsaasfrUserMenuItem[] = [
 </script>
 
 <template>
-  <DsaasfrAppShell v-model:preview-open="preview">
+  <DsaasfrAppShell v-model:preview-open="preview.isOpen.value">
     <template #sidebar>
       <DsaasfrSidebar
         service-title="Démarches Pro"
@@ -130,21 +133,62 @@ const accountItems: DsaasfrUserMenuItem[] = [
     <h1 class="fr-h3">
       {{ pageTitle }}
     </h1>
-    <PageBody :path="route.path" />
+    <PageBody
+      :path="route.path"
+      @preview="preview.open"
+    />
 
-    <template #preview="{ closePreview }">
-      <div class="fr-p-3w">
-        <h2 class="fr-h5">
-          Aperçu
-        </h2>
-        <p>Pièce justificative.pdf</p>
-        <DsfrButton
-          label="Fermer l’aperçu"
-          tertiary
-          size="sm"
-          @click="closePreview"
-        />
-      </div>
+    <template
+      v-if="previewed"
+      #preview
+    >
+      <DsaasfrPreviewPanel
+        :title="previewed.title"
+        :description="previewed.description"
+      >
+        <template
+          v-if="previewed.link"
+          #actions
+        >
+          <RouterLink
+            class="fr-btn fr-btn--secondary fr-btn--sm"
+            :to="previewed.link"
+          >
+            Ouvrir le dossier
+          </RouterLink>
+        </template>
+        <dl
+          v-if="previewed.fields"
+          class="fr-mb-3w"
+        >
+          <template
+            v-for="[label, value] in previewed.fields"
+            :key="label"
+          >
+            <dt class="fr-text--sm fr-text--bold fr-mb-0">
+              {{ label }}
+            </dt>
+            <dd class="fr-ml-0 fr-mb-2w">
+              {{ value }}
+            </dd>
+          </template>
+        </dl>
+        <div
+          v-if="previewed.document"
+          class="fr-p-3w fr-mb-3w playground-document"
+        >
+          <p class="fr-text--xs fr-mb-1w">
+            Aperçu du document (simulé)
+          </p>
+          <p
+            v-for="n in 12"
+            :key="n"
+            class="fr-text--sm"
+          >
+            Page {{ n }} — contenu du document.
+          </p>
+        </div>
+      </DsaasfrPreviewPanel>
     </template>
   </DsaasfrAppShell>
 
@@ -162,3 +206,11 @@ const accountItems: DsaasfrUserMenuItem[] = [
     />
   </DsfrModal>
 </template>
+
+<style scoped>
+/* Simulated document page (demo only). */
+.playground-document {
+  border: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
+  background-color: var(--background-alt-grey);
+}
+</style>

@@ -1,0 +1,158 @@
+import { render, screen } from '@testing-library/vue'
+import userEvent from '@testing-library/user-event'
+import { defineComponent, h, nextTick, ref } from 'vue'
+import { createMemoryHistory, createRouter } from 'vue-router'
+import { afterEach, vi } from 'vitest'
+import { expectNoA11yViolations } from '@/test-utils/axe'
+import { usePreviewQuery } from '../../composables/usePreviewQuery'
+import DsaasfrAppShell from '../DsaasfrAppShell/DsaasfrAppShell.vue'
+import DsaasfrPreviewPanel from './DsaasfrPreviewPanel.vue'
+
+function mockViewport(narrow: boolean) {
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    matches: narrow, media: query, addEventListener: () => {}, removeEventListener: () => {},
+  }))
+}
+
+/** A shell whose preview is opened by a button in the toolbar. */
+function renderShell() {
+  const Host = defineComponent({
+    setup() {
+      const open = ref(false)
+      return () => h(DsaasfrAppShell, {
+        'previewOpen': open.value,
+        'onUpdate:previewOpen': (v: boolean) => (open.value = v),
+      }, {
+        sidebar: () => h('nav', { 'aria-label': 'Navigation principale' }, h('a', { href: '#x' }, 'Dossiers')),
+        toolbar: () => h('button', { type: 'button', onClick: () => (open.value = true) }, 'Aperçu du dossier D-2026-2041'),
+        default: () => h('h1', 'Dossiers'),
+        preview: () => h(DsaasfrPreviewPanel, { title: 'Dossier D-2026-2041', description: 'Permis de construire' }, {
+          actions: () => h('a', { href: '#ouvrir' }, 'Ouvrir le dossier'),
+          default: () => h('p', 'Demandeur : Alix Petit'),
+        }),
+      })
+    },
+  })
+  const user = userEvent.setup()
+  const result = render(Host)
+  return { ...result, user, opener: screen.getByRole('button', { name: 'Aperçu du dossier D-2026-2041' }) }
+}
+
+afterEach(() => vi.unstubAllGlobals())
+
+describe('DsaasfrPreviewPanel in DsaasfrAppShell', () => {
+  it('names the preview region after its title and moves focus to the title on open', async () => {
+    const { user, opener } = renderShell()
+
+    await user.click(opener)
+
+    const region = await screen.findByRole('complementary', { name: 'Dossier D-2026-2041' })
+    const title = screen.getByRole('heading', { name: 'Dossier D-2026-2041', level: 2 })
+    expect(region.contains(title)).toBe(true)
+    await vi.waitFor(() => expect(document.activeElement).toBe(title))
+  })
+
+  it('closes with the DSFR close button and returns focus to the opener', async () => {
+    const { user, opener } = renderShell()
+    await user.click(opener)
+
+    await user.click(await screen.findByRole('button', { name: 'Fermer l’aperçu' }))
+
+    expect(screen.queryByRole('complementary')).toBeNull()
+    await vi.waitFor(() => expect(document.activeElement).toBe(opener))
+  })
+
+  it('closes on Escape from inside the panel', async () => {
+    const { user, opener } = renderShell()
+    await user.click(opener)
+    await screen.findByRole('complementary')
+
+    await user.keyboard('{Escape}')
+
+    expect(screen.queryByRole('complementary')).toBeNull()
+    await vi.waitFor(() => expect(document.activeElement).toBe(opener))
+  })
+
+  it('does not steal focus when the preview is open from the start (shared link)', async () => {
+    render(DsaasfrAppShell, {
+      props: { previewOpen: true },
+      slots: { default: '<h1>Dossiers</h1>', preview: '<p>Aperçu</p>' },
+    })
+    await nextTick()
+
+    expect(document.activeElement).toBe(document.body)
+  })
+
+  it('makes the rest of the page inert on narrow screens (full-screen preview)', async () => {
+    mockViewport(true)
+    const { user, opener } = renderShell()
+    await user.click(opener)
+    await screen.findByRole('complementary')
+    await nextTick()
+
+    expect(screen.getByRole('main').closest('[inert]')).toBeTruthy()
+    expect(screen.getByRole('complementary').closest('[inert]')).toBeNull()
+  })
+
+  it('keeps the page interactive on wide screens', async () => {
+    mockViewport(false)
+    const { user, opener } = renderShell()
+    await user.click(opener)
+    await screen.findByRole('complementary')
+
+    expect(screen.getByRole('main').closest('[inert]')).toBeNull()
+  })
+
+  it('has no detectable accessibility violations when open', async () => {
+    const { container, user, opener } = renderShell()
+    await user.click(opener)
+    await screen.findByRole('complementary')
+
+    await expectNoA11yViolations(container)
+  })
+})
+
+describe('DsaasfrPreviewPanel on its own', () => {
+  it('emits close', async () => {
+    const user = userEvent.setup()
+    const { emitted } = render(DsaasfrPreviewPanel, { props: { title: 'Pièce 2' } })
+
+    await user.click(screen.getByRole('button', { name: 'Fermer l’aperçu' }))
+
+    expect(emitted('close')).toHaveLength(1)
+  })
+})
+
+describe('usePreviewQuery', () => {
+  async function setup() {
+    const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/:p(.*)*', component: { render: () => null } }] })
+    await router.push('/dossiers')
+    await router.isReady()
+    let api!: ReturnType<typeof usePreviewQuery>
+    render(defineComponent({ setup() { api = usePreviewQuery(); return () => null } }), { global: { plugins: [router] } })
+    return { router, api }
+  }
+
+  it('opens into the URL, Back closes it', async () => {
+    const { router, api } = await setup()
+
+    api.open('D-2026-2041')
+    await vi.waitFor(() => expect(router.currentRoute.value.query.apercu).toBe('D-2026-2041'))
+    expect(api.isOpen.value).toBe(true)
+    expect(api.item.value).toBe('D-2026-2041')
+
+    router.back()
+    await vi.waitFor(() => expect(api.isOpen.value).toBe(false))
+    expect(router.currentRoute.value.path).toBe('/dossiers')
+  })
+
+  it('closes by replacing the history entry', async () => {
+    const { router, api } = await setup()
+    api.open('D-2026-2041')
+    await vi.waitFor(() => expect(api.isOpen.value).toBe(true))
+
+    api.isOpen.value = false
+
+    await vi.waitFor(() => expect(router.currentRoute.value.query.apercu).toBeUndefined())
+  })
+})

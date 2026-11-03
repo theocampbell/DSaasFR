@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
 import { DsaasfrBreadcrumbBar } from '../DsaasfrBreadcrumbBar'
+import { DsaasfrPreviewPanel } from '../DsaasfrPreviewPanel'
+import { DsaasfrToolbar } from '../DsaasfrToolbar'
 import { DsaasfrSidebar } from '../DsaasfrSidebar'
 import { DsaasfrUserMenu } from '../DsaasfrUserMenu'
 import { accountItems } from '../DsaasfrUserMenu/DsaasfrUserMenu.stories'
@@ -41,7 +43,7 @@ export const navItems: DsaasfrSidebarItem[] = [
 ]
 
 const template = (previewOpen: boolean) => ({
-  components: { DsaasfrAppShell, DsaasfrBreadcrumbBar, DsaasfrSidebar, DsaasfrUserMenu },
+  components: { DsaasfrAppShell, DsaasfrBreadcrumbBar, DsaasfrPreviewPanel, DsaasfrSidebar, DsaasfrToolbar, DsaasfrUserMenu },
   setup() {
     const preview = ref(previewOpen)
     const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers' }, { text: 'Dossier #2041' }]
@@ -66,19 +68,22 @@ const template = (previewOpen: boolean) => ({
       </template>
 
       <template #toolbar="{ togglePreview, previewToggleAttrs }">
-        <DsfrButton label="Filtrer" secondary size="sm" />
-        <DsfrButton label="Aperçu" tertiary size="sm" v-bind="previewToggleAttrs" @click="togglePreview" />
+        <DsaasfrToolbar label="Filtres et actions de la liste">
+          <template #start><p class="fr-text--sm fr-mb-0">40 dossiers</p></template>
+          <template #end>
+            <DsfrButton label="Filtrer" icon="fr-icon-filter-line" secondary size="sm" />
+            <DsfrButton label="Aperçu" icon="fr-icon-eye-line" tertiary size="sm" v-bind="previewToggleAttrs" @click="togglePreview" />
+          </template>
+        </DsaasfrToolbar>
       </template>
 
       <h1 class="fr-h3">Dossier #2041</h1>
       <p>Contenu principal de l’application.</p>
 
-      <template #preview="{ closePreview }">
-        <div class="fr-p-3w">
-          <h2 class="fr-h5">Aperçu</h2>
-          <p>Pièce justificative.pdf</p>
-          <DsfrButton label="Fermer l’aperçu" tertiary size="sm" @click="closePreview" />
-        </div>
+      <template #preview>
+        <DsaasfrPreviewPanel title="Dossier D-2026-2041" description="Permis de construire">
+          <p>Demandeur : Alix Petit — Pessac</p>
+        </DsaasfrPreviewPanel>
       </template>
     </DsaasfrAppShell>
   `,

@@ -34,3 +34,34 @@ export const lorem = [
   'Les délais d’instruction courent à compter de la réception d’un dossier complet. Toute demande de pièce complémentaire suspend le délai jusqu’à réception.',
   'Les paramètres ci-dessous ne sont pas enregistrés : ce bac à sable n’est relié à aucune base de données.',
 ]
+
+const pieceTitles: Record<string, string> = {
+  1: 'Formulaire Cerfa n° 13406*09 signé',
+  2: 'Plan de situation du terrain et plan de masse des constructions',
+  3: 'Notice décrivant le terrain et le projet',
+}
+
+export interface PreviewContent {
+  title: string
+  description?: string
+  link?: string
+  fields?: [string, string][]
+  document?: boolean
+}
+
+/** Preview ids: `D-2026-2041` (case file) or `D-2026-2041/2` (document 2 of it). */
+export function describePreview(id: string | undefined): PreviewContent | undefined {
+  if (!id) return undefined
+  const [dossierId, piece] = id.split('/')
+  const row = dossiers.find(r => r[0] === dossierId)
+  if (!row) return undefined
+  if (piece) {
+    return { title: pieceTitles[piece] ?? `Pièce ${piece}`, description: `Pièce justificative — dossier ${dossierId}`, document: true }
+  }
+  return {
+    title: `Dossier ${row[0]}`,
+    description: row[2],
+    link: `/dossiers/${row[0]}`,
+    fields: [['Demandeur', row[1]!], ['Commune', row[3]!], ['Statut', row[4]!], ['Dépôt', row[5]!]],
+  }
+}

@@ -2,7 +2,9 @@
 // Long, realistic content per page, to test scrolling in the shell.
 import { activity, dossiers, lorem, usagers } from './fakeData'
 
-defineProps<{ path: string }>()
+const props = defineProps<{ path: string }>()
+const emit = defineEmits<{ preview: [id: string] }>()
+const dossierId = () => props.path.split('/')[2]
 
 const stats = [
   { label: 'Dossiers à instruire', value: '128' },
@@ -61,7 +63,7 @@ const stats = [
             <thead>
               <tr>
                 <th
-                  v-for="header in ['N°', 'Demandeur', 'Type', 'Commune', 'Statut', 'Dépôt']"
+                  v-for="header in ['N°', 'Demandeur', 'Type', 'Commune', 'Statut', 'Dépôt', 'Aperçu']"
                   :key="header"
                   scope="col"
                 >
@@ -87,6 +89,16 @@ const stats = [
                   :key="cell"
                 >
                   {{ cell }}
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-eye-line"
+                    :title="`Aperçu du dossier ${row[0]}`"
+                    @click="emit('preview', row[0]!)"
+                  >
+                    Aperçu du dossier {{ row[0] }}
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -122,6 +134,7 @@ const stats = [
     <li
       v-for="piece in [1, 2, 3]"
       :key="piece"
+      class="fr-mb-1w"
     >
       <RouterLink
         class="fr-link"
@@ -129,6 +142,13 @@ const stats = [
       >
         Pièce {{ piece }}
       </RouterLink>
+      <button
+        type="button"
+        class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-btn--icon-left fr-icon-eye-line fr-ml-2w"
+        @click="emit('preview', `${dossierId()}/${piece}`)"
+      >
+        Aperçu<span class="fr-sr-only"> de la pièce {{ piece }}</span>
+      </button>
     </li>
   </ul>
 
