@@ -154,10 +154,12 @@ watch(hasPreview, async (open) => {
     class="dsaasfr-app-shell"
     :class="{ 'dsaasfr-app-shell--preview-open': hasPreview }"
   >
-    <DsfrSkipLinks
+    <div
       v-if="!hideSkipLinks"
-      :links="skipLinks"
-    />
+      :inert="pageInert"
+    >
+      <DsfrSkipLinks :links="skipLinks" />
+    </div>
 
     <div
       v-if="$slots.header"
@@ -182,33 +184,37 @@ watch(hasPreview, async (open) => {
         class="dsaasfr-app-shell__content"
         :inert="pageInert"
       >
-        <div
-          v-if="$slots.breadcrumb || $slots.toolbar"
-          ref="bars"
-          class="dsaasfr-app-shell__bars"
-        >
-          <div
-            v-if="$slots.breadcrumb"
-            class="dsaasfr-app-shell__breadcrumb"
-          >
-            <slot name="breadcrumb" />
-          </div>
-          <div
-            v-if="$slots.toolbar"
-            class="dsaasfr-app-shell__toolbar"
-          >
-            <slot
-              name="toolbar"
-              v-bind="previewScope"
-            />
-          </div>
-        </div>
+        <!-- The breadcrumb and toolbar rows are part of the page: inside <main>, so their
+             content (e.g. "40 dossiers") belongs to a landmark. -->
         <main
           :id="mainId"
           class="dsaasfr-app-shell__main"
           tabindex="-1"
         >
-          <slot />
+          <div
+            v-if="$slots.breadcrumb || $slots.toolbar"
+            ref="bars"
+            class="dsaasfr-app-shell__bars"
+          >
+            <div
+              v-if="$slots.breadcrumb"
+              class="dsaasfr-app-shell__breadcrumb"
+            >
+              <slot name="breadcrumb" />
+            </div>
+            <div
+              v-if="$slots.toolbar"
+              class="dsaasfr-app-shell__toolbar"
+            >
+              <slot
+                name="toolbar"
+                v-bind="previewScope"
+              />
+            </div>
+          </div>
+          <div class="dsaasfr-app-shell__page">
+            <slot />
+          </div>
         </main>
       </div>
 
@@ -317,6 +323,12 @@ watch(hasPreview, async (open) => {
 }
 
 .dsaasfr-app-shell__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.dsaasfr-app-shell__page {
   flex: 1;
   padding: var(--dsaasfr-space-3w);
 }
@@ -332,28 +344,6 @@ watch(hasPreview, async (open) => {
 
 .dsaasfr-app-shell__preview:focus {
   outline: none;
-}
-
-/* 62em–78em (DSFR lg–xl): the preview slides over the content instead of squeezing it
-   into a thin column. Non-modal: the content stays usable around it. */
-@media (width < 78em) {
-  .dsaasfr-app-shell--preview-open .dsaasfr-app-shell__body {
-    grid-template-columns: var(--dsaasfr-shell-sidebar-width) minmax(0, 1fr);
-  }
-
-  /* Above a DsfrHeader (+750, the aside comes later in the DOM), below DSFR menus (+1000).
-     Overlapping surface: DSFR overlap background + shadow (as fr-menu); box-shadow rather
-     than fr-menu's drop-shadow filter, which would also apply to the panel's content. */
-  .dsaasfr-app-shell__preview {
-    position: fixed;
-    z-index: calc(var(--ground) + 750);
-    top: 0;
-    right: 0;
-    width: var(--dsaasfr-shell-preview-width);
-    max-width: 100%;
-    box-shadow: var(--overlap-shadow);
-    background-color: var(--background-overlap-grey);
-  }
 }
 
 /* Below 62em (DSFR "lg", i.e. high zoom) nothing is pinned: pinned areas would eat the
@@ -389,15 +379,19 @@ watch(hasPreview, async (open) => {
     padding-inline: var(--dsaasfr-space-2w);
   }
 
-  .dsaasfr-app-shell__main {
+  .dsaasfr-app-shell__page {
     padding: var(--dsaasfr-space-2w);
   }
 
-  /* Full screen; the rest of the page is inert (see pageInert). */
+  /* Full screen above everything (incl. the DSFR header, +1000; below DSFR modals,
+     +1750); the rest of the page, skip links included, is inert (see pageInert). */
   .dsaasfr-app-shell__preview {
+    position: fixed;
+    z-index: calc(var(--ground) + 1500);
+    inset: 0;
     width: 100%;
+    height: 100%;
     border-left: 0;
-    box-shadow: none;
   }
 }
 </style>

@@ -91,6 +91,8 @@ describe('DsaasfrPreviewPanel in DsaasfrAppShell', () => {
     await nextTick()
 
     expect(screen.getByRole('main').closest('[inert]')).toBeTruthy()
+    expect(screen.getByRole('navigation', { name: 'Navigation principale' }).closest('[inert]')).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Contenu' }).closest('[inert]')).toBeTruthy()
     expect(screen.getByRole('complementary').closest('[inert]')).toBeNull()
   })
 

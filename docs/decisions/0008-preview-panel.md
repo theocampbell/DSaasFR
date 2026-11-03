@@ -19,13 +19,15 @@ Linear, mail clients) keeps the list visible and the preview open while moving o
 ## Decision
 
 - **Layout by the shell**, by width:
-  - ≥ 78em (DSFR xl): the panel **pushes** the content (third column, pinned).
-  - 62–78em: it **slides over** the content, so the content is not squeezed into a thin
-    column. Floating surface like `fr-menu`: `--background-overlap-grey` and
-    `--overlap-shadow` (as a `box-shadow`; fr-menu's `filter: drop-shadow` would also
-    affect the panel content). Layer `--ground + 750`: above a `DsfrHeader` if an app uses
-    one, below DSFR menus (+1000).
-  - < 62em (high zoom): still fixed, **full screen**; the rest of the page is `inert`.
+  - ≥ 62em (DSFR lg): the panel **pushes** the content (third column, pinned). On medium
+    screens the content gets narrow and wide tables scroll inside their own frame
+    (`fr-table`). An earlier version floated the panel over the content between 62 and
+    78em; the a11y review showed focus could land on controls hidden under it (RGAA 10.7)
+    and the list behind could not be used to preview the next item, so it was dropped:
+    nothing is ever covered.
+  - < 62em (high zoom): **full screen**, fixed, layer `--ground + 1500` (above a DSFR
+    header, below DSFR modals); the rest of the page — sidebar / DSFR header, content and
+    skip links — is `inert`.
 - **DsaasfrPreviewPanel** for the content: sticky header with the title (heading), an
   optional description, the official DSFR close button (`fr-btn--close`, text "Fermer",
   name "Fermer l'aperçu"), optional actions and footer, scrolling body.
@@ -47,7 +49,10 @@ Linear, mail clients) keeps the list visible and the preview open while moving o
   is next in the tab order). Opened from a shared link / page load, focus stays at the page
   start (no focus stealing).
 - Escape (focus inside) and "Fermer" close it; focus returns to the element that opened it.
-- Full screen below 62em: the rest of the page is `inert`, so focus cannot go behind it.
+- Full screen below 62em: the rest of the page, skip links included, is `inert`, so
+  focus cannot go behind it.
+- The breadcrumb and toolbar rows sit inside `<main>` (their text belongs to a landmark,
+  RGAA 12.6); the "Contenu" skip link lands on them.
 - Each "Aperçu" trigger names its item ("Aperçu du dossier D-2026-2041").
 
 ## Open questions
