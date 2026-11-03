@@ -259,8 +259,8 @@ watch(previewOpen, async (open) => {
   padding-block: var(--dsaasfr-space-1w);
 }
 
-/* Toolbar items keep their natural width and wrap onto a new line as a whole,
-   instead of being squeezed until their labels break (e.g. "Nouveau dossier").
+/* Raw items put directly in the toolbar row (without DsaasfrToolbar) keep their natural
+   width and wrap as a whole instead of being squeezed until their labels break.
    max-width keeps a single very long label inside the row at 320px (RGAA 10.11). */
 .dsaasfr-app-shell__toolbar {
   flex-wrap: wrap;
@@ -268,7 +268,7 @@ watch(previewOpen, async (open) => {
   padding-block: var(--dsaasfr-space-1w);
 }
 
-.dsaasfr-app-shell__toolbar > :deep(*) {
+.dsaasfr-app-shell__toolbar > :deep(:not(.dsaasfr-toolbar)) {
   flex: 0 0 auto;
   max-width: 100%;
 }

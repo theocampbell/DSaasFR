@@ -22,6 +22,9 @@ const items: DsaasfrSidebarItem[] = [
   },
 ]
 
+// Toolbar row only on list pages.
+const listCount = computed(() => ({ '/dossiers': '40 dossiers', '/usagers': '30 usagers' } as Record<string, string>)[route.path])
+
 // Key action, top right of the breadcrumb row, only on pages that have one
 // (demo: buttons do nothing).
 const keyAction = computed(() => {
@@ -90,14 +93,32 @@ const accountItems: DsaasfrUserMenuItem[] = [
       </DsaasfrBreadcrumbBar>
     </template>
 
-    <template #toolbar="{ togglePreview, previewToggleAttrs }">
-      <DsfrButton
-        label="Aperçu"
-        secondary
-        size="sm"
-        v-bind="previewToggleAttrs"
-        @click="togglePreview"
-      />
+    <template
+      v-if="listCount"
+      #toolbar
+    >
+      <DsaasfrToolbar label="Filtres et actions de la liste">
+        <template #start>
+          <p class="fr-text--sm fr-mb-0">
+            {{ listCount }}
+          </p>
+        </template>
+        <template #end>
+          <!-- Filters come next (filter chips in `start`, this trigger opens them). -->
+          <DsfrButton
+            label="Filtrer"
+            icon="fr-icon-filter-line"
+            secondary
+            size="sm"
+          />
+          <DsfrButton
+            label="Exporter"
+            icon="fr-icon-download-line"
+            tertiary
+            size="sm"
+          />
+        </template>
+      </DsaasfrToolbar>
     </template>
 
     <DsfrNotice
