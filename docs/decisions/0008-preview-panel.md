@@ -20,9 +20,12 @@ Linear, mail clients) keeps the list visible and the preview open while moving o
 
 - **Layout by the shell**, by width:
   - ≥ 78em (DSFR xl): the panel **pushes** the content (third column, pinned).
-  - 62–78em: it **slides over** the content (fixed, `--overlap-shadow`), so the content is
-    not squeezed into a thin column. Non-modal: the rest stays usable.
-  - < 62em (high zoom): **full screen**; the rest of the page is `inert`.
+  - 62–78em: it **slides over** the content, so the content is not squeezed into a thin
+    column. Floating surface like `fr-menu`: `--background-overlap-grey` and
+    `--overlap-shadow` (as a `box-shadow`; fr-menu's `filter: drop-shadow` would also
+    affect the panel content). Layer `--ground + 750`: above a `DsfrHeader` if an app uses
+    one, below DSFR menus (+1000).
+  - < 62em (high zoom): still fixed, **full screen**; the rest of the page is `inert`.
 - **DsaasfrPreviewPanel** for the content: sticky header with the title (heading), an
   optional description, the official DSFR close button (`fr-btn--close`, text "Fermer",
   name "Fermer l'aperçu"), optional actions and footer, scrolling body.
@@ -30,7 +33,14 @@ Linear, mail clients) keeps the list visible and the preview open while moving o
   entry (Back closes the preview), closing replaces it; a shared link opens the preview.
 - No resizing for now (a resize handle must be keyboard-operable; to add if users ask).
 
+- Header built by us: Vue DSFR does not export DsfrModal's header on its own; the close
+  button is the official `fr-btn--close fr-btn` markup. Header and footer backgrounds
+  inherit the panel surface.
+
 ## Accessibility consequences
+
+- Exception to the DSFR focus ring: the title gets focus programmatically on open; its
+  ring is hidden for mouse users only (`:focus:not(:focus-visible)`), kept for keyboard.
 
 - The panel is a `complementary` region named by its title (`aria-labelledby`).
 - When the **user** opens it, focus moves to the title (announced, and the panel content

@@ -91,14 +91,16 @@ const stats = [
                   {{ cell }}
                 </td>
                 <td>
-                  <button
-                    type="button"
-                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-eye-line"
+                  <DsfrButton
+                    :label="`Aperçu du dossier ${row[0]}`"
                     :title="`Aperçu du dossier ${row[0]}`"
+                    icon="fr-icon-eye-line"
+                    icon-only
+                    tertiary
+                    no-outline
+                    size="sm"
                     @click="emit('preview', row[0]!)"
-                  >
-                    Aperçu du dossier {{ row[0] }}
-                  </button>
+                  />
                 </td>
               </tr>
             </tbody>

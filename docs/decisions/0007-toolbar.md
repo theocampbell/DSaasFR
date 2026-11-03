@@ -23,6 +23,8 @@ actions. The library must not decide that.
   filter components (chips, dropdown) are separate and go into these slots.
 - Items keep their natural width and wrap as a whole (never squeezed until labels
   break), `end` stays right-aligned, and on narrow screens `end` wraps below `start`.
+- Own flex layout rather than `fr-btns-group` / `DsfrButtonGroup`: those lay out buttons
+  only; the toolbar holds mixed content (text, filter chips, triggers, menus).
 - Same pattern as the breadcrumb bar (0006): content left, actions right. One primary
   button per view lives in the breadcrumb bar; the toolbar uses secondary / tertiary.
 

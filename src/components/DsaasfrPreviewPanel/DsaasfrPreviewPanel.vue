@@ -90,6 +90,7 @@ function close() {
 
 <style scoped>
 .dsaasfr-preview-panel {
+  background-color: inherit;
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -105,7 +106,9 @@ function close() {
   gap: var(--dsaasfr-space-2w);
   padding: var(--dsaasfr-space-2w) var(--dsaasfr-space-3w);
   border-bottom: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
-  background-color: var(--background-default-grey);
+
+  /* Same surface as the panel (default grey when pushed, overlap grey when floating). */
+  background-color: inherit;
 }
 
 .dsaasfr-preview-panel__heading {
@@ -140,9 +143,10 @@ function close() {
 
 .dsaasfr-preview-panel__footer {
   position: sticky;
+  z-index: 1;
   bottom: 0;
   padding: var(--dsaasfr-space-2w) var(--dsaasfr-space-3w);
   border-top: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
-  background-color: var(--background-default-grey);
+  background-color: inherit;
 }
 </style>

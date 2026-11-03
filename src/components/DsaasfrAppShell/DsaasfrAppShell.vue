@@ -341,19 +341,24 @@ watch(hasPreview, async (open) => {
     grid-template-columns: var(--dsaasfr-shell-sidebar-width) minmax(0, 1fr);
   }
 
+  /* Above a DsfrHeader (+750, the aside comes later in the DOM), below DSFR menus (+1000).
+     Overlapping surface: DSFR overlap background + shadow (as fr-menu); box-shadow rather
+     than fr-menu's drop-shadow filter, which would also apply to the panel's content. */
   .dsaasfr-app-shell__preview {
     position: fixed;
-    z-index: calc(var(--ground) + 500);
+    z-index: calc(var(--ground) + 750);
     top: 0;
     right: 0;
     width: var(--dsaasfr-shell-preview-width);
     max-width: 100%;
     box-shadow: var(--overlap-shadow);
+    background-color: var(--background-overlap-grey);
   }
 }
 
 /* Below 62em (DSFR "lg", i.e. high zoom) nothing is pinned: pinned areas would eat the
-   little screen space left at 400% zoom. The preview stacks under the content. */
+   little screen space left at 400% zoom. The preview stays fixed but full width (full
+   screen), and the rest of the page is inert (see pageInert). */
 @media (width < 62em) {
   .dsaasfr-app-shell__sidebar,
   .dsaasfr-app-shell__bars {
