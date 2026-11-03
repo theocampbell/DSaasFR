@@ -57,34 +57,88 @@ function onPointerDownOutside(event: PointerEvent) {
   if (!root.value?.contains(event.target as Node)) close()
 }
 
-// Keep the panel inside the viewport (RGAA 10.11: no horizontal scroll at 320px): if it
-// would overflow on one side, shift it back by the overflow.
+// Keep the panel inside the viewport (RGAA 10.11 / 10.7): shifted back horizontally if it
+// would overflow a side; limited in height (scrolls inside) to the space left on screen,
+// and flipped to the other side of the trigger only when the requested side is cramped. Recomputed
+// while open, as the trigger (e.g. a chip whose values change) or the window resizes.
 const EDGE = 16
+/** Below this room (12rem) the preferred side counts as cramped and the panel may flip. */
+const MIN_ROOM = 192
 const shift = ref(0)
-function keepInViewport() {
+const flipped = ref(false)
+const maxHeight = ref<number>()
+const opensUp = computed(() => props.placement.startsWith('top') !== flipped.value)
+
+async function keepInViewport() {
+  const el = panel.value
+  const surface = el?.firstElementChild as HTMLElement | null
+  const anchor = trigger.value?.getBoundingClientRect()
+  if (!el || !surface || !anchor || typeof window === 'undefined') return
   shift.value = 0
-  const rect = panel.value?.getBoundingClientRect()
-  if (!rect || typeof window === 'undefined') return
+  maxHeight.value = undefined
+  flipped.value = false
+  await nextTick()
+
+  const natural = surface.scrollHeight
+  const viewport = window.innerHeight
+  const below = viewport - anchor.bottom - 2 * EDGE
+  const above = anchor.top - 2 * EDGE
+  const preferredUp = props.placement.startsWith('top')
+  const room = preferredUp ? above : below
+  const other = preferredUp ? below : above
+  // Keep the requested side (scrolling inside if needed) unless it is really cramped:
+  // flipping into space taken by e.g. the DSFR header would hide the panel's top.
+  if (natural > room && room < MIN_ROOM && other > room) flipped.value = true
+  const space = flipped.value ? other : room
+  maxHeight.value = natural > space ? Math.max(space, 0) : undefined
+  await nextTick()
+
+  const rect = el.getBoundingClientRect()
   const width = document.documentElement.clientWidth
-  if (rect.right > width - EDGE) shift.value = width - EDGE - rect.right
-  if (rect.left + shift.value < EDGE) shift.value = EDGE - rect.left
+  let dx = 0
+  if (rect.right > width - EDGE) dx = width - EDGE - rect.right
+  if (rect.left + dx < EDGE) dx = EDGE - rect.left
+  shift.value = dx
+}
+
+let resizeObserver: ResizeObserver | undefined
+const onWindowResize = () => void keepInViewport()
+function stopTracking() {
+  resizeObserver?.disconnect()
+  resizeObserver = undefined
+  window.removeEventListener('resize', onWindowResize)
+}
+
+/** Autofocus target: the current choice first (checked / pressed / current), else the first control. */
+function focusTarget(root: HTMLElement) {
+  return root.querySelector<HTMLElement>('input:checked, [aria-pressed="true"], [aria-current]:not([aria-current="false"])')
+    ?? root.querySelector<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
 }
 
 watch(open, async (isOpen) => {
   if (typeof document === 'undefined') return
   if (!isOpen) {
     document.removeEventListener('pointerdown', onPointerDownOutside)
+    stopTracking()
     shift.value = 0
+    maxHeight.value = undefined
+    flipped.value = false
     return
   }
   document.addEventListener('pointerdown', onPointerDownOutside)
   await nextTick()
-  keepInViewport()
-  if (props.autofocus) {
-    panel.value?.querySelector<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')?.focus()
+  await keepInViewport()
+  window.addEventListener('resize', onWindowResize)
+  if (typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(onWindowResize)
+    if (trigger.value) resizeObserver.observe(trigger.value)
   }
+  if (props.autofocus && panel.value) focusTarget(panel.value)?.focus()
 }, { immediate: true })
-onBeforeUnmount(() => document.removeEventListener('pointerdown', onPointerDownOutside))
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', onPointerDownOutside)
+  stopTracking()
+})
 
 defineExpose({ close, focus: () => trigger.value?.focus() })
 </script>
@@ -119,9 +173,13 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
       :id="panelId"
       ref="panel"
       class="fr-menu dsaasfr-dropdown__panel"
+      :class="{ 'dsaasfr-dropdown__panel--up': opensUp, 'dsaasfr-dropdown__panel--down': !opensUp }"
       :style="shift ? { translate: `${shift}px 0` } : undefined"
     >
-      <div class="fr-menu__list dsaasfr-dropdown__surface">
+      <div
+        class="fr-menu__list dsaasfr-dropdown__surface"
+        :style="maxHeight !== undefined ? { maxHeight: `${maxHeight}px` } : undefined"
+      >
         <slot :close="close" />
       </div>
     </div>
@@ -153,15 +211,11 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
   padding: 0;
 }
 
-.dsaasfr-dropdown--bottom-start .dsaasfr-dropdown__panel.fr-menu,
-.dsaasfr-dropdown--bottom-end .dsaasfr-dropdown__panel.fr-menu,
-.dsaasfr-dropdown--bottom-stretch .dsaasfr-dropdown__panel.fr-menu {
+.dsaasfr-dropdown__panel--down.fr-menu {
   top: calc(100% + var(--dsaasfr-space-1v));
 }
 
-.dsaasfr-dropdown--top-start .dsaasfr-dropdown__panel.fr-menu,
-.dsaasfr-dropdown--top-end .dsaasfr-dropdown__panel.fr-menu,
-.dsaasfr-dropdown--top-stretch .dsaasfr-dropdown__panel.fr-menu {
+.dsaasfr-dropdown__panel--up.fr-menu {
   top: auto;
   bottom: calc(100% + var(--dsaasfr-space-1v));
 }
@@ -188,6 +242,7 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
   width: auto;
   margin: 0;
   padding: var(--dsaasfr-space-1w) 0;
+  overflow-y: auto;
   background-color: var(--background-overlap-grey);
 
   /* No DSFR open-blue top line: it only exists from lg up; consistent at all widths. */

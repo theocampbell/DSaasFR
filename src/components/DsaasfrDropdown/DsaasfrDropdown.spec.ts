@@ -49,6 +49,25 @@ describe('DsaasfrDropdown', () => {
     await vi.waitFor(() => expect(document.activeElement?.textContent).toBe('Statut'))
   })
 
+  it('autofocus prefers the current choice over the first control', async () => {
+    const user = userEvent.setup()
+    render({
+      components: { DsaasfrDropdown },
+      template: `
+        <DsaasfrDropdown autofocus>
+          <template #trigger>Condition</template>
+          <fieldset><legend>Condition</legend>
+            <input id="a" type="radio" name="op"><label for="a">est</label>
+            <input id="b" type="radio" name="op" checked><label for="b">n’est pas</label>
+          </fieldset>
+        </DsaasfrDropdown>`,
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Condition' }))
+
+    await vi.waitFor(() => expect(document.activeElement).toBe(screen.getByRole('radio', { name: 'n’est pas' })))
+  })
+
   it('closes on Escape and returns focus to the trigger', async () => {
     const { user, trigger } = setup({ autofocus: true })
     await user.click(trigger)

@@ -47,7 +47,7 @@ const groupName = computed(() =>
   [`${props.groupLabel} :`, props.field, props.operator, props.values.length ? props.values.join(', ') : props.emptyValuesText]
     .filter(Boolean).join(' '))
 
-interface PartDef { part: DsaasfrFilterChipPart, text: string, label: string, extra?: string }
+interface PartDef { part: DsaasfrFilterChipPart, text: string, label: string }
 const parts = computed<PartDef[]>(() => [
   { part: 'field', text: props.field, label: props.editFieldLabel },
   ...(props.operator ? [{ part: 'operator' as const, text: props.operator, label: props.editOperatorLabel }] : []),
@@ -55,8 +55,7 @@ const parts = computed<PartDef[]>(() => [
     part: 'values',
     text: valuesText.value,
     label: props.editValuesLabel,
-    // Summarised values: the full list is in the name too.
-    extra: props.values.length > props.maxVisibleValues ? ` (${props.values.join(', ')})` : '',
+    // The chip's group name already carries the full list of values.
   },
 ])
 
@@ -83,7 +82,7 @@ function setOpen(part: DsaasfrFilterChipPart, open: boolean) {
         placement="bottom-start"
         autofocus
         :trigger-class="['dsaasfr-filter-chip__button', 'fr-text--sm', 'fr-m-0', p.part === 'field' ? 'fr-text--bold' : '']"
-        :trigger-label="`${p.label} ${p.text}${p.extra ?? ''}`"
+        :trigger-label="`${p.label} ${p.text}`"
         :open="openPart === p.part"
         @update:open="setOpen(p.part, $event)"
       >
@@ -118,6 +117,7 @@ function setOpen(part: DsaasfrFilterChipPart, open: boolean) {
 /* A DSFR neutral tag (fr-tag) split into segments: same surface, radius, height, text. */
 .dsaasfr-filter-chip {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: stretch;
   max-width: 100%;
   border-radius: var(--dsaasfr-chip-radius);
@@ -158,14 +158,19 @@ function setOpen(part: DsaasfrFilterChipPart, open: boolean) {
   min-height: var(--dsaasfr-chip-height);
   padding: 0 var(--dsaasfr-space-3v);
   color: inherit;
-  white-space: nowrap;
+  text-align: left;
 }
 
+/* Never cut: a long part wraps its text (and the chip wraps its parts) instead of
+   being truncated, so values stay readable at 320px / 400% zoom (RGAA 10.11). */
 .dsaasfr-filter-chip :deep(.dsaasfr-filter-chip__button) {
-  overflow: hidden;
-  text-overflow: ellipsis;
   max-width: var(--dsaasfr-chip-part-max-width);
+  overflow-wrap: anywhere;
   background-color: var(--idle);
+}
+
+.dsaasfr-filter-chip__part--field {
+  flex-shrink: 0;
 }
 
 .dsaasfr-filter-chip :deep(.dsaasfr-filter-chip__button:hover),

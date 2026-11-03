@@ -26,8 +26,11 @@ Three layers:
 
 1. **DsaasfrDropdown** (library): trigger button + floating panel, disclosure pattern.
    Escape returns focus to the trigger; click outside / tab out close it; `autofocus` moves
-   focus into the panel (option lists, forms); the panel is shifted to stay inside the
-   viewport. Surface: official `fr-menu` / `fr-menu__list` markup; since `fr-menu` only
+   focus into the panel, on the **current choice** (checked / current) else the first
+   control. The panel **stays inside the viewport** while open (recomputed when the
+   trigger or the window resizes): shifted horizontally, height limited to the room left
+   with scrolling inside, flipped to the other side only when the requested side is
+   cramped (< 12rem) — flipping freely put it under the DSFR header at 320px. Surface: official `fr-menu` / `fr-menu__list` markup; since `fr-menu` only
    floats from lg, the DSFR desktop rules (absolute, `--ground + 1000`, drop shadow,
    overlap surface and hover pair, high-contrast outline) are applied at all widths; the
    desktop-only open-blue top line is dropped for consistency. Panel 1v below the
@@ -56,8 +59,9 @@ Three layers:
 - × = "Retirer le filtre Statut".
 - Dropdown panels contain real form controls (fieldset + legend) or lists of buttons.
 - **App responsibilities** (shown in the playground): announce the result count
-  (`role="status"`: "16 dossiers sur 40"); after removing a chip or clearing all, move focus
-  somewhere meaningful (the playground moves it to "Filtrer").
+  (`role="status"`: "16 dossiers sur 40"); after removing a chip, move focus to the next
+  chip (or the previous one), after clearing all to "Filtrer"; mark the current field with
+  `aria-current` and a visible check, and keep values when the same field is re-picked.
 - Clicking a non-focusable label inside a panel inside a focusable container (the shell's
   `<main>`) must not close it: focus moving to an ancestor is not "leaving".
 

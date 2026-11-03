@@ -50,11 +50,12 @@ describe('DsaasfrFilterChip', () => {
     expect(within(group).getByText('Assigné à')).toBeTruthy()
   })
 
-  it('summarises many values but keeps them all in the accessible name', () => {
+  it('summarises many values; the full list stays in the chip group name', () => {
     setup({ values: ['A', 'B', 'C', 'D'] })
 
-    const button = screen.getByRole('button', { name: 'Modifier les valeurs : A, B et 2 autres (A, B, C, D)' })
+    const button = screen.getByRole('button', { name: 'Modifier les valeurs : A, B et 2 autres' })
     expect(button.textContent?.trim()).toBe('A, B et 2 autres')
+    expect(screen.getByRole('group', { name: 'Filtre : Assigné à est A, B, C, D' })).toBeTruthy()
   })
 
   it('shows a placeholder when no value is selected yet', () => {
