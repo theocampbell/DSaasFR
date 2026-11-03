@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePreviewQuery, useRouteBreadcrumb } from 'dsaasfr'
 import type { DsaasfrSidebarItem, DsaasfrUserMenuItem } from 'dsaasfr'
+import FilterControls from './FilterControls.vue'
 import PageBody from './PageBody.vue'
 import { describePreview } from './fakeData'
 
@@ -102,17 +103,21 @@ const accountItems: DsaasfrUserMenuItem[] = [
     >
       <DsaasfrToolbar label="Filtres et actions de la liste">
         <template #start>
-          <p class="fr-text--sm fr-mb-0">
+          <FilterControls
+            v-if="route.path === '/dossiers'"
+            area="start"
+          />
+          <p
+            v-else
+            class="fr-text--sm fr-mb-0"
+          >
             {{ listCount }}
           </p>
         </template>
         <template #end>
-          <!-- Filters come next (filter chips in `start`, this trigger opens them). -->
-          <DsfrButton
-            label="Filtrer"
-            icon="fr-icon-filter-line"
-            secondary
-            size="sm"
+          <FilterControls
+            v-if="route.path === '/dossiers'"
+            area="end"
           />
           <DsfrButton
             label="Exporter"

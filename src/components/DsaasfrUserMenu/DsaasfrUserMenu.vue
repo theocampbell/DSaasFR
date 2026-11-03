@@ -4,12 +4,12 @@
  *
  * Pattern: disclosure (button + aria-expanded/aria-controls + list of links and
  * buttons), like the DSFR header menus and DsfrLanguageSelector — not an ARIA
- * `role="menu"`. Escape, click outside and tabbing out close it.
+ * `role="menu"`. Built on DsaasfrDropdown (Escape, click outside, tab out, focus return).
  *
  * See docs/decisions/0005-user-menu.md.
  */
-import { computed, onBeforeUnmount, useTemplateRef, watch } from 'vue'
 import { RouterLink } from 'vue-router'
+import DsaasfrDropdown from '../DsaasfrDropdown/DsaasfrDropdown.vue'
 import type { DsaasfrUserMenuItem, DsaasfrUserMenuProps } from './DsaasfrUserMenu.types'
 
 const props = withDefaults(defineProps<DsaasfrUserMenuProps>(), {
@@ -23,43 +23,12 @@ const props = withDefaults(defineProps<DsaasfrUserMenuProps>(), {
 const emit = defineEmits<{ select: [item: DsaasfrUserMenuItem] }>()
 
 const open = defineModel<boolean>('open', { default: false })
-const root = useTemplateRef<HTMLElement>('root')
-const trigger = useTemplateRef<HTMLButtonElement>('trigger')
-const panelId = computed(() => `${props.id}-panel`)
 
-function close(returnFocus = false) {
-  open.value = false
-  if (returnFocus) trigger.value?.focus()
-}
-
-function select(item: DsaasfrUserMenuItem) {
+function select(item: DsaasfrUserMenuItem, close: () => void) {
   emit('select', item)
   item.action?.()
   close()
 }
-
-function onKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape' && open.value) {
-    event.stopPropagation()
-    close(true)
-  }
-}
-
-function onFocusOut(event: FocusEvent) {
-  const next = event.relatedTarget as Node | null
-  if (next && !root.value?.contains(next)) close()
-}
-
-function onPointerDownOutside(event: PointerEvent) {
-  if (!root.value?.contains(event.target as Node)) close()
-}
-
-watch(open, (isOpen) => {
-  if (typeof document === 'undefined') return
-  if (isOpen) document.addEventListener('pointerdown', onPointerDownOutside)
-  else document.removeEventListener('pointerdown', onPointerDownOutside)
-})
-onBeforeUnmount(() => document.removeEventListener('pointerdown', onPointerDownOutside))
 
 const itemClass = (item: DsaasfrUserMenuItem) => [
   'fr-btn fr-btn--tertiary-no-outline fr-btn--sm dsaasfr-user-menu__item',
@@ -68,21 +37,14 @@ const itemClass = (item: DsaasfrUserMenuItem) => [
 </script>
 
 <template>
-  <div
-    ref="root"
+  <DsaasfrDropdown
+    :id="id"
+    v-model:open="open"
     class="dsaasfr-user-menu"
-    :class="`dsaasfr-user-menu--${placement}`"
-    @keydown="onKeydown"
-    @focusout="onFocusOut"
+    :placement="props.placement === 'top' ? 'top-stretch' : 'bottom-stretch'"
+    trigger-class="dsaasfr-user-menu__trigger"
   >
-    <button
-      ref="trigger"
-      type="button"
-      class="dsaasfr-user-menu__trigger"
-      :aria-expanded="open"
-      :aria-controls="panelId"
-      @click="open = !open"
-    >
+    <template #trigger>
       <span
         class="dsaasfr-user-menu__avatar fr-icon-account-circle-line"
         aria-hidden="true"
@@ -96,20 +58,14 @@ const itemClass = (item: DsaasfrUserMenuItem) => [
       </span>
       <span
         class="dsaasfr-user-menu__chevron"
-        :class="placement === 'top' ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'"
+        :class="props.placement === 'top' ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'"
         aria-hidden="true"
       />
-    </button>
+    </template>
 
-    <!-- Official DSFR menu markup (as in fr-translate / fr-nav): fr-menu > fr-menu__list
-         brings the overlap background, hover pair, drop shadow and high-contrast outline. -->
-    <div
-      v-show="open"
-      :id="panelId"
-      class="fr-menu dsaasfr-user-menu__panel"
-    >
+    <template #default="{ close }">
       <ul
-        class="fr-menu__list dsaasfr-user-menu__list"
+        class="dsaasfr-user-menu__list"
         :aria-label="menuLabel"
       >
         <li
@@ -121,7 +77,7 @@ const itemClass = (item: DsaasfrUserMenuItem) => [
             v-if="item.to"
             :to="item.to"
             :class="itemClass(item)"
-            @click="select(item)"
+            @click="select(item, close)"
           >
             {{ item.text }}
           </RouterLink>
@@ -129,32 +85,28 @@ const itemClass = (item: DsaasfrUserMenuItem) => [
             v-else-if="item.href"
             :href="item.href"
             :class="itemClass(item)"
-            @click="select(item)"
+            @click="select(item, close)"
           >{{ item.text }}</a>
           <button
             v-else
             type="button"
             :class="itemClass(item)"
-            @click="select(item)"
+            @click="select(item, close)"
           >
             {{ item.text }}
           </button>
         </li>
         <slot :close="close" />
       </ul>
-    </div>
-  </div>
+    </template>
+  </DsaasfrDropdown>
 </template>
 
 <style scoped>
-.dsaasfr-user-menu {
-  position: relative;
-}
-
 /* Custom trigger (two-line name + role does not fit fr-btn). It inherits the
    --idle/--hover/--active pair from its container, like DSFR tertiary buttons,
    and copies the fr-translate__btn expanded state. See 0005. */
-.dsaasfr-user-menu__trigger {
+.dsaasfr-user-menu :deep(.dsaasfr-user-menu__trigger) {
   display: flex;
   align-items: center;
   gap: var(--dsaasfr-space-3v);
@@ -165,15 +117,15 @@ const itemClass = (item: DsaasfrUserMenuItem) => [
   background-color: var(--idle);
 }
 
-.dsaasfr-user-menu__trigger:hover {
+.dsaasfr-user-menu :deep(.dsaasfr-user-menu__trigger:hover) {
   background-color: var(--hover);
 }
 
-.dsaasfr-user-menu__trigger:active {
+.dsaasfr-user-menu :deep(.dsaasfr-user-menu__trigger:active) {
   background-color: var(--active);
 }
 
-.dsaasfr-user-menu__trigger[aria-expanded="true"] {
+.dsaasfr-user-menu :deep(.dsaasfr-user-menu__trigger[aria-expanded="true"]) {
   --idle: transparent;
   --hover: var(--background-open-blue-france-hover);
   --active: var(--background-open-blue-france-active);
@@ -182,7 +134,7 @@ const itemClass = (item: DsaasfrUserMenuItem) => [
   color: var(--text-active-blue-france);
 }
 
-.dsaasfr-user-menu__trigger[aria-expanded="true"]:hover {
+.dsaasfr-user-menu :deep(.dsaasfr-user-menu__trigger[aria-expanded="true"]:hover) {
   background-color: var(--hover);
 }
 
@@ -191,7 +143,7 @@ const itemClass = (item: DsaasfrUserMenuItem) => [
   color: var(--text-action-high-blue-france);
 }
 
-.dsaasfr-user-menu__trigger[aria-expanded="true"] .dsaasfr-user-menu__chevron {
+.dsaasfr-user-menu :deep([aria-expanded="true"]) .dsaasfr-user-menu__chevron {
   transform: rotate(-180deg);
 }
 
@@ -214,29 +166,9 @@ const itemClass = (item: DsaasfrUserMenuItem) => [
   overflow-wrap: anywhere;
 }
 
-/* Layout-only overrides of fr-menu: it is designed to drop below a header nav item
-   (top: 100%, 20rem wide). Here it spans the sidebar and opens upwards. */
-.dsaasfr-user-menu__panel.fr-menu {
-  right: 0;
-  left: 0;
-  width: auto;
+.dsaasfr-user-menu__list {
   margin: 0;
   padding: 0;
-}
-
-.dsaasfr-user-menu--top .dsaasfr-user-menu__panel.fr-menu {
-  top: auto;
-  bottom: calc(100% + var(--dsaasfr-space-1v));
-}
-
-.dsaasfr-user-menu--bottom .dsaasfr-user-menu__panel.fr-menu {
-  top: calc(100% + var(--dsaasfr-space-1v));
-}
-
-.dsaasfr-user-menu__list.fr-menu__list {
-  width: auto;
-  margin: 0;
-  padding: var(--dsaasfr-space-1w) 0;
   list-style: none;
 }
 

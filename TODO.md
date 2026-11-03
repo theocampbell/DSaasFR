@@ -5,12 +5,13 @@ are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can 
 
 ## 1. Finish the shell (base for v0.1.0)
 
-- [ ] 🤖 **Page title & announcement**: browser tab title (`document.title`, RGAA 8.6)
-      and a page-change announcement for screen readers, from the same route titles as
-      the breadcrumb.
-- [ ] 🤖 **Filters** (in the toolbar): dropdown/popover extracted from the user menu,
-      Linear-style filter chip (field / operator / values / remove, each part editable),
-      "Filtrer" trigger opening a dropdown; filter logic stays in the app (playground example).
+- [ ] 🤖 **Page titles from loaded data** (after filters): one title per page, set by
+      the page once its data is loaded (e.g. dossier number, applicant), feeding together
+      the breadcrumb's current level, the `<h1>`, the browser tab (`document.title`,
+      RGAA 8.6) and a page-change announcement for screen readers.
+- [ ] 🤖 **Integration guide + fake auth in the playground**: layout route, auth store,
+      role-filtered navigation and actions, router guard (an "instructeur" and an "admin"
+      seeing different things).
 - [ ] 🤖 Review pass by `dsfr-guardian` + `a11y-auditor` on each component above.
 - [ ] 👤 Read the decision records (docs/decisions) and mark the ones you agree with
       **Accepted**.
@@ -72,5 +73,7 @@ are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can 
 - [x] `DsaasfrToolbar`: generic second row, `start` / `end` slots (decision 0007).
 - [x] `DsaasfrPreviewPanel` + shell layouts (push / overlay / full screen), focus, Escape,
       in the URL with `usePreviewQuery` (decision 0008).
+- [x] Filters: `DsaasfrDropdown` (shared with the user menu) + `DsaasfrFilterChip`,
+      Linear-style; filter logic example in the playground (decision 0009).
 - [x] Component prefix renamed `Dsfs` → `Dsaasfr` (CSS `dsaasfr-`): one name everywhere,
       clearly distinct from Vue DSFR's `Dsfr`, mirrors its convention.

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Long, realistic content per page, to test scrolling in the shell.
-import { activity, dossiers, lorem, usagers } from './fakeData'
+import { activity, lorem, usagers } from './fakeData'
+import { filteredDossiers as dossiers } from './filters'
 
 const props = defineProps<{ path: string }>()
 const emit = defineEmits<{ preview: [id: string] }>()
@@ -51,6 +52,12 @@ const stats = [
   </template>
 
   <!-- Dossiers: DSFR table markup so the case number can be a link -->
+  <p
+    v-else-if="path === '/dossiers' && !dossiers.length"
+    class="fr-mt-4w"
+  >
+    Aucun dossier ne correspond à ces filtres.
+  </p>
   <div
     v-else-if="path === '/dossiers'"
     class="fr-table"
@@ -59,7 +66,7 @@ const stats = [
       <div class="fr-table__container">
         <div class="fr-table__content">
           <table>
-            <caption>Dossiers en cours (40)</caption>
+            <caption>Dossiers en cours ({{ dossiers.length }})</caption>
             <thead>
               <tr>
                 <th
