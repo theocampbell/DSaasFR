@@ -18,7 +18,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'DRAFT. Application layout: full-height sidebar carrying the bloc-marque and the navigation (no DSFR header), breadcrumb row, toolbar row, main content and an optional preview panel. See docs/decisions/0002 and 0003.',
+          'BROUILLON. Mise en page d’application : barre latérale sur toute la hauteur portant le bloc-marque et la navigation (pas d’en-tête DSFR), ligne du fil d’Ariane, ligne de la barre d’outils, contenu principal et panneau d’aperçu facultatif. Voir les fiches de décision docs/decisions/0002 et 0003.',
       },
     },
   },

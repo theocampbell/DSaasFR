@@ -12,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'One active filter, Linear-style: `[field] [operator] [values] [×]`, looking like a DSFR neutral tag split into segments. Presentational: each part whose slot is provided opens a dropdown with that content (the app decides: field list, condition radios, value checkboxes); × emits `remove`. The filter logic stays in the app. See docs/decisions/0009 and the playground (Dossiers page).',
+          'Une étiquette de filtre représente un filtre actif, à la manière de Linear : `[field] [operator] [values] [×]`, avec l’apparence d’un tag neutre DSFR découpé en segments. Composant de présentation : chaque partie dont le slot est fourni ouvre un menu déroulant avec ce contenu (c’est l’application qui décide : liste de champs, boutons radio de condition, cases à cocher de valeurs) ; × émet `remove`. La logique de filtrage reste dans l’application. Voir la fiche de décision docs/decisions/0009 et le playground (page Dossiers).',
       },
     },
   },

@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Second row of the app shell. Generic container: put anything in `start` (left) and `end` (right) — buttons, triggers, active filters, view switches. Items wrap as a whole on narrow screens. Optional `label` exposes it as a labelled group. See docs/decisions/0007.',
+          'Seconde ligne du shell applicatif. Conteneur générique : placez ce que vous voulez dans `start` (à gauche) et `end` (à droite) — boutons, déclencheurs, filtres actifs, choix de vue. Sur écran étroit, les éléments passent à la ligne d’un bloc. La prop facultative `label` l’expose comme un groupe nommé. Voir la fiche de décision docs/decisions/0007.',
       },
     },
   },

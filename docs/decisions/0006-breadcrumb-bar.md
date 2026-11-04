@@ -1,71 +1,81 @@
-# 0006 — Breadcrumb bar: router-driven breadcrumb + key action
+# 0006 — Barre de fil d'Ariane : fil d'Ariane piloté par le routeur + action principale
 
-- **Status**: Proposed
-- **Date**: 2026-11-02
-- **Components**: DsaasfrBreadcrumbBar, `useRouteBreadcrumb`
+- **Statut** : Proposé
+- **Date** : 2026-11-02
+- **Composants** : DsaasfrBreadcrumbBar, `useRouteBreadcrumb`
 
-## DSFR starting point
+## Point de départ DSFR
 
-- [Fil d'Ariane](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/fil-d-ariane):
-  `nav.fr-breadcrumb > ol.fr-breadcrumb__list > li > a.fr-breadcrumb__link`, current page
-  last with `aria-current="page"`, label "vous êtes ici :". On mobile the whole trail hides
-  behind a "Voir le fil d'Ariane" button. Placed above the page title, with page margins.
-- Vue DSFR `DsfrBreadcrumb` takes a `links` array only: no slot for a collapse button
-  or for actions.
+- [Fil d'Ariane](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/fil-d-ariane) :
+  `nav.fr-breadcrumb > ol.fr-breadcrumb__list > li > a.fr-breadcrumb__link`, page courante
+  en dernier avec `aria-current="page"`, intitulé « vous êtes ici : ». En mobile, tout le
+  fil est masqué derrière un bouton « Voir le fil d'Ariane ». Placé au-dessus du titre de
+  la page, avec les marges de page.
+- Le `DsfrBreadcrumb` de Vue DSFR n'accepte qu'un tableau `links` : aucun slot pour un
+  bouton de repli ni pour des actions.
 
-## SaaS need
+## Besoin SaaS
 
-App pages are 3–5 levels deep (list → case file → documents → document). The row above the
-content has free horizontal space; users expect the page's key action (e.g. "Nouveau
-dossier") at the top right, as in most SaaS tools. Teams should not hand-wire the
-breadcrumb on every page.
+Les pages d'application ont 3 à 5 niveaux de profondeur (liste → dossier → pièces →
+pièce). La ligne au-dessus du contenu dispose d'espace horizontal libre ; les utilisateurs
+s'attendent à trouver l'action principale de la page (par ex. « Nouveau dossier ») en haut
+à droite, comme dans la plupart des outils SaaS. Les équipes ne devraient pas avoir à
+câbler le fil d'Ariane à la main sur chaque page.
 
-## Decision
+## Décision
 
-- **Official DSFR breadcrumb markup** and classes, rendered by `DsaasfrBreadcrumbBar`
-  (not `DsfrBreadcrumb`, which cannot host the "…" button). Layout-only overrides: no page
-  margins, one line, flex.
-- **Right side: `actions` slot** for the page's key action(s), outside the `nav`.
-- **Router-driven**: `useRouteBreadcrumb()` resolves every path prefix (`/`, `/dossiers`,
-  `/dossiers/2041`) and reads the matching route's `meta.breadcrumb` (or `meta.title`):
-  a string or a function of the route; `false` hides a level. Works with flat and nested
-  routes. An `items` prop overrides it. The same trail gives the page `<h1>`.
-- **Long trails**: above `maxItems` (default 4) levels, the middle ones collapse into a
-  "…" button (first level, "…", last levels kept). It reveals the full trail; a new page
-  starts collapsed again.
-- **Long labels** (measured in the browser, after review): ancestors never shrink (capped
-  at 16rem); only the current page shrinks, down to 10rem. If the trail still does not fit
-  on one line — narrow window, 200% text zoom — it **wraps**, and the current page wraps its
-  text, so no level is ever cut to a fragment. Labels that are actually truncated get a
-  tooltip (on the `li`, because the DSFR gives the current page `pointer-events: none`).
-  Tooltips are not reachable by keyboard or touch, so a **focused** link whose label is
-  cut wraps its text in place (and the trail wraps) instead of widening off-screen;
-  labels that fit do not move. The current page is not focusable: its full text must be
-  the page `<h1>` (**required** of apps using the bar).
-- Ancestors without a destination render as plain text (breadcrumb mention grey, no
-  underline, `fr-text--xs` like the links) — a state the DSFR does not define; only the last level gets
-  `aria-current="page"` (links use a `custom` RouterLink so vue-router does not add its
-  own `aria-current`).
-- **Narrow screens / high zoom**: the DSFR hides the trail behind "Voir le fil d'Ariane"
-  below 48em; we keep it visible and wrapping below 62em, so every level stays readable.
-- **Key action**: one primary button per view, size `sm` in the shell bars (toolbar uses
-  secondary / tertiary buttons).
+- **Balisage et classes officiels du fil d'Ariane DSFR**, rendus par
+  `DsaasfrBreadcrumbBar` (et non `DsfrBreadcrumb`, qui ne peut pas accueillir le bouton
+  « … »). Surcharges de mise en page uniquement : pas de marges de page, une ligne, flex.
+- **À droite : slot `actions`** pour l'action ou les actions principales de la page, en
+  dehors du `nav`.
+- **Piloté par le routeur** : `useRouteBreadcrumb()` résout chaque préfixe de chemin (`/`,
+  `/dossiers`, `/dossiers/2041`) et lit `meta.breadcrumb` (ou `meta.title`) de la route
+  correspondante : une chaîne ou une fonction de la route ; `false` masque un niveau.
+  Fonctionne avec des routes à plat ou imbriquées. Une prop `items` le remplace. Le même
+  fil fournit le `<h1>` de la page.
+- **Fils longs** : au-delà de `maxItems` niveaux (4 par défaut), les niveaux intermédiaires
+  se replient dans un bouton « … » (premier niveau, « … », derniers niveaux conservés). Il
+  révèle le fil complet ; une nouvelle page repart repliée.
+- **Libellés longs** (mesurés dans le navigateur, après revue) : les ancêtres ne rétrécissent
+  jamais (plafonnés à 16rem) ; seule la page courante rétrécit, jusqu'à 10rem. Si le fil ne
+  tient toujours pas sur une ligne — fenêtre étroite, zoom du texte à 200 % — il **passe à
+  la ligne**, et le texte de la page courante passe aussi à la ligne, de sorte qu'aucun
+  niveau n'est jamais réduit à un fragment. Les libellés réellement tronqués reçoivent une
+  infobulle (sur le `li`, car le DSFR applique `pointer-events: none` à la page courante).
+  Les infobulles ne sont accessibles ni au clavier ni au tactile : un lien **ayant le
+  focus** dont le libellé est tronqué fait donc passer son texte à la ligne sur place (et le
+  fil passe à la ligne) au lieu de s'élargir hors de l'écran ; les libellés qui tiennent
+  ne bougent pas. La page courante ne peut pas recevoir le focus : son texte complet doit
+  être le `<h1>` de la page (**obligatoire** pour les applications qui utilisent la barre).
+- Les ancêtres sans destination s'affichent en texte simple (gris mention du fil d'Ariane,
+  sans soulignement, `fr-text--xs` comme les liens) — un état que le DSFR ne définit pas ;
+  seul le dernier niveau reçoit `aria-current="page"` (les liens utilisent un RouterLink
+  `custom` pour que vue-router n'ajoute pas son propre `aria-current`).
+- **Écrans étroits / fort zoom** : le DSFR masque le fil derrière « Voir le fil d'Ariane »
+  sous 48em ; nous le gardons visible et passant à la ligne sous 62em, pour que chaque
+  niveau reste lisible.
+- **Action principale** : un seul bouton primaire par vue, taille `sm` dans les barres du
+  shell (la barre d'outils utilise des boutons secondaires / tertiaires).
 
-## Accessibility consequences
+## Conséquences pour l'accessibilité
 
-- Same landmark and labels as the DSFR breadcrumb (`nav` "vous êtes ici :", `aria-current`).
-- "…" is a real `<button>` (styled with `fr-breadcrumb__link`; `fr-breadcrumb__button` is
-  hidden from md up): name "Afficher tous les niveaux du fil d'Ariane (n)". No
-  `aria-expanded`: it disappears on activation, and focus moves to the first revealed
-  level, so focus is never lost. Its target is small: fine for WCAG 2.1 AA, below the
-  WCAG 2.2 target-size minimum (2.5.8).
-- No list id unless the app passes one (nothing references it), so no duplicate ids.
-- The key action is outside the navigation landmark, after the trail in reading order.
+- Même région et mêmes intitulés que le fil d'Ariane DSFR (`nav` « vous êtes ici : »,
+  `aria-current`).
+- « … » est un vrai `<button>` (stylé avec `fr-breadcrumb__link` ; `fr-breadcrumb__button`
+  est masqué à partir de md) : nom « Afficher tous les niveaux du fil d'Ariane (n) ». Pas
+  d'`aria-expanded` : il disparaît à l'activation, et le focus passe au premier niveau
+  révélé, de sorte que le focus n'est jamais perdu. Sa cible est petite : conforme au WCAG
+  2.1 AA, mais sous le minimum de taille de cible du WCAG 2.2 (2.5.8).
+- Pas d'id sur la liste sauf si l'application en fournit un (rien n'y fait référence),
+  donc pas d'identifiants dupliqués.
+- L'action principale est en dehors de la région de navigation, après le fil dans l'ordre
+  de lecture.
 
-## Open questions
+## Questions ouvertes
 
-1. Should a page be able to put more than one action on the right, or one primary action
-   plus an overflow menu (to be designed with the toolbar row)?
-2. `document.title` (browser tab, RGAA 8.6) and a page-change announcement for screen
-   readers should come from the same route titles — flagged by the a11y review, next item
-   in TODO.md.
+1. Une page doit-elle pouvoir placer plus d'une action à droite, ou une action primaire
+   plus un menu de débordement (à concevoir avec la ligne de la barre d'outils) ?
+2. `document.title` (onglet du navigateur, RGAA 8.6) et une annonce de changement de page
+   pour les lecteurs d'écran devraient provenir des mêmes titres de route — signalé par la
+   revue d'accessibilité, prochain élément de TODO.md.

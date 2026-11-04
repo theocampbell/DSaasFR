@@ -1,31 +1,32 @@
-# 0001 — Build on Vue DSFR, extend rather than replace
+# 0001 — S'appuyer sur Vue DSFR : étendre plutôt que remplacer
 
-- **Status**: Proposed
-- **Date**: 2026-11-01
-- **Components**: all
+- **Statut** : Proposé
+- **Date** : 2026-11-01
+- **Composants** : tous
 
-## DSFR starting point
+## Point de départ DSFR
 
-Government Vue apps already use `@gouvminint/vue-dsfr`, which wraps `@gouvfr/dsfr`
-(CSS, tokens, fonts, icons) in `Dsfr*` components.
+Les applications Vue de l'État utilisent déjà `@gouvminint/vue-dsfr`, qui encapsule
+`@gouvfr/dsfr` (CSS, jetons, polices, icônes) dans des composants `Dsfr*`.
 
-## SaaS need
+## Besoin SaaS
 
-Teams building back-offices and SaaS-like tools need application patterns (app shell,
-sidebar navigation, toolbars, preview panel, data views) that the DSFR does not provide,
-and they hesitate to interpret the DSFR on their own.
+Les équipes qui développent des back-offices et des outils de type SaaS ont besoin de
+patterns d'application (shell applicatif, navigation en barre latérale, barres d'outils,
+panneau d'aperçu, vues de données) que le DSFR ne fournit pas, et elles hésitent à
+interpréter le DSFR par elles-mêmes.
 
-## Decision
+## Décision
 
-- `@gouvminint/vue-dsfr` and `vue` are **peer dependencies**; DSaaSFR never re-implements
-  a component Vue DSFR already ships.
-- Same consumption model as Vue DSFR: `app.use(DSaaSFR)` or per-component imports,
-  `import 'dsaasfr/styles'`.
-- Same conventions: `Dsaasfr` prefix, props + `v-model` + slots, TypeScript types.
-- Styling uses DSFR CSS variables only (colours, themes) and the DSFR spacing scale,
-  enforced by Stylelint.
+- `@gouvminint/vue-dsfr` et `vue` sont des **dépendances pair** (peer dependencies) ;
+  DSaaSFR ne réimplémente jamais un composant déjà fourni par Vue DSFR.
+- Même mode d'utilisation que Vue DSFR : `app.use(DSaaSFR)` ou import composant par
+  composant, `import 'dsaasfr/styles'`.
+- Mêmes conventions : préfixe `Dsaasfr`, props + `v-model` + slots, types TypeScript.
+- Les styles n'utilisent que les variables CSS du DSFR (couleurs, thèmes) et l'échelle
+  d'espacement du DSFR, ce que vérifie Stylelint.
 
-## Accessibility consequences
+## Conséquences pour l'accessibilité
 
-Inherits Vue DSFR / DSFR accessibility for composed components; every new pattern
-follows WAI-ARIA APG and is tested with axe.
+Les composants composés héritent de l'accessibilité de Vue DSFR / du DSFR ; chaque
+nouveau pattern suit le WAI-ARIA APG et est testé avec axe.

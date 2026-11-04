@@ -21,7 +21,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'The signed-in person as a trigger (name + role) opening account actions: links (profile, preferences) and buttons (display settings, log out). Disclosure pattern like the DSFR header menus. Designed for the DsaasfrSidebar footer; opens upwards by default. See docs/decisions/0005.',
+          'La personne connectée sert de déclencheur (nom + rôle) et ouvre les actions de compte : liens (profil, préférences) et boutons (paramètres d’affichage, déconnexion). Pattern de divulgation comme les menus de l’en-tête DSFR. Conçu pour le pied de DsaasfrSidebar ; s’ouvre vers le haut par défaut. Voir la fiche de décision docs/decisions/0005.',
       },
     },
   },

@@ -17,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Application sidebar that replaces the DSFR header: bloc-marque and service name at the top (banner landmark), primary navigation below (groups = secondary navigation, opened automatically when they contain the current page), footer slot for account and settings. Active state is derived from vue-router. See docs/decisions/0003.',
+          'Barre latérale d’application qui remplace l’en-tête DSFR : bloc-marque et nom du service en haut (région banner), navigation principale en dessous (groupes = navigation secondaire, ouverts automatiquement lorsqu’ils contiennent la page courante), slot de pied pour le compte et les réglages. L’état actif est déduit de vue-router. Voir la fiche de décision docs/decisions/0003.',
       },
     },
   },

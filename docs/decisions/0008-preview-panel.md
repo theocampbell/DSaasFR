@@ -1,61 +1,68 @@
-# 0008 — Preview panel
+# 0008 — Panneau d'aperçu
 
-- **Status**: Proposed
-- **Date**: 2026-11-03
-- **Components**: DsaasfrAppShell (`preview` slot), DsaasfrPreviewPanel, `usePreviewQuery`
+- **Statut** : Proposé
+- **Date** : 2026-11-03
+- **Composants** : DsaasfrAppShell (slot `preview`), DsaasfrPreviewPanel, `usePreviewQuery`
 
-## DSFR starting point
+## Point de départ DSFR
 
-- [Modale](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/modale):
-  centred dialog, "Fermer" close button (`fr-btn--close`), focus trapped.
-- No side panel / drawer component.
+- [Modale](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/modale) :
+  boîte de dialogue centrée, bouton de fermeture « Fermer » (`fr-btn--close`), focus piégé.
+- Aucun composant de panneau latéral / tiroir.
 
-## SaaS need
+## Besoin SaaS
 
-Back-office users check an item (case file, document) without leaving the list, then the
-next one. A modal hides the list and must be closed each time; a side panel (as in Claude,
-Linear, mail clients) keeps the list visible and the preview open while moving on.
+Les utilisateurs de back-office consultent un élément (dossier, document) sans quitter la
+liste, puis le suivant. Une modale masque la liste et doit être fermée à chaque fois ; un
+panneau latéral (comme dans Claude, Linear ou les clients de messagerie) garde la liste
+visible et l'aperçu ouvert pendant que l'on passe à l'élément suivant.
 
-## Decision
+## Décision
 
-- **Layout by the shell**, by width:
-  - ≥ 62em (DSFR lg): the panel **pushes** the content (third column, pinned). On medium
-    screens the content gets narrow and wide tables scroll inside their own frame
-    (`fr-table`). An earlier version floated the panel over the content between 62 and
-    78em; the a11y review showed focus could land on controls hidden under it (RGAA 10.7)
-    and the list behind could not be used to preview the next item, so it was dropped:
-    nothing is ever covered.
-  - < 62em (high zoom): **full screen**, fixed, layer `--ground + 1500` (above a DSFR
-    header, below DSFR modals); the rest of the page — sidebar / DSFR header, content and
-    skip links — is `inert`.
-- **DsaasfrPreviewPanel** for the content: sticky header with the title (heading), an
-  optional description, the official DSFR close button (`fr-btn--close`, text "Fermer",
-  name "Fermer l'aperçu"), optional actions and footer, scrolling body.
-- **In the URL**: `usePreviewQuery()` keeps the item in `?apercu=…`. Opening pushes a history
-  entry (Back closes the preview), closing replaces it; a shared link opens the preview.
-- No resizing for now (a resize handle must be keyboard-operable; to add if users ask).
+- **Mise en page assurée par le shell**, selon la largeur :
+  - ≥ 62em (lg du DSFR) : le panneau **pousse** le contenu (troisième colonne, fixée). Sur
+    les écrans moyens, le contenu devient étroit et les tableaux larges défilent dans leur
+    propre cadre (`fr-table`). Une version antérieure faisait flotter le panneau au-dessus
+    du contenu entre 62 et 78em ; la revue d'accessibilité a montré que le focus pouvait
+    arriver sur des contrôles masqués dessous (RGAA 10.7) et que la liste en arrière-plan
+    ne permettait plus d'afficher l'aperçu de l'élément suivant ; cette version a donc été
+    abandonnée : rien n'est jamais recouvert.
+  - < 62em (fort zoom) : **plein écran**, fixe, couche `--ground + 1500` (au-dessus d'un
+    en-tête DSFR, en dessous des modales DSFR) ; le reste de la page — barre latérale /
+    en-tête DSFR, contenu et liens d'évitement — est `inert`.
+- **DsaasfrPreviewPanel** pour le contenu : en-tête fixé (sticky) avec le titre (niveau de
+  titre), une description facultative, le bouton de fermeture officiel du DSFR
+  (`fr-btn--close`, texte « Fermer », nom « Fermer l'aperçu »), des actions et un pied
+  facultatifs, un corps qui défile.
+- **Dans l'URL** : `usePreviewQuery()` conserve l'élément dans `?apercu=…`. L'ouverture
+  ajoute une entrée à l'historique (le bouton Retour ferme l'aperçu), la fermeture la
+  remplace ; un lien partagé ouvre l'aperçu.
+- Pas de redimensionnement pour l'instant (une poignée de redimensionnement doit être
+  utilisable au clavier ; à ajouter si les utilisateurs le demandent).
 
-- Header built by us: Vue DSFR does not export DsfrModal's header on its own; the close
-  button is the official `fr-btn--close fr-btn` markup. Header and footer backgrounds
-  inherit the panel surface.
+- En-tête construit par nos soins : Vue DSFR n'exporte pas séparément l'en-tête de
+  DsfrModal ; le bouton de fermeture utilise le balisage officiel `fr-btn--close fr-btn`.
+  Les fonds de l'en-tête et du pied héritent de la surface du panneau.
 
-## Accessibility consequences
+## Conséquences pour l'accessibilité
 
-- Exception to the DSFR focus ring: the title gets focus programmatically on open; its
-  ring is hidden for mouse users only (`:focus:not(:focus-visible)`), kept for keyboard.
+- Exception à l'anneau de focus du DSFR : le titre reçoit le focus par programmation à
+  l'ouverture ; son anneau est masqué pour les utilisateurs de la souris uniquement
+  (`:focus:not(:focus-visible)`), conservé pour le clavier.
 
-- The panel is a `complementary` region named by its title (`aria-labelledby`).
-- When the **user** opens it, focus moves to the title (announced, and the panel content
-  is next in the tab order). Opened from a shared link / page load, focus stays at the page
-  start (no focus stealing).
-- Escape (focus inside) and "Fermer" close it; focus returns to the element that opened it.
-- Full screen below 62em: the rest of the page, skip links included, is `inert`, so
-  focus cannot go behind it.
-- The breadcrumb and toolbar rows sit inside `<main>` (their text belongs to a landmark,
-  RGAA 12.6); the "Contenu" skip link lands on them.
-- Each "Aperçu" trigger names its item ("Aperçu du dossier D-2026-2041").
+- Le panneau est une région `complementary` nommée par son titre (`aria-labelledby`).
+- Lorsque l'**utilisateur** l'ouvre, le focus passe sur le titre (annoncé, et le contenu du
+  panneau suit dans l'ordre de tabulation). S'il est ouvert depuis un lien partagé / au
+  chargement de la page, le focus reste en début de page (pas de vol de focus).
+- Échap (focus à l'intérieur) et « Fermer » le ferment ; le focus revient à l'élément qui
+  l'a ouvert.
+- En plein écran sous 62em : le reste de la page, liens d'évitement compris, est `inert`,
+  de sorte que le focus ne peut pas passer derrière.
+- Les lignes du fil d'Ariane et de la barre d'outils se trouvent dans `<main>` (leur texte
+  appartient à une région, RGAA 12.6) ; le lien d'évitement « Contenu » y mène.
+- Chaque déclencheur « Aperçu » nomme son élément (« Aperçu du dossier D-2026-2041 »).
 
-## Open questions
+## Questions ouvertes
 
-1. Next / previous item buttons in the panel header to move through a list?
-2. "Open full page" action as a standard header button?
+1. Des boutons élément suivant / précédent dans l'en-tête du panneau pour parcourir une liste ?
+2. Une action « Ouvrir en pleine page » comme bouton standard de l'en-tête ?

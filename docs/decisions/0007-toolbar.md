@@ -1,38 +1,45 @@
-# 0007 — Toolbar: generic second row with start / end slots
+# 0007 — Barre d'outils : seconde ligne générique avec slots start / end
 
-- **Status**: Proposed
-- **Date**: 2026-11-03
-- **Components**: DsaasfrToolbar
+- **Statut** : Proposé
+- **Date** : 2026-11-03
+- **Composants** : DsaasfrToolbar
 
-## DSFR starting point
+## Point de départ DSFR
 
-No DSFR toolbar component. The DSFR offers buttons and button groups (`fr-btns-group`),
-tags, segmented controls, but no row combining them above a list.
+Aucun composant de barre d'outils dans le DSFR. Le DSFR propose des boutons et des groupes
+de boutons (`fr-btns-group`), des tags, des contrôles segmentés, mais aucune ligne qui les
+combine au-dessus d'une liste.
 
-## SaaS need
+## Besoin SaaS
 
-List pages need a row for context (count, active filters, view switches) and tools
-(filter, export, display options). What goes in it varies per app: one team puts filter
-chips on the left and a "Filtrer" trigger on the right, another puts view tabs or bulk
-actions. The library must not decide that.
+Les pages de liste ont besoin d'une ligne pour le contexte (nombre de résultats, filtres
+actifs, choix de vue) et pour les outils (filtrer, exporter, options d'affichage). Son
+contenu varie selon l'application : une équipe met des étiquettes de filtre à gauche et un
+déclencheur « Filtrer » à droite, une autre met des onglets de vue ou des actions groupées.
+Ce n'est pas à la bibliothèque d'en décider.
 
-## Decision
+## Décision
 
-- `DsaasfrToolbar`: two slots, `start` (left) and `end` (right). The component owns
-  layout only — spacing (DSFR scale), alignment, wrapping. It knows nothing about filters;
-  filter components (chips, dropdown) are separate and go into these slots.
-- Items keep their natural width and wrap as a whole (never squeezed until labels
-  break), `end` stays right-aligned, and on narrow screens `end` wraps below `start`.
-- Own flex layout rather than `fr-btns-group` / `DsfrButtonGroup`: those lay out buttons
-  only; the toolbar holds mixed content (text, filter chips, triggers, menus).
-- Same pattern as the breadcrumb bar (0006): content left, actions right. One primary
-  button per view lives in the breadcrumb bar; the toolbar uses secondary / tertiary.
+- `DsaasfrToolbar` : deux slots, `start` (à gauche) et `end` (à droite). Le composant ne
+  gère que la mise en page — espacement (échelle DSFR), alignement, passage à la ligne. Il
+  ne sait rien des filtres ; les composants de filtre (étiquettes, menu déroulant) sont
+  séparés et se placent dans ces slots.
+- Les éléments gardent leur largeur naturelle et passent à la ligne d'un bloc (jamais
+  compressés au point de couper les libellés), `end` reste aligné à droite et, sur écran
+  étroit, `end` passe sous `start`.
+- Mise en page flex propre plutôt que `fr-btns-group` / `DsfrButtonGroup` : ceux-ci ne
+  disposent que des boutons ; la barre d'outils contient des contenus variés (texte,
+  étiquettes de filtre, déclencheurs, menus).
+- Même pattern que la barre de fil d'Ariane (0006) : contenu à gauche, actions à droite.
+  Le seul bouton primaire de la vue se trouve dans la barre de fil d'Ariane ; la barre
+  d'outils utilise des boutons secondaires / tertiaires.
 
-## Accessibility consequences
+## Conséquences pour l'accessibilité
 
-- **Not `role="toolbar"`**: the ARIA toolbar pattern means one tab stop and arrow-key
-  navigation, which suits icon button rows, not mixed content (filter chips with several
-  buttons each, menus, text). Each control stays in the normal tab order.
-- With a `label` prop it is a labelled group (`role="group"`), e.g. "Filtres et actions
-  de la liste"; without it, plain layout.
-- Reading order = visual order: `start` then `end`.
+- **Pas de `role="toolbar"`** : le pattern ARIA toolbar implique un seul arrêt de
+  tabulation et une navigation aux flèches, ce qui convient aux rangées de boutons à
+  icône, pas aux contenus variés (étiquettes de filtre comportant chacune plusieurs
+  boutons, menus, texte). Chaque contrôle reste dans l'ordre de tabulation normal.
+- Avec une prop `label`, c'est un groupe nommé (`role="group"`), par ex. « Filtres et
+  actions de la liste » ; sans elle, simple mise en page.
+- Ordre de lecture = ordre visuel : `start` puis `end`.

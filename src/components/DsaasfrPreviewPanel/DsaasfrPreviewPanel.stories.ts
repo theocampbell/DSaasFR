@@ -11,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Content of the DsaasfrAppShell `preview` slot: sticky header (title, DSFR close button), optional actions and footer, scrolling body. In the shell, the title names the preview region and receives focus when the user opens it; Escape and "Fermer" close it and focus returns to the opener. Layout is handled by the shell: pushes the content from 78em, slides over it from 62em, full screen (rest of the page inert) below. Pair with `usePreviewQuery()` to keep the preview in the URL. See docs/decisions/0008.',
+          'Contenu du slot `preview` de DsaasfrAppShell : en-tête fixé (titre, bouton de fermeture DSFR), actions et pied facultatifs, corps qui défile. Dans le shell, le titre nomme la région d’aperçu et reçoit le focus lorsque l’utilisateur l’ouvre ; Échap et « Fermer » la ferment et le focus revient à l’élément déclencheur. La mise en page est assurée par le shell : le panneau pousse le contenu à partir de 78em, glisse par-dessus à partir de 62em, et passe en plein écran (reste de la page inerte) en dessous. À associer à `usePreviewQuery()` pour conserver l’aperçu dans l’URL. Voir la fiche de décision docs/decisions/0008.',
       },
     },
   },

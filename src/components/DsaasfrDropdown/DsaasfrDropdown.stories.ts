@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'A trigger button opening a floating panel (disclosure pattern, official DSFR menu surface). Escape returns focus to the trigger; click outside / tab out close it; `autofocus` moves focus into the panel; the panel stays inside the viewport. Used by DsaasfrUserMenu, DsaasfrFilterChip and the "Filtrer" trigger. See docs/decisions/0009.',
+          'Un bouton déclencheur qui ouvre un panneau flottant (pattern de divulgation, surface officielle du menu DSFR). Échap rend le focus au déclencheur ; un clic à l’extérieur ou une sortie avec Tab le ferment ; `autofocus` place le focus dans le panneau ; le panneau reste dans la fenêtre d’affichage. Utilisé par DsaasfrUserMenu, DsaasfrFilterChip et le déclencheur « Filtrer ». Voir la fiche de décision docs/decisions/0009.',
       },
     },
   },

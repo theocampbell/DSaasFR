@@ -1,28 +1,28 @@
-# NNNN — Title
+# NNNN — Titre
 
-- **Status**: Proposed | Accepted | Superseded by NNNN
-- **Date**: YYYY-MM-DD
-- **Components**: DsaasfrXxx
+- **Statut** : Proposé | Accepté | Remplacé par NNNN
+- **Date** : AAAA-MM-JJ
+- **Composants** : DsaasfrXxx
 
-## DSFR starting point
+## Point de départ DSFR
 
-Which DSFR page / component / Vue DSFR component this builds on (with links), and what it says.
+Page, composant DSFR ou composant Vue DSFR sur lequel on s'appuie (avec liens), et ce qu'il prévoit.
 
-## SaaS need
+## Besoin SaaS
 
-What a public-service back-office or SaaS user needs that the DSFR pattern does not cover.
+Ce dont a besoin l'utilisateur d'un back-office de service public ou d'un SaaS, et que le pattern DSFR ne couvre pas.
 
-## Options considered
+## Options envisagées
 
 1. …
 2. …
 
-## Decision
+## Décision
 
-What we chose and why.
+Ce que nous avons retenu et pourquoi.
 
-## Accessibility consequences
+## Conséquences pour l'accessibilité
 
-Landmarks, keyboard model, focus management, RGAA criteria affected.
+Régions, modèle d'interaction au clavier, gestion du focus, critères RGAA concernés.
 
-## Open questions for the DSFR community
+## Questions ouvertes pour la communauté DSFR

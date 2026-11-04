@@ -1,26 +1,28 @@
-# 0002 — Application shell layout
+# 0002 — Mise en page du shell applicatif
 
-- **Status**: Proposed (draft — awaiting product owner design input)
-- **Date**: 2026-11-01
-- **Components**: DsaasfrAppShell (+ future DsaasfrSidebar, DsaasfrToolbar, DsaasfrPreviewPanel)
+- **Statut** : Proposé (brouillon — en attente des choix de conception du responsable produit)
+- **Date** : 2026-11-01
+- **Composants** : DsaasfrAppShell (+ futurs DsaasfrSidebar, DsaasfrToolbar, DsaasfrPreviewPanel)
 
-## DSFR starting point
+## Point de départ DSFR
 
-- [En-tête](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/en-tete):
-  mandatory bloc-marque, designed for websites (tall, centred in `fr-container`).
-- [Menu latéral](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/menu-lateral):
-  in-page side navigation, not an application-level primary navigation.
+- [En-tête](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/en-tete) :
+  bloc-marque obligatoire, conçu pour les sites web (haut, centré dans `fr-container`).
+- [Menu latéral](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/menu-lateral) :
+  navigation latérale au sein d'une page, et non navigation principale à l'échelle de
+  l'application.
 - [Fil d'Ariane](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/fil-d-ariane).
 - [Liens d'évitement](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/liens-d-evitement).
 
-## SaaS need
+## Besoin SaaS
 
-Back-office users spend hours in the tool. Today's DSFR pages stack everything vertically
-in a centred container, wasting screen width on large screens. Users need: persistent
-primary navigation, a sense of where they are, contextual actions/filters close to the
-content, and the ability to preview a document or item without leaving the list.
+Les utilisateurs de back-office passent des heures dans l'outil. Aujourd'hui, les pages
+DSFR empilent tout verticalement dans un conteneur centré, ce qui gaspille la largeur sur
+les grands écrans. Les utilisateurs ont besoin : d'une navigation principale persistante,
+de savoir où ils se trouvent, d'actions et de filtres contextuels proches du contenu, et
+de pouvoir afficher l'aperçu d'un document ou d'un élément sans quitter la liste.
 
-## Draft layout
+## Mise en page provisoire
 
 ```
 ┌─────────────┬────────────────────────────────────────┬──────────────┐
@@ -33,40 +35,46 @@ content, and the ability to preview a document or item without leaving the list.
 └─────────────┴────────────────────────────────────────┴──────────────┘
 ```
 
-The DSFR header is replaced by the sidebar brand block: see
+L'en-tête DSFR est remplacé par le bloc de marque de la barre latérale : voir
 [0003](0003-brand-in-sidebar.md).
 
-- **Breadcrumb row** = location (DsfrBreadcrumb, margins removed).
-- **Toolbar row** = page-level actions and filters (inspired by Linear).
-- **Preview panel** = optional `aside`, opened by the app (`v-model:preview-open`).
-- Below the DSFR `lg` breakpoint (62em, i.e. high zoom) the sidebar becomes the DSFR
-  mobile header and the other regions stack: see [0004](0004-narrow-screens.md).
+- **Ligne du fil d'Ariane** = emplacement (DsfrBreadcrumb, marges supprimées).
+- **Ligne de la barre d'outils** = actions et filtres au niveau de la page (inspiré de Linear).
+- **Panneau d'aperçu** = `aside` facultatif, ouvert par l'application (`v-model:preview-open`).
+- Sous le point de rupture `lg` du DSFR (62em, c'est-à-dire en cas de fort zoom), la barre
+  latérale devient l'en-tête mobile du DSFR et les autres zones s'empilent : voir
+  [0004](0004-narrow-screens.md).
 
-## Scrolling
+## Défilement
 
-The **page** scrolls; the sidebar, the breadcrumb + toolbar rows and the preview panel are
-pinned with `position: sticky`. An earlier version scrolled an inner `<main>` box: same
-look, but keyboard users could not scroll text-only pages without first focusing the box
-(axe `scrollable-region-focusable`, WCAG 2.1.1), and the router's scroll reset did not
-apply. With page scrolling, Page Down / Space, find-in-page and scroll restoration work
-natively. The pinned rows' height is mirrored into `scroll-padding-top` so focused
-elements are never hidden under them (WCAG 2.4.11). Below 62em (high zoom) nothing is
-pinned, to keep the little screen space for content.
+C'est la **page** qui défile ; la barre latérale, les lignes du fil d'Ariane et de la barre
+d'outils ainsi que le panneau d'aperçu sont fixés avec `position: sticky`. Une version
+antérieure faisait défiler une boîte `<main>` interne : même rendu, mais les utilisateurs
+du clavier ne pouvaient pas faire défiler les pages composées uniquement de texte sans
+d'abord donner le focus à la boîte (axe `scrollable-region-focusable`, WCAG 2.1.1), et la
+réinitialisation du défilement par le routeur ne s'appliquait pas. Avec le défilement de
+la page, Page suivante / Espace, la recherche dans la page et la restauration du
+défilement fonctionnent nativement. La hauteur des lignes fixées est reportée dans
+`scroll-padding-top` afin que les éléments ayant le focus ne soient jamais masqués
+dessous (WCAG 2.4.11). Sous 62em (fort zoom), rien n'est fixé, pour laisser le peu
+d'espace disponible au contenu.
 
-## Accessibility consequences
+## Conséquences pour l'accessibilité
 
-- Landmarks: `header` (from DsfrHeader), `nav` "Navigation principale", breadcrumb `nav`,
-  `main` (focus target of the skip link), `aside` "Aperçu".
-- Skip links: "Contenu" and "Menu".
-- Preview: the toggle gets `aria-controls` + `aria-expanded` via the `previewToggleAttrs`
-  slot prop; focus stays on the toggle when the panel opens and returns to it when the
-  panel closes from inside (RGAA 12.8).
-- To decide: whether the toolbar is a
-  plain group or an APG toolbar (arrow-key navigation); collapsed sidebar labelling.
+- Régions : `header` (fourni par DsfrHeader), `nav` « Navigation principale », `nav` du
+  fil d'Ariane, `main` (cible du lien d'évitement), `aside` « Aperçu ».
+- Liens d'évitement : « Contenu » et « Menu ».
+- Aperçu : le bouton de bascule reçoit `aria-controls` + `aria-expanded` via la prop de
+  slot `previewToggleAttrs` ; le focus reste sur le bouton de bascule à l'ouverture du
+  panneau et y revient lorsque le panneau est fermé depuis l'intérieur (RGAA 12.8).
+- À décider : si la barre d'outils est un
+  simple groupe ou une barre d'outils APG (navigation aux flèches) ; l'étiquetage de la
+  barre latérale repliée.
 
-## Open questions
+## Questions ouvertes
 
-1. ~~Header height~~ → resolved by 0003 (no header).
-2. Secondary navigation: second sidebar level, tabs in the toolbar row, or both?
-3. Preview panel: fixed width, resizable, or expandable to full width?
-4. ~~Mobile~~ → see 0004. The preview panel on narrow screens is still open.
+1. ~~Hauteur de l'en-tête~~ → résolu par 0003 (pas d'en-tête).
+2. Navigation secondaire : second niveau dans la barre latérale, onglets dans la ligne de
+   la barre d'outils, ou les deux ?
+3. Panneau d'aperçu : largeur fixe, redimensionnable, ou extensible en pleine largeur ?
+4. ~~Mobile~~ → voir 0004. Le panneau d'aperçu sur écran étroit reste une question ouverte.

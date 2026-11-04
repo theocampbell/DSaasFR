@@ -1,60 +1,69 @@
-# 0004 — Narrow screens and high zoom: DSFR mobile header pattern
+# 0004 — Écrans étroits et fort zoom : pattern d'en-tête mobile du DSFR
 
-- **Status**: Proposed — variant A chosen by the product owner (2026-11-02)
-- **Date**: 2026-11-01
-- **Components**: DsaasfrSidebar, DsaasfrAppShell
+- **Statut** : Proposé — variante A choisie par le responsable produit (2026-11-02)
+- **Date** : 2026-11-01
+- **Composants** : DsaasfrSidebar, DsaasfrAppShell
 
-## DSFR starting point
+## Point de départ DSFR
 
-- The DSFR is mobile-first; breakpoints sm 36em, md 48em, lg 62em, xl 78em.
+- Le DSFR est conçu « mobile first » ; points de rupture sm 36em, md 48em, lg 62em, xl 78em.
 - [En-tête](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/en-tete),
-  mobile: bloc-marque + service name + "Menu" button opening the navigation in a modal.
+  en mobile : bloc-marque + nom du service + bouton « Menu » qui ouvre la navigation dans
+  une modale.
 - [Menu latéral](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/menu-lateral),
-  mobile: collapses inline behind a "Dans cette rubrique" button (in-page navigation only).
+  en mobile : se replie dans la page derrière un bouton « Dans cette rubrique » (navigation
+  au sein de la page uniquement).
 
-## SaaS need
+## Besoin SaaS
 
-Analytics show desktop-only users, so no phone experience is designed. But RGAA 10.11 /
-WCAG 1.4.10 (reflow) requires the app to be usable at **320 CSS px without horizontal
-scrolling**, which is a 1280px desktop screen at **400% zoom**. Low-vision desktop users
-are counted as desktop in analytics. The target of this decision is high zoom, not phones.
+Les statistiques de fréquentation ne montrent que des utilisateurs sur poste de travail :
+aucune expérience téléphone n'est donc conçue. Mais le RGAA 10.11 / WCAG 1.4.10
+(redistribution du contenu) exige que l'application soit utilisable à **320 px CSS sans
+défilement horizontal**, ce qui correspond à un écran de poste de travail de 1280px avec
+un **zoom à 400 %**. Les utilisateurs malvoyants sur poste de travail sont comptés comme
+tels dans les statistiques. La cible de cette décision est le fort zoom, pas les téléphones.
 
-## Options considered
+## Options envisagées
 
-1. Collapsible sidebar (icon rail) — **rejected**: overkill for the users, and a collapsed
-   rail would crop the bloc-marque (forbidden).
-2. Stack the sidebar above the content (previous behaviour) — passes reflow, but at 400%
-   zoom users scroll through the whole navigation on every page.
-3. **Below 62em, switch to the DSFR mobile header pattern** (chosen): a bar with
-   bloc-marque + service name + "Menu" button; the menu opens in a modal containing the
-   same navigation and the "Mon espace" footer. The bloc-marque is always visible, never
-   cropped. Same `DsaasfrSidebar` props drive both layouts.
+1. Barre latérale repliable (rail d'icônes) — **rejeté** : disproportionné pour les
+   utilisateurs, et un rail replié rognerait le bloc-marque (interdit).
+2. Empiler la barre latérale au-dessus du contenu (comportement précédent) — respecte la
+   redistribution, mais à 400 % de zoom les utilisateurs font défiler toute la navigation
+   sur chaque page.
+3. **Sous 62em, basculer sur le pattern d'en-tête mobile du DSFR** (retenu) : une barre
+   avec bloc-marque + nom du service + bouton « Menu » ; le menu s'ouvre dans une modale
+   contenant la même navigation et le pied « Mon espace ». Le bloc-marque est toujours
+   visible, jamais rogné. Les mêmes props de `DsaasfrSidebar` pilotent les deux mises en page.
 
-## Two implementations evaluated
+## Deux implémentations évaluées
 
 | | A — `dsfr-header` | B — `dialog` |
 |---|---|---|
-| Bar | Vue DSFR `DsfrHeader` (official mobile header, icon menu button) | Our bar (bloc-marque + service side by side, "Menu" text button) |
-| Modal | DsfrHeader's menu modal (focus-trap, Escape, focus return) | Native `<dialog>` + `showModal()` (inert page, Escape, focus return) |
-| Rule 1 "reuse Vue DSFR" | Fully reused | Own modal code (small) |
-| Look | Pure DSFR | Closer to the wide sidebar |
-| Risks | Relies on the untyped `mainnav` slot scope (`hidemodal`); hard-coded ids `button-menu`/`close-button` in Vue DSFR | Service name wraps at 320px next to the bloc-marque; Tab can reach browser UI (native dialog behaviour) |
+| Barre | `DsfrHeader` de Vue DSFR (en-tête mobile officiel, bouton de menu à icône) | Notre barre (bloc-marque + service côte à côte, bouton texte « Menu ») |
+| Modale | Modale de menu de DsfrHeader (piège à focus, Échap, retour du focus) | `<dialog>` natif + `showModal()` (page inerte, Échap, retour du focus) |
+| Règle 1 « réutiliser Vue DSFR » | Réutilisation complète | Code de modale propre (réduit) |
+| Rendu | DSFR pur | Plus proche de la barre latérale large |
+| Risques | Dépend de la portée non typée du slot `mainnav` (`hidemodal`) ; identifiants `button-menu`/`close-button` codés en dur dans Vue DSFR | Le nom du service passe à la ligne à 320px à côté du bloc-marque ; Tab peut atteindre l'interface du navigateur (comportement natif de dialog) |
 
-Both were checked at 320px: focus moves to "Fermer" on open, Escape closes and returns
-focus to "Menu", following a link closes the menu, exactly one banner landmark.
+Les deux ont été vérifiées à 320px : le focus passe sur « Fermer » à l'ouverture, Échap
+ferme et rend le focus à « Menu », suivre un lien ferme le menu, exactement une région
+banner.
 
-**Chosen: A** — the official pattern, nothing to justify to the DSFR community, keeps
-us within rule 1 (reuse Vue DSFR). Users are desktop-only, so the narrow layout only has
-to be correct and familiar at high zoom, not polished. Variant B and the experimental
-`narrowVariant` prop were removed.
+**Retenue : A** — le pattern officiel, rien à justifier auprès de la communauté DSFR, et
+nous restons dans le cadre de la règle 1 (réutiliser Vue DSFR). Les utilisateurs sont
+exclusivement sur poste de travail : la mise en page étroite doit seulement être correcte
+et familière en fort zoom, pas soignée dans le détail. La variante B et la prop
+expérimentale `narrowVariant` ont été supprimées.
 
-## Accessibility consequences
+## Conséquences pour l'accessibilité
 
-- Breakpoint detection via `matchMedia` (`useNarrowViewport`), so only one layout is in the
-  DOM: no duplicated landmarks or ids.
-- The preview panel stacks under the content below 62em (to revisit with the panel work).
+- Détection du point de rupture via `matchMedia` (`useNarrowViewport`), de sorte qu'une
+  seule mise en page est présente dans le DOM : ni régions ni identifiants dupliqués.
+- Le panneau d'aperçu s'empile sous le contenu en dessous de 62em (à revoir lors du
+  travail sur le panneau).
 
-## Upstream notes for Vue DSFR
+## Remarques à remonter à Vue DSFR
 
-- `DsfrHeader`'s `mainnav` slot passes `{ hidemodal }` but is typed without props.
-- Group buttons in `DsfrSideMenuList` get `aria-current="page"` when active (see 0003).
+- Le slot `mainnav` de `DsfrHeader` transmet `{ hidemodal }` mais est typé sans props.
+- Les boutons de groupe de `DsfrSideMenuList` reçoivent `aria-current="page"` lorsqu'ils
+  sont actifs (voir 0003).

@@ -33,13 +33,13 @@ import App from './App.vue'
 createApp(App).use(VueDsfr).use(DSaaSFR).mount('#app')
 ```
 
-Or import components individually:
+Ou importer les composants un par un :
 
 ```ts
 import { DsaasfrAppShell } from 'dsaasfr'
 ```
 
-## Usage
+## Utilisation
 
 ```vue
 <DsaasfrAppShell v-model:preview-open="preview">
@@ -56,31 +56,32 @@ import { DsaasfrAppShell } from 'dsaasfr'
 </DsaasfrAppShell>
 ```
 
-## Components
+## Composants
 
-| Component | Status |
+| Composant | Statut |
 |---|---|
-| `DsaasfrAppShell` | Draft — see [decision 0002](docs/decisions/0002-app-shell-layout.md) |
-| `DsaasfrSidebar` | Draft — see [decision 0003](docs/decisions/0003-brand-in-sidebar.md) |
-| `DsaasfrUserMenu` | Draft — see [decision 0005](docs/decisions/0005-user-menu.md) |
-| `DsaasfrBreadcrumbBar` | Draft — see [decision 0006](docs/decisions/0006-breadcrumb-bar.md) |
-| `DsaasfrToolbar` | Draft — see [decision 0007](docs/decisions/0007-toolbar.md) |
-| `DsaasfrPreviewPanel` | Draft — see [decision 0008](docs/decisions/0008-preview-panel.md) |
-| `DsaasfrDropdown`, `DsaasfrFilterChip` | Draft — see [decision 0009](docs/decisions/0009-filters.md) |
+| `DsaasfrAppShell` | Brouillon — voir la [fiche de décision 0002](docs/decisions/0002-app-shell-layout.md) |
+| `DsaasfrSidebar` | Brouillon — voir la [fiche de décision 0003](docs/decisions/0003-brand-in-sidebar.md) |
+| `DsaasfrUserMenu` | Brouillon — voir la [fiche de décision 0005](docs/decisions/0005-user-menu.md) |
+| `DsaasfrBreadcrumbBar` | Brouillon — voir la [fiche de décision 0006](docs/decisions/0006-breadcrumb-bar.md) |
+| `DsaasfrToolbar` | Brouillon — voir la [fiche de décision 0007](docs/decisions/0007-toolbar.md) |
+| `DsaasfrPreviewPanel` | Brouillon — voir la [fiche de décision 0008](docs/decisions/0008-preview-panel.md) |
+| `DsaasfrDropdown`, `DsaasfrFilterChip` | Brouillon — voir la [fiche de décision 0009](docs/decisions/0009-filters.md) |
 
-## Principles
+## Principes
 
-- Extend Vue DSFR, never replace it ([decision 0001](docs/decisions/0001-build-on-vue-dsfr.md)).
-- DSFR CSS variables only for colours, DSFR scale for spacing, DSFR classes for type
-  (enforced by Stylelint).
-- RGAA 4.1 / WCAG 2.1 AA, WAI-ARIA APG patterns, axe in every test.
-- Desktop-first, but usable at 400% zoom (RGAA 10.11): below 62em the sidebar becomes the
-  DSFR mobile header ([decision 0004](docs/decisions/0004-narrow-screens.md)).
-- Every interpretation of the DSFR is written down in [`docs/decisions`](docs/decisions).
+- Étendre Vue DSFR, jamais le remplacer ([fiche de décision 0001](docs/decisions/0001-build-on-vue-dsfr.md)).
+- Uniquement les variables CSS du DSFR pour les couleurs, l'échelle du DSFR pour les
+  espacements, les classes du DSFR pour la typographie (vérifié par Stylelint).
+- RGAA 4.1 / WCAG 2.1 AA, patterns WAI-ARIA APG, axe dans chaque test.
+- Conçu d'abord pour le poste de travail, mais utilisable avec un zoom à 400 % (RGAA 10.11) :
+  sous 62em, la barre latérale devient l'en-tête mobile du DSFR
+  ([fiche de décision 0004](docs/decisions/0004-narrow-screens.md)).
+- Chaque interprétation du DSFR est consignée dans [`docs/decisions`](docs/decisions).
 
-## Development
+## Développement
 
-Prerequisites: Node 22+ and pnpm (`corepack enable` installs the pinned pnpm version).
+Prérequis : Node 22+ et pnpm (`corepack enable` installe la version de pnpm fixée dans le projet).
 
 ```bash
 git clone https://github.com/theocampbell/DSaasFR.git
@@ -94,14 +95,14 @@ pnpm dev          # http://localhost:5173 — playground: a fake back-office to 
 pnpm check        # lint + typecheck + test + build
 ```
 
-Tip: to see the narrow / high-zoom layout, zoom the browser to 400% or make the window
-narrower than ~990px.
+Astuce : pour voir la mise en page sur écran étroit / fort zoom, zoomez le navigateur à 400 %
+ou réduisez la largeur de la fenêtre sous ~990px.
 
-## Sandbox
+## Bac à sable
 
-`.github/workflows/deploy-sandbox.yml` publishes Storybook (`/`) and the playground
-(`/playground/`) to GitHub Pages on every push. One-time setup: repo Settings → Pages →
-Source: **GitHub Actions**.
+`.github/workflows/deploy-sandbox.yml` publie Storybook (`/`) et le playground
+(`/playground/`) sur GitHub Pages à chaque push. Configuration à faire une seule fois :
+Settings du dépôt → Pages → Source : **GitHub Actions**.
 
-This repo is set up to be developed with Claude Code: see [CLAUDE.md](CLAUDE.md) and the
-specialised agents in [.claude/agents](.claude/agents).
+Ce dépôt est conçu pour être développé avec Claude Code : voir [CLAUDE.md](CLAUDE.md) et les
+agents spécialisés dans [.claude/agents](.claude/agents).

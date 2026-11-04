@@ -1,79 +1,88 @@
-# DSaaSFR — todo
+# DSaaSFR — à faire
 
-Worked through one item at a time, top to bottom. Claude updates this file as items
-are done. **Owner**: 🤖 Claude · 👤 Théo (decision or action only you can take).
+Traité un élément à la fois, de haut en bas. Claude met ce fichier à jour au fur et à
+mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vous seul pouvez prendre).
 
-## 1. Finish the shell (base for v0.1.0)
+## 1. Terminer le shell (base de la v0.1.0)
 
-- [ ] 🤖 **Page titles from loaded data** (after filters): one title per page, set by
-      the page once its data is loaded (e.g. dossier number, applicant), feeding together
-      the breadcrumb's current level, the `<h1>`, the browser tab (`document.title`,
-      RGAA 8.6) and a page-change announcement for screen readers.
-- [ ] 🤖 **Integration guide + fake auth in the playground**: layout route, auth store,
-      role-filtered navigation and actions, router guard (an "instructeur" and an "admin"
-      seeing different things).
-- [ ] 🤖 Review pass by `dsfr-guardian` + `a11y-auditor` on each component above.
-- [ ] 👤 Read the decision records (docs/decisions) and mark the ones you agree with
-      **Accepted**.
+- [ ] 🤖 **Titres de page issus des données chargées** (après les filtres) : un titre par page,
+      défini par la page une fois ses données chargées (par ex. numéro de dossier, demandeur),
+      qui alimente à la fois le niveau courant du fil d'Ariane, le `<h1>`, l'onglet du
+      navigateur (`document.title`, RGAA 8.6) et une annonce de changement de page pour les
+      lecteurs d'écran.
+- [ ] 🤖 **Guide d'intégration + fausse authentification dans le playground** : route de
+      mise en page, store d'authentification, navigation et actions filtrées selon le rôle,
+      garde du routeur (un « instructeur » et un « admin » qui voient des choses différentes).
+- [ ] 🤖 Passe de revue par `dsfr-guardian` + `a11y-auditor` sur chacun des composants ci-dessus.
+- [ ] 👤 Lire les fiches de décision (docs/decisions) et passer celles que vous approuvez
+      au statut **Accepté**.
 
-## 2. Publish on npm
+## 2. Publier sur npm
 
-- [ ] 👤 **Package name**: `@dsaasfr/vue` (recommended: neutral, can be handed over)
-      or `dsaasfr`.
-- [ ] 🤖 Package metadata: `LICENSE` file, repository/homepage/bugs/keywords,
-      `publishConfig.access`, `prepublishOnly` running `pnpm check`, clean public types.
-- [ ] 🤖 Consumer test in CI: pack the package, install it in a blank Vite + Vue DSFR
-      app, check it builds, renders and type-checks.
-- [ ] 🤖 Release process: Changesets (versions + CHANGELOG) and a GitHub Action
-      publishing with npm trusted publishing (no token, provenance badge).
-- [ ] 🤖👤 Create a `main` branch and work through pull requests from then on.
-- [ ] 👤 npm account with 2FA (+ `dsaasfr` organisation if scoped name), and add the
-      GitHub workflow as trusted publisher on npmjs.com.
-- [ ] 👤 Merge the first release PR → `0.1.0` published.
+- [ ] 👤 **Nom du paquet** : `@dsaasfr/vue` (recommandé : neutre, peut être transmis)
+      ou `dsaasfr`.
+- [ ] 🤖 Métadonnées du paquet : fichier `LICENSE`, repository/homepage/bugs/keywords,
+      `publishConfig.access`, `prepublishOnly` qui lance `pnpm check`, types publics propres.
+- [ ] 🤖 Test côté consommateur en CI : empaqueter le paquet, l'installer dans une
+      application Vite + Vue DSFR vierge, vérifier qu'elle compile, s'affiche et passe le
+      contrôle de types.
+- [ ] 🤖 Processus de publication : Changesets (versions + CHANGELOG) et une GitHub Action
+      qui publie avec le trusted publishing de npm (sans jeton, badge de provenance).
+- [ ] 🤖👤 Créer une branche `main` et travailler ensuite par pull requests.
+- [ ] 👤 Compte npm avec 2FA (+ organisation `dsaasfr` si nom à portée), et déclarer le
+      workflow GitHub comme trusted publisher sur npmjs.com.
+- [ ] 👤 Fusionner la première PR de publication → `0.1.0` publiée.
 
-## 3. People and community
+## 3. Personnes et communauté
 
-- [ ] 👤 Tell your manager and your directorate's AI referent / the ministry's digital
-      department about the project (open-source, no internal data) — see the AI rules
-      summary from 2026-11-02.
-- [ ] 👤 Check the PIAG usage charter on the intranet.
-- [ ] 🤖👤 Report the two Vue DSFR issues found (decision 0004): `DsfrHeader` `mainnav`
-      slot typed without its `hidemodal` prop; `DsfrSideMenuList` puts
-      `aria-current="page"` on group buttons.
-- [ ] 🤖👤 Discussion post for Vue DSFR maintainers / DSFR community: sandbox link,
-      decision records, question "absorb, recognised extension, or independent?".
+- [ ] 👤 Informer votre responsable hiérarchique et le référent IA de votre direction / le
+      service du numérique du ministère au sujet du projet (open source, aucune donnée
+      interne) — voir la synthèse des règles sur l'IA du 2026-11-02.
+- [ ] 👤 Consulter la charte d'utilisation de PIAG sur l'intranet.
+- [ ] 🤖👤 Signaler les deux problèmes Vue DSFR identifiés (fiche de décision 0004) : slot
+      `mainnav` de `DsfrHeader` typé sans sa prop `hidemodal` ; `DsfrSideMenuList` place
+      `aria-current="page"` sur les boutons de groupe.
+- [ ] 🤖👤 Message de discussion pour les mainteneurs de Vue DSFR / la communauté DSFR :
+      lien vers le bac à sable, fiches de décision, question « intégration, extension
+      reconnue ou projet indépendant ? ».
 
-## 4. Later
+## 4. Plus tard
 
-- [ ] Data table: sticky headers, sorting, row selection, bulk actions.
-- [ ] Combobox / autocomplete, multi-select, date range picker.
-- [ ] Toasts, empty states, loading skeletons.
-- [ ] `DsaasfrDisplaySettings` component (if every app needs the display settings modal).
-- [ ] User menu avatar: initials or photo.
-- [ ] Nuxt module (only if Nuxt teams ask for it).
+- [ ] Tableau de données : en-têtes fixes, tri, sélection de lignes, actions groupées.
+- [ ] Combobox / autocomplétion, sélection multiple, sélecteur de période.
+- [ ] Toasts, états vides, squelettes de chargement.
+- [ ] Composant `DsaasfrDisplaySettings` (si toutes les applications ont besoin de la
+      modale de paramètres d'affichage).
+- [ ] Avatar du menu utilisateur : initiales ou photo.
+- [ ] Module Nuxt (seulement si des équipes Nuxt le demandent).
 
-## Done
+## Fait
 
-- [x] Scaffold: Vite library, Storybook (light/dark), Vitest + axe, DSFR-only lint rules,
-      playground, CI, Claude agents and lint hook.
-- [x] `DsaasfrAppShell`: layout, landmarks, skip links, preview slot with focus return.
-- [x] `DsaasfrSidebar`: bloc-marque + service name instead of the DSFR header, router-driven
-      navigation with groups, footer slot.
-- [x] Narrow screens / 400% zoom: two variants built for comparison.
-- [x] `DsaasfrUserMenu`: name + role trigger, account actions, DSFR menu markup,
-      display settings modal (`useScheme`).
-- [x] Public sandbox on GitHub Pages (Storybook + playground), demo notice.
-- [x] Summary of the AI usage rules (State guide, MTE roadmap, PIAG).
-- [x] Scrolling: the page scrolls, sidebar + breadcrumb/toolbar rows + preview pinned
-      (keyboard scrolling fixed, WCAG 2.1.1; focus never hidden under pinned rows, 2.4.11).
-- [x] Narrow screens: variant A (DsfrHeader) kept, variant B and `narrowVariant` removed.
-- [x] `DsaasfrBreadcrumbBar`: router-driven breadcrumb (DSFR markup) + key action on the
-      right, "…" collapse for deep trails, no label cut to fragments (wraps instead);
-      reviewed by dsfr-guardian + a11y-auditor.
-- [x] `DsaasfrToolbar`: generic second row, `start` / `end` slots (decision 0007).
-- [x] `DsaasfrPreviewPanel` + shell layouts (push / overlay / full screen), focus, Escape,
-      in the URL with `usePreviewQuery` (decision 0008).
-- [x] Filters: `DsaasfrDropdown` (shared with the user menu) + `DsaasfrFilterChip`,
-      Linear-style; filter logic example in the playground (decision 0009).
-- [x] Component prefix renamed `Dsfs` → `Dsaasfr` (CSS `dsaasfr-`): one name everywhere,
-      clearly distinct from Vue DSFR's `Dsfr`, mirrors its convention.
+- [x] Socle : bibliothèque Vite, Storybook (clair/sombre), Vitest + axe, règles de lint
+      DSFR uniquement, playground, CI, agents Claude et hook de lint.
+- [x] `DsaasfrAppShell` : mise en page, régions, liens d'évitement, slot d'aperçu avec
+      retour du focus.
+- [x] `DsaasfrSidebar` : bloc-marque + nom du service à la place de l'en-tête DSFR,
+      navigation pilotée par le routeur avec groupes, slot de pied.
+- [x] Écrans étroits / zoom à 400 % : deux variantes construites pour comparaison.
+- [x] `DsaasfrUserMenu` : déclencheur nom + rôle, actions de compte, balisage de menu DSFR,
+      modale de paramètres d'affichage (`useScheme`).
+- [x] Bac à sable public sur GitHub Pages (Storybook + playground), mention de démonstration.
+- [x] Synthèse des règles d'usage de l'IA (guide de l'État, feuille de route du MTE, PIAG).
+- [x] Défilement : la page défile, barre latérale + lignes fil d'Ariane / barre d'outils +
+      aperçu fixés (défilement au clavier corrigé, WCAG 2.1.1 ; focus jamais masqué sous les
+      lignes fixées, 2.4.11).
+- [x] Écrans étroits : variante A (DsfrHeader) conservée, variante B et `narrowVariant`
+      supprimées.
+- [x] `DsaasfrBreadcrumbBar` : fil d'Ariane piloté par le routeur (balisage DSFR) + action
+      principale à droite, repli « … » pour les arborescences profondes, aucun libellé
+      tronqué en fragments (retour à la ligne à la place) ; revu par dsfr-guardian +
+      a11y-auditor.
+- [x] `DsaasfrToolbar` : seconde ligne générique, slots `start` / `end` (fiche de décision 0007).
+- [x] `DsaasfrPreviewPanel` + mises en page du shell (poussée / superposée / plein écran),
+      focus, Échap, dans l'URL avec `usePreviewQuery` (fiche de décision 0008).
+- [x] Filtres : `DsaasfrDropdown` (partagé avec le menu utilisateur) + `DsaasfrFilterChip`,
+      à la manière de Linear ; exemple de logique de filtrage dans le playground (fiche de
+      décision 0009).
+- [x] Préfixe des composants renommé `Dsfs` → `Dsaasfr` (CSS `dsaasfr-`) : un seul nom
+      partout, nettement distinct du `Dsfr` de Vue DSFR, dont il reprend la convention.

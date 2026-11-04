@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'First row of the app shell: the breadcrumb (official DSFR markup) on the left, the page\'s key action(s) on the right. Items come from the router (`meta.breadcrumb` or `meta.title` of each route) or from the `items` prop. Long labels are truncated; above `maxItems` levels the middle ones collapse into a "…" button. See docs/decisions/0006.',
+          'Première ligne du shell applicatif : le fil d’Ariane (balisage officiel du DSFR) à gauche, l’action ou les actions principales de la page à droite. Les éléments proviennent du routeur (`meta.breadcrumb` ou `meta.title` de chaque route) ou de la prop `items`. Les libellés longs sont tronqués ; au-delà de `maxItems` niveaux, les niveaux intermédiaires se replient dans un bouton « … ». Voir la fiche de décision docs/decisions/0006.',
       },
     },
   },

@@ -1,85 +1,102 @@
-# 0009 — Filters: dropdown + filter chip in the toolbar, logic in the app
+# 0009 — Filtres : menu déroulant + étiquette de filtre dans la barre d'outils, logique dans l'application
 
-- **Status**: Proposed
-- **Date**: 2026-11-03
-- **Components**: DsaasfrDropdown, DsaasfrFilterChip (DsaasfrUserMenu now built on the dropdown)
+- **Statut** : Proposé
+- **Date** : 2026-11-03
+- **Composants** : DsaasfrDropdown, DsaasfrFilterChip (DsaasfrUserMenu repose désormais sur le menu déroulant)
 
-## DSFR starting point
+## Point de départ DSFR
 
-- [Tag](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/tag): neutral,
-  clickable, selectable or dismissible tags — each tag does **one** thing.
-- Menus: `fr-menu > fr-menu__list` (header navigation, language selector), floating only
-  from the lg breakpoint; disclosure pattern (button + `aria-expanded`).
-- Form controls: checkboxes, radios (`DsfrCheckboxSet`, `DsfrRadioButtonSet`).
-- No filter-bar or dropdown component.
+- [Tag](https://www.systeme-de-design.gouv.fr/composants-et-modeles/composants/tag) : tags
+  neutres, cliquables, sélectionnables ou supprimables — chaque tag fait **une seule** chose.
+- Menus : `fr-menu > fr-menu__list` (navigation de l'en-tête, sélecteur de langue),
+  flottants uniquement à partir du point de rupture lg ; pattern de divulgation (bouton +
+  `aria-expanded`).
+- Contrôles de formulaire : cases à cocher, boutons radio (`DsfrCheckboxSet`,
+  `DsfrRadioButtonSet`).
+- Aucun composant de barre de filtres ni de menu déroulant.
 
-## SaaS need
+## Besoin SaaS
 
-Users narrow long lists by combining conditions and adjust them in place, as in Linear:
-"Assigné à · est · Personne A, Personne B · ×", where the field, the condition and the
-values can each be changed by clicking them. Which fields exist, their values and how they
-apply are specific to each app.
+Les utilisateurs restreignent de longues listes en combinant des conditions et les
+ajustent sur place, comme dans Linear : « Assigné à · est · Personne A, Personne B · × »,
+où le champ, la condition et les valeurs peuvent chacun être modifiés en cliquant dessus.
+Les champs disponibles, leurs valeurs et la façon dont ils s'appliquent sont propres à
+chaque application.
 
-## Decision
+## Décision
 
-Three layers:
+Trois couches :
 
-1. **DsaasfrDropdown** (library): trigger button + floating panel, disclosure pattern.
-   Escape returns focus to the trigger; click outside / tab out close it; `autofocus` moves
-   focus into the panel, on the **current choice** (checked / current) else the first
-   control. The panel **stays inside the viewport** while open (recomputed when the
-   trigger or the window resizes): shifted horizontally, height limited to the room left
-   with scrolling inside, flipped to the other side only when the requested side is
-   cramped (< 12rem) — flipping freely put it under the DSFR header at 320px. Surface: official `fr-menu` / `fr-menu__list` markup; since `fr-menu` only
-   floats from lg, the DSFR desktop rules (absolute, `--ground + 1000`, drop shadow,
-   overlap surface and hover pair, high-contrast outline) are applied at all widths; the
-   desktop-only open-blue top line is dropped for consistency. Panel 1v below the
-   trigger, at most 22rem wide. Shared by the user menu.
-2. **DsaasfrFilterChip** (library, presentational): `[field] [operator] [values] [×]`. Each
-   part with a slot becomes a dropdown trigger showing that slot's content; parts without a
-   slot are plain text; × emits `remove`; `v-model:open-part` lets the app open "values"
-   right after adding a filter. Looks like a **DSFR neutral tag split into segments** (same
-   surface, radius, height, text, padding, hover pair): one fr-tag cannot hold several
-   actions, so DsfrTag / fr-tag--dismiss are not reused. **Interpretation**: in the DSFR
-   the grey tag is the static one and clickable tags are blue (action-low); a chip made of
-   several buttons in blue would read as one big action, so it stays grey and each part
-   shows its affordance on hover and when open (open-blue, as `fr-translate__btn`). The ×
-   part has asymmetric padding to sit at the rounded end.
-3. **Filter logic** (app): fields, operators, values, applying them, URL sync if wanted.
+1. **DsaasfrDropdown** (bibliothèque) : bouton déclencheur + panneau flottant, pattern de
+   divulgation. Échap rend le focus au déclencheur ; un clic à l'extérieur ou une sortie
+   avec Tab le ferment ; `autofocus` place le focus dans le panneau, sur le **choix
+   courant** (coché / courant), sinon sur le premier contrôle. Le panneau **reste dans la
+   fenêtre d'affichage** tant qu'il est ouvert (recalculé lorsque le déclencheur ou la
+   fenêtre est redimensionné) : décalé horizontalement, hauteur limitée à l'espace restant
+   avec défilement interne, basculé de l'autre côté uniquement lorsque le côté demandé est
+   trop exigu (< 12rem) — le basculer librement le plaçait sous l'en-tête DSFR à 320px.
+   Surface : balisage officiel `fr-menu` / `fr-menu__list` ; comme `fr-menu` ne flotte
+   qu'à partir de lg, les règles DSFR pour poste de travail (absolute, `--ground + 1000`,
+   ombre portée, surface overlap et paire de survol, contour en mode contraste élevé) sont
+   appliquées à toutes les largeurs ; le filet supérieur open-blue, propre au poste de
+   travail, est abandonné par souci de cohérence. Panneau à 1v sous le déclencheur, 22rem
+   de large au maximum. Partagé avec le menu utilisateur.
+2. **DsaasfrFilterChip** (bibliothèque, présentationnel) : `[field] [operator] [values] [×]`.
+   Chaque partie dotée d'un slot devient un déclencheur de menu déroulant affichant le
+   contenu de ce slot ; les parties sans slot sont du texte simple ; × émet `remove` ;
+   `v-model:open-part` permet à l'application d'ouvrir « valeurs » juste après l'ajout
+   d'un filtre. L'étiquette ressemble à un **tag neutre DSFR découpé en segments** (même
+   surface, rayon, hauteur, texte, marges internes, paire de survol) : un fr-tag ne peut
+   pas porter plusieurs actions, donc DsfrTag / fr-tag--dismiss ne sont pas réutilisés.
+   **Interprétation** : dans le DSFR, le tag gris est le tag statique et les tags
+   cliquables sont bleus (action-low) ; une étiquette composée de plusieurs boutons en
+   bleu se lirait comme une seule grande action, elle reste donc grise et chaque partie
+   montre son affordance au survol et lorsqu'elle est ouverte (open-blue, comme
+   `fr-translate__btn`). La partie × a des marges internes asymétriques pour s'ajuster à
+   l'extrémité arrondie.
+3. **Logique de filtrage** (application) : champs, opérateurs, valeurs, leur application,
+   synchronisation avec l'URL si souhaité.
 
-### Interaction (product owner, 2026-11-04)
+### Interaction (responsable produit, 2026-11-04)
 
-- **Applied on demand, not on click.** With millions of records filtering runs on the
-  server: instant filtering means one request per click and results moving while the user
-  is still choosing (Linear can filter instantly because it keeps a local, synced copy of
-  the data). An explicit "Appliquer" sends one request per decision and announces the new
-  count once. Every panel works on a draft; closing it without applying discards it.
-- **"Filtrer"** (toolbar end) opens **every field with its values** (DSFR checkbox sets),
-  with a pinned footer: "Réinitialiser", "Appliquer les filtres (n)". The trigger shows the
-  number of active filters ("Filtrer (2)").
-- **One chip per field** (toolbar start), in field order, values in list order. The field
-  is not editable on the chip (it could create a duplicate); condition and values open a
-  panel with its own "Appliquer"; × removes the filter immediately; "Tout effacer".
-- Library support: a pinned `footer` slot on DsaasfrDropdown, passed through by
-  DsaasfrFilterChip (with the open `part`).
+- **Appliqué à la demande, pas au clic.** Avec des millions d'enregistrements, le
+  filtrage s'exécute sur le serveur : un filtrage instantané signifie une requête par clic
+  et des résultats qui bougent pendant que l'utilisateur fait encore son choix (Linear
+  peut filtrer instantanément parce qu'il conserve une copie locale synchronisée des
+  données). Un bouton « Appliquer » explicite envoie une requête par décision et annonce
+  le nouveau nombre de résultats une seule fois. Chaque panneau travaille sur un
+  brouillon ; le fermer sans appliquer l'abandonne.
+- **« Filtrer »** (`end` de la barre d'outils) ouvre **tous les champs avec leurs valeurs**
+  (groupes de cases à cocher DSFR), avec un pied fixé : « Réinitialiser », « Appliquer les
+  filtres (n) ». Le déclencheur affiche le nombre de filtres actifs (« Filtrer (2) »).
+- **Une étiquette par champ** (`start` de la barre d'outils), dans l'ordre des champs,
+  valeurs dans l'ordre de la liste. Le champ n'est pas modifiable sur l'étiquette (cela
+  pourrait créer un doublon) ; la condition et les valeurs ouvrent un panneau doté de son
+  propre « Appliquer » ; × retire le filtre immédiatement ; « Tout effacer ».
+- Prise en charge par la bibliothèque : un slot `footer` fixé sur DsaasfrDropdown, transmis
+  par DsaasfrFilterChip (avec la `part` ouverte).
 
-## Accessibility consequences
+## Conséquences pour l'accessibilité
 
-- Chip = labelled group: "Filtre : Statut est Accepté, Incomplet".
-- Part buttons: "Modifier le champ : Statut", "Modifier la condition : est",
-  "Modifier les valeurs : …" — each contains its visible text (label in name). Summarised
-  values ("A, B et 2 autres") keep the full list in the name.
-- × = "Retirer le filtre Statut".
-- Dropdown panels contain real form controls (fieldset + legend) or lists of buttons.
-- **App responsibilities** (shown in the playground): announce the result count
-  (`role="status"`: "16 dossiers sur 40"); after removing a chip, move focus to the next
-  chip (or the previous one), after clearing all to "Filtrer"; mark the current field with
-  `aria-current` and a visible check, and keep values when the same field is re-picked.
-- Clicking a non-focusable label inside a panel inside a focusable container (the shell's
-  `<main>`) must not close it: focus moving to an ancestor is not "leaving".
+- Étiquette = groupe nommé : « Filtre : Statut est Accepté, Incomplet ».
+- Boutons des parties : « Modifier le champ : Statut », « Modifier la condition : est »,
+  « Modifier les valeurs : … » — chacun contient son texte visible (libellé inclus dans le
+  nom). Les valeurs résumées (« A, B et 2 autres ») conservent la liste complète dans le nom.
+- × = « Retirer le filtre Statut ».
+- Les panneaux des menus déroulants contiennent de vrais contrôles de formulaire (fieldset
+  + legend) ou des listes de boutons.
+- **Responsabilités de l'application** (illustrées dans le playground) : annoncer le
+  nombre de résultats (`role="status"` : « 16 dossiers sur 40 ») ; après le retrait d'une
+  étiquette, déplacer le focus sur l'étiquette suivante (ou la précédente), après « Tout
+  effacer » sur « Filtrer » ; signaler le champ courant avec `aria-current` et une coche
+  visible, et conserver les valeurs lorsque le même champ est de nouveau choisi.
+- Un clic sur un libellé non focalisable dans un panneau situé dans un conteneur
+  focalisable (le `<main>` du shell) ne doit pas le fermer : un focus qui passe à un
+  ancêtre ne signifie pas « sortir ».
 
-## Open questions
+## Questions ouvertes
 
-1. Keep filters in the URL (shareable filtered lists), like the preview?
-2. Search inside long value lists (combobox) — future component.
-3. A filter count badge on "Filtrer" when chips are hidden on narrow screens?
+1. Conserver les filtres dans l'URL (listes filtrées partageables), comme l'aperçu ?
+2. Recherche dans les longues listes de valeurs (combobox) — futur composant.
+3. Un badge indiquant le nombre de filtres sur « Filtrer » lorsque les étiquettes sont
+   masquées sur écran étroit ?
