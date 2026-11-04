@@ -46,9 +46,22 @@ Three layers:
    shows its affordance on hover and when open (open-blue, as `fr-translate__btn`). The ×
    part has asymmetric padding to sit at the rounded end.
 3. **Filter logic** (app): fields, operators, values, applying them, URL sync if wanted.
-   The playground shows an example (Dossiers): "Filtrer" (toolbar end) lists the fields;
-   choosing one adds a chip (toolbar start) with its values open (DSFR checkboxes); the
-   condition uses DSFR radios; "Tout effacer" clears all.
+
+### Interaction (product owner, 2026-11-04)
+
+- **Applied on demand, not on click.** With millions of records filtering runs on the
+  server: instant filtering means one request per click and results moving while the user
+  is still choosing (Linear can filter instantly because it keeps a local, synced copy of
+  the data). An explicit "Appliquer" sends one request per decision and announces the new
+  count once. Every panel works on a draft; closing it without applying discards it.
+- **"Filtrer"** (toolbar end) opens **every field with its values** (DSFR checkbox sets),
+  with a pinned footer: "Réinitialiser", "Appliquer les filtres (n)". The trigger shows the
+  number of active filters ("Filtrer (2)").
+- **One chip per field** (toolbar start), in field order, values in list order. The field
+  is not editable on the chip (it could create a duplicate); condition and values open a
+  panel with its own "Appliquer"; × removes the filter immediately; "Tout effacer".
+- Library support: a pinned `footer` slot on DsaasfrDropdown, passed through by
+  DsaasfrFilterChip (with the open `part`).
 
 ## Accessibility consequences
 

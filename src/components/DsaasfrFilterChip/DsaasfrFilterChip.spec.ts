@@ -64,6 +64,22 @@ describe('DsaasfrFilterChip', () => {
     expect(screen.getByRole('button', { name: 'Modifier les valeurs : Choisir…' })).toBeTruthy()
   })
 
+  it('passes the open part to the shared footer slot', async () => {
+    const user = userEvent.setup()
+    render(DsaasfrFilterChip, {
+      props: { field: 'Statut', operator: 'est', values: ['Incomplet'] },
+      slots: {
+        operator: '<p>Condition</p>',
+        values: '<p>Valeurs</p>',
+        footer: `<template #footer="{ part }"><button type="button">Appliquer ({{ part }})</button></template>`,
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: /Modifier les valeurs/ }))
+
+    expect(screen.getByRole('button', { name: 'Appliquer (values)' })).toBeTruthy()
+  })
+
   it('emits remove from the × button', async () => {
     const { user, emitted } = setup()
 

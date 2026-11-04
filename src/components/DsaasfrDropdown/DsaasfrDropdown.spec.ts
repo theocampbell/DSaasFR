@@ -123,6 +123,26 @@ describe('DsaasfrDropdown', () => {
     expect(document.activeElement).toBe(trigger)
   })
 
+  it('renders a footer slot that can close the panel', async () => {
+    const user = userEvent.setup()
+    render({
+      components: { DsaasfrDropdown },
+      template: `
+        <DsaasfrDropdown>
+          <template #trigger>Filtrer</template>
+          <p>Options</p>
+          <template #footer="{ close }"><button type="button" @click="close(true)">Appliquer</button></template>
+        </DsaasfrDropdown>`,
+    })
+    const trigger = screen.getByRole('button', { name: 'Filtrer' })
+    await user.click(trigger)
+
+    await user.click(screen.getByRole('button', { name: 'Appliquer' }))
+
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(trigger)
+  })
+
   it('gives unique panel ids to several dropdowns', () => {
     render({
       components: { DsaasfrDropdown },

@@ -3,7 +3,8 @@
  * DsaasfrFilterChip — one active filter, Linear-style: [field] [operator] [values] [×].
  *
  * Presentational: it shows what it is given. Each part whose slot is provided becomes a
- * button opening a DsaasfrDropdown with that slot's content (the app decides what to
+ * button opening a DsaasfrDropdown with that slot's content (+ the shared `footer` slot,
+ * e.g. an "Appliquer" button) (the app decides what to
  * show: field list, operator choice, value checkboxes). Parts without a slot are plain
  * text. × emits `remove`. Filter logic (fields, values, applying them) stays in the app.
  * Looks like a DSFR neutral tag split into segments. See docs/decisions/0009-filters.md.
@@ -33,6 +34,8 @@ const slots = defineSlots<{
   field?: (scope: { close: (returnFocus?: boolean) => void }) => unknown
   operator?: (scope: { close: (returnFocus?: boolean) => void }) => unknown
   values?: (scope: { close: (returnFocus?: boolean) => void }) => unknown
+  /** Pinned footer of the open part's panel (e.g. "Appliquer"); `part` tells which one. */
+  footer?: (scope: { part: DsaasfrFilterChipPart, close: (returnFocus?: boolean) => void }) => unknown
 }>()
 
 const valuesText = computed(() => {
@@ -92,6 +95,16 @@ function setOpen(part: DsaasfrFilterChipPart, open: boolean) {
         <template #default="{ close }">
           <slot
             :name="p.part"
+            :close="close"
+          />
+        </template>
+        <template
+          v-if="slots.footer"
+          #footer="{ close }"
+        >
+          <slot
+            name="footer"
+            :part="p.part"
             :close="close"
           />
         </template>

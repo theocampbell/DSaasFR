@@ -24,6 +24,8 @@ const open = defineModel<boolean>('open', { default: false })
 defineSlots<{
   trigger?: (scope: { open: boolean }) => unknown
   default?: (scope: { close: (returnFocus?: boolean) => void }) => unknown
+  /** Pinned at the bottom of the panel (e.g. "Appliquer"), stays visible while the content scrolls. */
+  footer?: (scope: { close: (returnFocus?: boolean) => void }) => unknown
 }>()
 
 const uid = useId()
@@ -181,6 +183,15 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
         :style="maxHeight !== undefined ? { maxHeight: `${maxHeight}px` } : undefined"
       >
         <slot :close="close" />
+        <div
+          v-if="$slots.footer"
+          class="dsaasfr-dropdown__footer"
+        >
+          <slot
+            name="footer"
+            :close="close"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -251,6 +262,20 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
   --idle: transparent;
   --hover: var(--background-overlap-grey-hover);
   --active: var(--background-overlap-grey-active);
+}
+
+.dsaasfr-dropdown__footer {
+  position: sticky;
+  bottom: calc(-1 * var(--dsaasfr-space-1w));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--dsaasfr-space-1w);
+  margin-top: var(--dsaasfr-space-1w);
+  margin-bottom: calc(-1 * var(--dsaasfr-space-1w));
+  padding: var(--dsaasfr-space-1w) var(--dsaasfr-space-2w);
+  border-top: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
+  background-color: inherit;
 }
 
 /* DSFR adds the high-contrast edge to fr-menu__list only from lg up. */

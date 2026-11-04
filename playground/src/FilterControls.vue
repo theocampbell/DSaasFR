@@ -1,10 +1,15 @@
 <script setup lang="ts">
-// App-side filter UI for the Dossiers list: chips (toolbar start) or the "Filtrer"
-// trigger (toolbar end), built from the library's DsaasfrFilterChip + DsaasfrDropdown.
-import { computed, nextTick } from 'vue'
+// App-side filter UI for the Dossiers list, built from the library's DsaasfrFilterChip +
+// DsaasfrDropdown:
+// - toolbar end: "Filtrer" opens every field with its values; nothing changes until
+//   "Appliquer les filtres";
+// - toolbar start: one chip per applied field. The field is fixed (one chip per field);
+//   condition and values open a panel with its own "Appliquer"; × removes the filter.
+// Every panel works on a draft: closing it without applying discards the changes.
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 import {
-  addFilter, clearFilters, fieldLabel, fields, filteredDossiers, filters, openPart,
-  operatorLabel, operators, removeFilter, valuesOf,
+  applied, applyFilter, applySelection, clearFilters, fieldLabel, fields, filteredDossiers,
+  operatorLabel, operators, removeFilter, selectionOf, valuesOf,
 } from './filters'
 import type { Operator } from './filters'
 
@@ -12,49 +17,66 @@ defineProps<{ area: 'start' | 'end' }>()
 
 const total = 40
 const count = computed(() =>
-  filters.some(f => f.values.length) ? `${filteredDossiers.value.length} dossiers sur ${total}` : `${total} dossiers`)
+  applied.length ? `${filteredDossiers.value.length} dossiers sur ${total}` : `${total} dossiers`)
 
-const chipOpenPart = (id: number) => (openPart.value?.id === id ? openPart.value.part : undefined)
-function setChipOpenPart(id: number, part: 'field' | 'operator' | 'values' | undefined) {
-  openPart.value = part ? { id, part } : (openPart.value?.id === id ? undefined : openPart.value)
+// ── "Filtrer": draft selection of all fields ─────────────────────────────────
+const panelOpen = ref(false)
+const draft = reactive<Record<string, string[]>>(selectionOf([]))
+const draftCount = computed(() => Object.values(draft).reduce((n, v) => n + v.length, 0))
+watch(panelOpen, (open) => {
+  if (open) Object.assign(draft, selectionOf(applied))
+})
+function applyAll(close: (returnFocus?: boolean) => void) {
+  applySelection(draft)
+  close(true)
+}
+function resetDraft() {
+  Object.assign(draft, selectionOf([]))
 }
 
-// Removing a chip or clearing all would drop focus on <body>: move it to "Filtrer".
-async function focusFilterTrigger() {
-  await nextTick()
-  document.querySelector<HTMLElement>('[data-filter-trigger] > button')?.focus()
+// ── Chips: draft of the open part ────────────────────────────────────────────
+type Part = 'field' | 'operator' | 'values'
+const openChip = ref<{ field: string, part: Part }>()
+const chipDraft = reactive<{ operator: Operator, values: string[] }>({ operator: 'is', values: [] })
+function setOpenPart(field: string, part: Part | undefined) {
+  if (part) {
+    const filter = applied.find(f => f.field === field)!
+    chipDraft.operator = filter.operator
+    chipDraft.values = [...filter.values]
+    openChip.value = { field, part }
+  }
+  else if (openChip.value?.field === field) {
+    openChip.value = undefined
+  }
 }
-// After removing a chip: focus the next chip (or the previous one), else "Filtrer".
-async function remove(id: number) {
-  const index = filters.findIndex(f => f.id === id)
-  removeFilter(id)
+function applyChip(field: string, close: (returnFocus?: boolean) => void) {
+  const empty = !chipDraft.values.length
+  applyFilter(field, chipDraft.operator, chipDraft.values)
+  if (empty) void focusAfterRemoval(applied.length)
+  else close(true)
+}
+
+// Removing a chip or clearing all would drop focus on <body>.
+async function focusAfterRemoval(index: number) {
   await nextTick()
   const chips = document.querySelectorAll<HTMLElement>('.dsaasfr-filter-chip')
   const target = chips[Math.min(index, chips.length - 1)]?.querySelector<HTMLElement>('button')
-  if (target) target.focus()
-  else void focusFilterTrigger()
+    ?? document.querySelector<HTMLElement>('[data-filter-trigger] > button')
+  target?.focus()
+}
+function remove(field: string) {
+  const index = applied.findIndex(f => f.field === field)
+  removeFilter(field)
+  void focusAfterRemoval(index)
 }
 function clearAll() {
   clearFilters()
-  void focusFilterTrigger()
-}
-
-function changeField(id: number, key: string, close: () => void) {
-  const filter = filters.find(f => f.id === id)!
-  // Re-picking the current field keeps its values.
-  if (filter.field === key) {
-    close()
-    return
-  }
-  filter.field = key
-  filter.values = []
-  close()
-  openPart.value = { id, part: 'values' }
+  void focusAfterRemoval(0)
 }
 </script>
 
 <template>
-  <!-- Toolbar start: result count (announced) + active filters -->
+  <!-- Toolbar start: result count (announced) + one chip per applied field -->
   <template v-if="area === 'start'">
     <p
       class="fr-text--sm fr-mb-0"
@@ -63,62 +85,46 @@ function changeField(id: number, key: string, close: () => void) {
       {{ count }}
     </p>
     <DsaasfrFilterChip
-      v-for="filter in filters"
-      :key="filter.id"
+      v-for="filter in applied"
+      :key="filter.field"
       :field="fieldLabel(filter.field)"
       :operator="operatorLabel(filter.operator)"
       :values="filter.values"
-      :open-part="chipOpenPart(filter.id)"
-      @update:open-part="setChipOpenPart(filter.id, $event)"
-      @remove="remove(filter.id)"
+      :open-part="openChip?.field === filter.field ? openChip.part : undefined"
+      @update:open-part="setOpenPart(filter.field, $event)"
+      @remove="remove(filter.field)"
     >
-      <template #field="{ close }">
-        <ul
-          class="playground-options"
-          aria-label="Champ"
-        >
-          <li
-            v-for="field in fields"
-            :key="field.key"
-          >
-            <!-- Current field: announced (aria-current) and shown (check icon). -->
-            <button
-              type="button"
-              class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm"
-              :class="field.key === filter.field ? 'fr-btn--icon-right fr-icon-check-line' : ''"
-              :aria-current="field.key === filter.field ? 'true' : undefined"
-              @click="changeField(filter.id, field.key, close)"
-            >
-              {{ field.label }}
-            </button>
-          </li>
-        </ul>
-      </template>
       <template #operator>
         <div class="fr-px-2w fr-pt-1w">
           <DsfrRadioButtonSet
-            :name="`operateur-${filter.id}`"
-            legend="Condition"
+            v-model="chipDraft.operator"
+            :name="`operateur-${filter.field}`"
+            :legend="`Condition : ${fieldLabel(filter.field)}`"
             small
-            :model-value="filter.operator"
             :options="operators.map(o => ({ label: o.label, value: o.value }))"
-            @update:model-value="(v: string | number | boolean | undefined) => (filter.operator = v as Operator)"
           />
         </div>
       </template>
       <template #values>
         <div class="fr-px-2w fr-pt-1w">
           <DsfrCheckboxSet
-            v-model="filter.values"
+            v-model="chipDraft.values"
             :legend="`Valeurs : ${fieldLabel(filter.field)}`"
             small
-            :options="valuesOf(filter.field).map(v => ({ label: v, value: v, name: `valeurs-${filter.id}`, id: `valeur-${filter.id}-${v}` }))"
+            :options="valuesOf(filter.field).map(v => ({ label: v, value: v, name: `chip-${filter.field}`, id: `chip-${filter.field}-${v}` }))"
           />
         </div>
       </template>
+      <template #footer="{ close }">
+        <DsfrButton
+          label="Appliquer"
+          size="sm"
+          @click="applyChip(filter.field, close)"
+        />
+      </template>
     </DsaasfrFilterChip>
     <DsfrButton
-      v-if="filters.length"
+      v-if="applied.length"
       label="Tout effacer"
       tertiary
       no-outline
@@ -127,52 +133,47 @@ function changeField(id: number, key: string, close: () => void) {
     />
   </template>
 
-  <!-- Toolbar end: "Filtrer" opens the list of fields -->
+  <!-- Toolbar end: "Filtrer" = every field with its values, applied on demand -->
   <DsaasfrDropdown
     v-else
+    v-model:open="panelOpen"
     data-filter-trigger
     placement="bottom-end"
     autofocus
     trigger-class="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left fr-icon-filter-line"
+    :trigger-label="applied.length ? `Filtrer (${applied.length}), ${applied.length} filtre${applied.length > 1 ? 's' : ''} actif${applied.length > 1 ? 's' : ''}` : undefined"
   >
     <template #trigger>
-      Filtrer
+      Filtrer<template v-if="applied.length">
+        ({{ applied.length }})
+      </template>
     </template>
-    <template #default="{ close }">
-      <ul
-        class="playground-options"
-        aria-label="Ajouter un filtre"
-      >
-        <li
+    <template #default>
+      <div class="fr-px-2w fr-pt-1w">
+        <DsfrCheckboxSet
           v-for="field in fields"
           :key="field.key"
-        >
-          <button
-            type="button"
-            class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm"
-            @click="close(); addFilter(field.key)"
-          >
-            {{ field.label }}
-          </button>
-        </li>
-      </ul>
+          v-model="draft[field.key]"
+          :legend="field.label"
+          small
+          :options="valuesOf(field.key).map(v => ({ label: v, value: v, name: `filtre-${field.key}`, id: `filtre-${field.key}-${v}` }))"
+        />
+      </div>
+    </template>
+    <template #footer="{ close }">
+      <DsfrButton
+        label="Réinitialiser"
+        tertiary
+        no-outline
+        size="sm"
+        :disabled="!draftCount"
+        @click="resetDraft"
+      />
+      <DsfrButton
+        :label="draftCount ? `Appliquer les filtres (${draftCount})` : 'Appliquer les filtres'"
+        size="sm"
+        @click="applyAll(close)"
+      />
     </template>
   </DsaasfrDropdown>
 </template>
-
-<style scoped>
-.playground-options {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.playground-options > li {
-  padding: 0;
-}
-
-.playground-options .fr-btn {
-  width: 100%;
-  max-width: none;
-}
-</style>
