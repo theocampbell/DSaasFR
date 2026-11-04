@@ -15,8 +15,8 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      'dsaasfr/styles': fileURLToPath(new URL('../src/styles/index.css', import.meta.url)),
-      'dsaasfr': fileURLToPath(new URL('../src/index.ts', import.meta.url)),
+      '@dsaasfr/vue/styles': fileURLToPath(new URL('../src/styles/index.css', import.meta.url)),
+      '@dsaasfr/vue': fileURLToPath(new URL('../src/index.ts', import.meta.url)),
       '@': fileURLToPath(new URL('../src', import.meta.url)),
     },
   },

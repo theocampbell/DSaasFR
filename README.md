@@ -12,21 +12,21 @@ strictement les couleurs, la typographie, les espacements et l'accessibilité du
 ## Installation
 
 ```bash
-npm install @gouvminint/vue-dsfr vue-router dsaasfr
+npm install @gouvminint/vue-dsfr vue-router @dsaasfr/vue
 ```
 
 ```ts
 // main.ts
 import { createApp } from 'vue'
 import VueDsfr from '@gouvminint/vue-dsfr'
-import DSaaSFR from 'dsaasfr'
+import DSaaSFR from '@dsaasfr/vue'
 
 import '@gouvfr/dsfr/dist/core/core.main.min.css'
 import '@gouvfr/dsfr/dist/component/component.main.min.css'
 import '@gouvfr/dsfr/dist/utility/utility.main.min.css'
 import '@gouvfr/dsfr/dist/scheme/scheme.min.css'
 import '@gouvminint/vue-dsfr/styles'
-import 'dsaasfr/styles'
+import '@dsaasfr/vue/styles'
 
 import App from './App.vue'
 
@@ -36,7 +36,7 @@ createApp(App).use(VueDsfr).use(DSaaSFR).mount('#app')
 Ou importer les composants un par un :
 
 ```ts
-import { DsaasfrAppShell } from 'dsaasfr'
+import { DsaasfrAppShell } from '@dsaasfr/vue'
 ```
 
 ## Utilisation
@@ -106,3 +106,23 @@ Settings du dépôt → Pages → Source : **GitHub Actions**.
 
 Ce dépôt est conçu pour être développé avec Claude Code : voir [CLAUDE.md](CLAUDE.md) et les
 agents spécialisés dans [.claude/agents](.claude/agents).
+
+## Publication
+
+Le paquet est publié sur npm sous le nom `@dsaasfr/vue`.
+
+**Première publication** (une seule fois, depuis votre poste) :
+
+```bash
+npm login                     # compte npm avec 2FA, membre de l'organisation dsaasfr
+pnpm install
+npm publish                   # lance d'abord pnpm check (prepublishOnly)
+```
+
+**Publications suivantes** (automatiques) : sur npmjs.com, déclarez le workflow
+`.github/workflows/release.yml` comme *trusted publisher* du paquet, puis :
+
+```bash
+npm version patch             # ou minor ; met à jour package.json et crée le tag v0.1.1
+git push --follow-tags        # le workflow vérifie, construit et publie avec provenance
+```

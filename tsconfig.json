@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "dsaasfr": ["src/index.ts"]
+      "@dsaasfr/vue": ["src/index.ts"]
     }
   },
   "include": ["src/**/*", "playground/**/*", ".storybook/**/*", "*.ts", "env.d.ts"]

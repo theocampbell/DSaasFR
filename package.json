@@ -1,7 +1,27 @@
 {
-  "name": "dsaasfr",
-  "version": "0.0.0",
-  "description": "SaaS-oriented Vue 3 components built on top of Vue DSFR and the Système de Design de l'État (DSFR).",
+  "name": "@dsaasfr/vue",
+  "version": "0.1.0",
+  "description": "Composants Vue 3 orientés application (SaaS, back-office) construits sur Vue DSFR et le Système de Design de l'État (DSFR). Proposition communautaire, non officielle.",
+  "keywords": [
+    "vue",
+    "vue3",
+    "dsfr",
+    "vue-dsfr",
+    "design-system",
+    "systeme-de-design-de-l-etat",
+    "rgaa",
+    "accessibilite",
+    "saas",
+    "back-office"
+  ],
+  "homepage": "https://theocampbell.github.io/DSaasFR/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theocampbell/DSaasFR.git"
+  },
+  "bugs": {
+    "url": "https://github.com/theocampbell/DSaasFR/issues"
+  },
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -9,7 +29,9 @@
   ],
   "files": [
     "dist",
-    "types"
+    "types",
+    "README.md",
+    "LICENSE"
   ],
   "main": "./dist/dsaasfr.js",
   "module": "./dist/dsaasfr.js",
@@ -40,7 +62,8 @@
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "prepublishOnly": "pnpm check"
   },
   "peerDependencies": {
     "@gouvminint/vue-dsfr": "^8.21.0",
@@ -77,5 +100,9 @@
   "packageManager": "pnpm@10.28.0",
   "engines": {
     "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }

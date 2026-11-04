@@ -19,19 +19,18 @@ mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vou
 
 ## 2. Publier sur npm
 
-- [ ] 👤 **Nom du paquet** : `@dsaasfr/vue` (recommandé : neutre, peut être transmis)
-      ou `dsaasfr`.
-- [ ] 🤖 Métadonnées du paquet : fichier `LICENSE`, repository/homepage/bugs/keywords,
-      `publishConfig.access`, `prepublishOnly` qui lance `pnpm check`, types publics propres.
-- [ ] 🤖 Test côté consommateur en CI : empaqueter le paquet, l'installer dans une
-      application Vite + Vue DSFR vierge, vérifier qu'elle compile, s'affiche et passe le
-      contrôle de types.
-- [ ] 🤖 Processus de publication : Changesets (versions + CHANGELOG) et une GitHub Action
-      qui publie avec le trusted publishing de npm (sans jeton, badge de provenance).
+- [ ] 👤 Créer l'organisation npm `dsaasfr` (gratuite pour les paquets publics) et activer
+      la 2FA sur le compte.
+- [ ] 👤 Première publication depuis votre poste : `npm login` puis `npm publish`
+      (voir la section « Publication » du README).
+- [ ] 👤 Sur npmjs.com, déclarer le workflow `release.yml` comme *trusted publisher* du
+      paquet `@dsaasfr/vue`.
+- [ ] 🤖 Ajouter le test côté consommateur à la CI (empaqueter, installer dans une
+      application Vite + Vue DSFR vierge, compiler, afficher). Fait à la main le 2026-11-04.
+- [ ] 🤖 Changesets (versions + CHANGELOG) quand d'autres contribueront.
 - [ ] 🤖👤 Créer une branche `main` et travailler ensuite par pull requests.
-- [ ] 👤 Compte npm avec 2FA (+ organisation `dsaasfr` si nom à portée), et déclarer le
-      workflow GitHub comme trusted publisher sur npmjs.com.
-- [ ] 👤 Fusionner la première PR de publication → `0.1.0` publiée.
+- [ ] 🤖 **Page d'accueil de la documentation** (Storybook) : introduction, installation,
+      démarrage rapide, liste des composants, en français.
 
 ## 3. Personnes et communauté
 
@@ -58,6 +57,10 @@ mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vou
 
 ## Fait
 
+- [x] Paquet `@dsaasfr/vue` prêt : métadonnées, licence MIT, `prepublishOnly` (`pnpm check`),
+      provenance, workflow de publication sur tag `v*` ; testé dans une application vierge
+      (installation, types, compilation, affichage).
+- [x] Documentation (fiches de décision, README, TODO, Storybook) traduite en français.
 - [x] Socle : bibliothèque Vite, Storybook (clair/sombre), Vitest + axe, règles de lint
       DSFR uniquement, playground, CI, agents Claude et hook de lint.
 - [x] `DsaasfrAppShell` : mise en page, régions, liens d'évitement, slot d'aperçu avec
