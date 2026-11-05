@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, 'claude/**']
+    branches: [main, develop, 'claude/**']
   pull_request:
 
 jobs:
@@ -18,10 +18,30 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
-      - run: pnpm test
+      - run: pnpm check-exports
+      - name: Tests + coverage
+        run: |
+          pnpm test:coverage | tee coverage.txt
+          { echo '### Couverture des tests'; echo '```'; sed -n '/Coverage summary/,/^=*$/p' coverage.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
       - run: pnpm build
       - run: pnpm build-storybook --quiet
       - uses: actions/upload-artifact@v4
         with:
           name: storybook
           path: storybook-static
+
+  commits:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Conventional commits
+        run: pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}

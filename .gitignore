@@ -9,3 +9,4 @@ coverage
 *.tsbuildinfo
 dist-playground
 _site
+coverage

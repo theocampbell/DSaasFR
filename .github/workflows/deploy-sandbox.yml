@@ -7,7 +7,7 @@ name: Deploy sandbox
 
 on:
   push:
-    branches: [claude/dsaasfr-component-library-vthch4, main]
+    branches: [develop, claude/dsaasfr-component-library-vthch4]
   workflow_dispatch:
 
 permissions:

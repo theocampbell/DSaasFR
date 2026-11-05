@@ -1,0 +1,19 @@
+name: Branche de fusion
+
+# As in Vue DSFR: contributions go to `develop`; only `develop` (or a hotfix branch) is
+# merged into `main`, which triggers a release.
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Only develop or hotfix/* into main
+        run: |
+          case "${{ github.head_ref }}" in
+            develop|hotfix/*) echo "OK: ${{ github.head_ref }} → main" ;;
+            *) echo "::error::Les PR doivent viser develop (reçu : ${{ github.head_ref }} → main)."; exit 1 ;;
+          esac
