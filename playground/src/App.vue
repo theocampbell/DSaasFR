@@ -6,7 +6,7 @@ import { usePreviewQuery, useRouteBreadcrumb } from '@dsaasfr/vue'
 import type { DsaasfrSidebarItem, DsaasfrUserMenuItem } from '@dsaasfr/vue'
 import FilterControls from './FilterControls.vue'
 import PageBody from './PageBody.vue'
-import { describePreview } from './fakeData'
+import { describePreview, dossiers } from './fakeData'
 
 const route = useRoute()
 // Preview in the URL (?apercu=…): shareable, Back closes it.
@@ -27,7 +27,7 @@ const items: DsaasfrSidebarItem[] = [
 ]
 
 // Toolbar row only on list pages.
-const listCount = computed(() => ({ '/dossiers': '40 dossiers', '/usagers': '30 usagers' } as Record<string, string>)[route.path])
+const listCount = computed(() => ({ '/dossiers': `${dossiers.length} dossiers`, '/usagers': '30 usagers' } as Record<string, string>)[route.path])
 
 // Key action, top right of the breadcrumb row, only on pages that have one
 // (demo: buttons do nothing).

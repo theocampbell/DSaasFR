@@ -5,8 +5,7 @@ import { DsaasfrPreviewPanel } from '../DsaasfrPreviewPanel'
 import { DsaasfrToolbar } from '../DsaasfrToolbar'
 import { DsaasfrSidebar } from '../DsaasfrSidebar'
 import { DsaasfrUserMenu } from '../DsaasfrUserMenu'
-import { accountItems } from '../DsaasfrUserMenu/DsaasfrUserMenu.stories'
-import type { DsaasfrSidebarItem } from '../DsaasfrSidebar'
+import { accountItems, navItems } from '../../../.storybook/fixtures'
 import DsaasfrAppShell from './DsaasfrAppShell.vue'
 
 const meta = {
@@ -26,21 +25,6 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
-
-export const navItems: DsaasfrSidebarItem[] = [
-  { text: 'Tableau de bord', to: '/' },
-  { text: 'Dossiers', to: '/dossiers' },
-  { text: 'Usagers', to: '/usagers' },
-  { text: 'Statistiques', to: '/statistiques' },
-  {
-    text: 'Administration',
-    menuItems: [
-      { text: 'Agents', to: '/admin/agents' },
-      { text: 'Démarches', to: '/admin/demarches' },
-      { text: 'Paramètres', to: '/admin/parametres' },
-    ],
-  },
-]
 
 const template = (previewOpen: boolean) => ({
   components: { DsaasfrAppShell, DsaasfrBreadcrumbBar, DsaasfrPreviewPanel, DsaasfrSidebar, DsaasfrToolbar, DsaasfrUserMenu },

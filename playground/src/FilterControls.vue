@@ -7,22 +7,32 @@
 //   condition and values open a panel with its own "Appliquer"; × removes the filter.
 // Every panel works on a draft: closing it without applying discards the changes.
 import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { dossiers } from './fakeData'
 import {
-  applied, applyFilter, applySelection, clearFilters, fieldLabel, fields, filteredDossiers,
-  operatorLabel, operators, removeFilter, selectionOf, valuesOf,
+  applied, applyFilter, applySelection, clearFilters, countResults, facetCount, fieldLabel,
+  fields, filteredDossiers, filtersOf, operatorLabel, operators, removeFilter, selectionOf,
+  valuesOf,
 } from './filters'
 import type { Operator } from './filters'
 
 defineProps<{ area: 'start' | 'end' }>()
 
-const total = 40
+const total = dossiers.length
+const plural = (n: number) => `${n} dossier${n > 1 ? 's' : ''}`
 const count = computed(() =>
-  applied.length ? `${filteredDossiers.value.length} dossiers sur ${total}` : `${total} dossiers`)
+  applied.length ? `${plural(filteredDossiers.value.length)} sur ${total}` : plural(total))
 
 // ── "Filtrer": draft selection of all fields ─────────────────────────────────
 const panelOpen = ref(false)
 const draft = reactive<Record<string, string[]>>(selectionOf([]))
 const draftCount = computed(() => Object.values(draft).reduce((n, v) => n + v.length, 0))
+const draftFilters = computed(() => filtersOf(draft))
+const draftResults = computed(() => countResults(draftFilters.value))
+/** Value options with their faceted count; values that would return nothing are disabled. */
+const draftOptions = (fieldKey: string, name: string) => valuesOf(fieldKey).map((v) => {
+  const n = facetCount(draftFilters.value, fieldKey, v)
+  return { label: `${v} (${n})`, value: v, name, id: `${name}-${v}`, disabled: n === 0 && !draft[fieldKey]!.includes(v) }
+})
 watch(panelOpen, (open) => {
   if (open) Object.assign(draft, selectionOf(applied))
 })
@@ -49,6 +59,23 @@ function setOpenPart(field: string, part: Part | undefined) {
     openChip.value = undefined
   }
 }
+const chipFilters = (field: string) => [
+  ...applied.filter(f => f.field !== field),
+  { field, operator: chipDraft.operator, values: chipDraft.values },
+]
+const chipResults = (field: string) => countResults(chipFilters(field))
+const chipOptions = (field: string) => valuesOf(field).map((v) => {
+  const others = applied.filter(f => f.field !== field)
+  const n = chipDraft.operator === 'is' ? facetCount(others, field, v) : undefined
+  return {
+    label: n === undefined ? v : `${v} (${n})`,
+    value: v,
+    name: `chip-${field}`,
+    id: `chip-${field}-${v}`,
+    disabled: n === 0 && !chipDraft.values.includes(v),
+  }
+})
+
 function applyChip(field: string, close: (returnFocus?: boolean) => void) {
   const empty = !chipDraft.values.length
   applyFilter(field, chipDraft.operator, chipDraft.values)
@@ -111,13 +138,13 @@ function clearAll() {
             v-model="chipDraft.values"
             :legend="`Valeurs : ${fieldLabel(filter.field)}`"
             small
-            :options="valuesOf(filter.field).map(v => ({ label: v, value: v, name: `chip-${filter.field}`, id: `chip-${filter.field}-${v}` }))"
+            :options="chipOptions(filter.field)"
           />
         </div>
       </template>
       <template #footer="{ close }">
         <DsfrButton
-          label="Appliquer"
+          :label="chipDraft.values.length ? `Afficher ${plural(chipResults(filter.field))}` : 'Retirer le filtre'"
           size="sm"
           @click="applyChip(filter.field, close)"
         />
@@ -156,7 +183,7 @@ function clearAll() {
           v-model="draft[field.key]"
           :legend="field.label"
           small
-          :options="valuesOf(field.key).map(v => ({ label: v, value: v, name: `filtre-${field.key}`, id: `filtre-${field.key}-${v}` }))"
+          :options="draftOptions(field.key, `filtre-${field.key}`)"
         />
       </div>
     </template>
@@ -169,8 +196,9 @@ function clearAll() {
         :disabled="!draftCount"
         @click="resetDraft"
       />
+      <!-- Preview of the result before applying (one count query on a real server). -->
       <DsfrButton
-        :label="draftCount ? `Appliquer les filtres (${draftCount})` : 'Appliquer les filtres'"
+        :label="draftCount ? `Afficher ${plural(draftResults)}` : `Afficher tous les dossiers`"
         size="sm"
         @click="applyAll(close)"
       />
