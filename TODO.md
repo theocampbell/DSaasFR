@@ -27,10 +27,7 @@ mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vou
       paquet `@dsaasfr/vue`.
 - [ ] 🤖 Ajouter le test côté consommateur à la CI (empaqueter, installer dans une
       application Vite + Vue DSFR vierge, compiler, afficher). Fait à la main le 2026-11-04.
-- [ ] 🤖 Changesets (versions + CHANGELOG) quand d'autres contribueront.
 - [ ] 🤖👤 Créer une branche `main` et travailler ensuite par pull requests.
-- [ ] 🤖 **Page d'accueil de la documentation** (Storybook) : introduction, installation,
-      démarrage rapide, liste des composants, en français.
 
 ## 3. Personnes et communauté
 
@@ -57,6 +54,10 @@ mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vou
 
 ## Fait
 
+- [x] Avant l'annonce à la communauté : publication automatisée (semantic-release, commits
+      conventionnels, journal des modifications en français), vérification des exports,
+      couverture des tests en CI, modèle de PR et guide du contributeur, pages de
+      documentation en français dans Storybook (Accueil, Pour commencer, Contribuer).
 - [x] Paquet `@dsaasfr/vue` prêt : métadonnées, licence MIT, `prepublishOnly` (`pnpm check`),
       provenance, workflow de publication sur tag `v*` ; testé dans une application vierge
       (installation, types, compilation, affichage).

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import DsaasfrDropdown from './DsaasfrDropdown.vue'
 
 const meta = {
-  title: 'Building blocks/DsaasfrDropdown',
+  title: 'Briques/DsaasfrDropdown',
   component: DsaasfrDropdown,
   tags: ['autodocs'],
   parameters: {

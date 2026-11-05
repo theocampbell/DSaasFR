@@ -1,0 +1,51 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Documentation/Accueil" />
+
+# DSaaSFR
+
+**Composants Vue 3 pour les applications métier de l'État** (outils internes, back-offices,
+applications en mode SaaS), construits **sur** [Vue DSFR](https://vue-ds.fr) et le
+[Système de Design de l'État](https://www.systeme-de-design.gouv.fr).
+
+> **Proposition communautaire, non officielle.** DSaaSFR n'est pas un produit du DSFR. C'est
+> une exploration ouverte : vos retours sont les bienvenus.
+
+## Pourquoi ?
+
+Le DSFR est pensé d'abord pour les sites publics. Les applications utilisées toute la journée
+par des agents ont d'autres besoins : une navigation permanente, des actions proches du
+contenu, des filtres, un aperçu sans quitter la liste… Chaque équipe réinvente ces
+composants, et les détails d'accessibilité (focus, zoom 400 %, régions, annonces) sont
+souvent ceux qui manquent.
+
+DSaaSFR propose ces motifs **une fois**, en respectant strictement le DSFR : jetons de
+couleur, typographie et espacements du DSFR uniquement, réutilisation de Vue DSFR, RGAA 4.1
+comme objectif. Chaque interprétation est expliquée dans une
+[fiche de décision](https://github.com/theocampbell/DSaasFR/tree/develop/docs/decisions).
+
+## Composants
+
+**Shell**
+
+- [DsaasfrAppShell](?path=/docs/shell-dsaasfrappshell--docs) : Mise en page de l'application : barre latérale, fil d'Ariane, barre d'outils, contenu, panneau d'aperçu
+- [DsaasfrSidebar](?path=/docs/shell-dsaasfrsidebar--docs) : Bloc-marque, nom du service, navigation principale et secondaire, pied (compte)
+- [DsaasfrUserMenu](?path=/docs/shell-dsaasfrusermenu--docs) : La personne connectée et ses actions de compte
+- [DsaasfrBreadcrumbBar](?path=/docs/shell-dsaasfrbreadcrumbbar--docs) : Fil d'Ariane construit depuis le routeur, action principale de la page
+- [DsaasfrToolbar](?path=/docs/shell-dsaasfrtoolbar--docs) : Barre d'outils générique : `start` à gauche, `end` à droite
+- [DsaasfrPreviewPanel](?path=/docs/shell-dsaasfrpreviewpanel--docs) : Aperçu d'un élément sans quitter la liste, lié à l'URL
+
+**Briques**
+
+- [DsaasfrDropdown](?path=/docs/briques-dsaasfrdropdown--docs) : Bouton ouvrant un panneau flottant (menus, filtres)
+- [DsaasfrFilterChip](?path=/docs/briques-dsaasfrfilterchip--docs) : Étiquette de filtre : champ, condition, valeurs, retrait
+
+Composables : `useRouteBreadcrumb()` (fil d'Ariane depuis les routes), `usePreviewQuery()`
+(aperçu dans l'URL).
+
+## Voir aussi
+
+- [Pour commencer](?path=/docs/documentation-pour-commencer--docs) : installation et premier écran
+- [Bac à sable](https://theocampbell.github.io/DSaasFR/playground/) : une fausse application de back-office
+- [Contribuer](?path=/docs/documentation-contribuer--docs)
+- [Dépôt GitHub](https://github.com/theocampbell/DSaasFR) · [npm : @dsaasfr/vue](https://www.npmjs.com/package/@dsaasfr/vue)

@@ -24,6 +24,11 @@ setup((app) => {
 const preview: Preview = {
   parameters: {
     layout: 'fullscreen',
+    options: {
+      storySort: {
+        order: ['Documentation', ['Accueil', 'Pour commencer', 'Contribuer'], 'Shell', 'Briques'],
+      },
+    },
     a11y: {
       // Fail stories on a11y violations rather than just reporting them.
       test: 'error',

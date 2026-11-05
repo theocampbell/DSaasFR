@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import DsaasfrFilterChip from './DsaasfrFilterChip.vue'
 
 const meta = {
-  title: 'Building blocks/DsaasfrFilterChip',
+  title: 'Briques/DsaasfrFilterChip',
   component: DsaasfrFilterChip,
   tags: ['autodocs'],
   args: { field: 'Assigné à', operator: 'est', values: ['Personne A', 'Personne B'] },
