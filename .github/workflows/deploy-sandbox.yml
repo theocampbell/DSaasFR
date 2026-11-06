@@ -1,7 +1,8 @@
 name: Deploy sandbox
 
-# Publishes the sandbox to GitHub Pages:
-#   /            Storybook (every component and state)
+# Publishes to GitHub Pages:
+#   /            documentation site (VitePress, French)
+#   /storybook/  Storybook (every component and state; docs examples are embedded from it)
 #   /playground/ the fake back-office app, to click around
 # One-time setup: repo Settings → Pages → Source: "GitHub Actions".
 
@@ -30,7 +31,8 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build-storybook --quiet --output-dir _site
+      - run: pnpm docs:build --outDir _site
+      - run: pnpm build-storybook --quiet --output-dir _site/storybook
       - run: pnpm build:playground
         env:
           PLAYGROUND_BASE: /${{ github.event.repository.name }}/playground/

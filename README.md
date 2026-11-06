@@ -11,7 +11,7 @@ strictement les couleurs, la typographie, les espacements et l'accessibilité du
 
 ## Documentation
 
-- [Documentation et composants (Storybook)](https://theocampbell.github.io/DSaasFR/?path=/docs/documentation-accueil--docs)
+- [Documentation](https://theocampbell.github.io/DSaasFR/) · [Storybook](https://theocampbell.github.io/DSaasFR/storybook/)
 - [Bac à sable](https://theocampbell.github.io/DSaasFR/playground/) : une fausse application de back-office
 - [Fiches de décision](docs/decisions) · [Guide du contributeur](CONTRIBUTING.md) · [Journal des modifications](CHANGELOG.md)
 
