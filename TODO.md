@@ -54,6 +54,10 @@ mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vou
 
 ## Fait
 
+- [x] Site de documentation (VitePress, en français) à la racine du bac à sable : guide,
+      une page par composant avec exemple en direct et code à copier, composables, recettes
+      (filtres, aperçu, rôles), fiches de décision, recherche. Storybook déplacé sous
+      `/storybook/`.
 - [x] Avant l'annonce à la communauté : publication automatisée (semantic-release, commits
       conventionnels, journal des modifications en français), vérification des exports,
       couverture des tests en CI, modèle de PR et guide du contributeur, pages de

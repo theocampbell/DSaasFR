@@ -14,6 +14,8 @@ const routes: RouteRecordRaw[] = [
   { path: '/dossiers/:id/pieces/:piece', component: Empty, meta: { breadcrumb: route => `Pièce ${route.params.piece}` } },
   { path: '/admin', component: Empty, meta: { breadcrumb: false } },
   { path: '/admin/agents', component: Empty, meta: { title: 'Agents' } },
+  { path: '/aide/faq', component: Empty, meta: { title: 'Questions fréquentes' } },
+  { path: '/:pathMatch(.*)*', component: Empty, meta: { title: 'Page introuvable' } },
 ]
 
 async function setup(path: string, options: { props?: Record<string, unknown>, slots?: Record<string, string> } = {}) {
@@ -44,6 +46,15 @@ describe('DsaasfrBreadcrumbBar', () => {
     const { nav } = await setup('/admin/agents')
 
     expect(labels(nav)).toEqual(['Tableau de bord', 'Agents'])
+  })
+
+  it('skips prefixes that only match a catch-all route, but keeps a not-found current page', async () => {
+    const { nav, unmount } = await setup('/aide/faq')
+    expect(labels(nav)).toEqual(['Tableau de bord', 'Questions fréquentes'])
+    unmount()
+
+    const second = await setup('/nulle-part')
+    expect(labels(second.nav)).toEqual(['Tableau de bord', 'Page introuvable'])
   })
 
   it('collapses the middle levels into a "…" button above maxItems', async () => {

@@ -14,3 +14,9 @@
   --vp-c-brand-3: #6a6af4;
   --vp-c-brand-soft: rgb(133 133 246 / 16%);
 }
+
+/* Wider content on component and recipe pages (see transformPageData). */
+.dsaasfr-wide .VPDoc.has-sidebar .container,
+.dsaasfr-wide .VPDoc.has-sidebar .content-container {
+  max-width: 1040px;
+}

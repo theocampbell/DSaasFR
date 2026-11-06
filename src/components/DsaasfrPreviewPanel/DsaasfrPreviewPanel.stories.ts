@@ -11,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Contenu du slot `preview` de DsaasfrAppShell : en-tête fixé (titre, bouton de fermeture DSFR), actions et pied facultatifs, corps qui défile. Dans le shell, le titre nomme la région d’aperçu et reçoit le focus lorsque l’utilisateur l’ouvre ; Échap et « Fermer » la ferment et le focus revient à l’élément déclencheur. La mise en page est assurée par le shell : le panneau pousse le contenu à partir de 78em, glisse par-dessus à partir de 62em, et passe en plein écran (reste de la page inerte) en dessous. À associer à `usePreviewQuery()` pour conserver l’aperçu dans l’URL. Voir la fiche de décision docs/decisions/0008.',
+          'Contenu du slot `preview` de DsaasfrAppShell : en-tête fixé (titre, bouton de fermeture DSFR), actions et pied facultatifs, corps qui défile. Dans le shell, le titre nomme la région d’aperçu et reçoit le focus lorsque l’utilisateur l’ouvre ; Échap et « Fermer » la ferment et le focus revient à l’élément déclencheur. La mise en page est assurée par le shell : le panneau pousse le contenu à partir de 62em, et passe en plein écran (reste de la page inerte) en dessous. À associer à `usePreviewQuery()` pour conserver l’aperçu dans l’URL. Voir la fiche de décision docs/decisions/0008.',
       },
     },
   },

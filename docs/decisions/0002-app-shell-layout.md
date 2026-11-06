@@ -65,8 +65,9 @@ d'espace disponible au contenu.
   fil d'Ariane, `main` (cible du lien d'évitement), `aside` « Aperçu ».
 - Liens d'évitement : « Contenu » et « Menu ».
 - Aperçu : le bouton de bascule reçoit `aria-controls` + `aria-expanded` via la prop de
-  slot `previewToggleAttrs` ; le focus reste sur le bouton de bascule à l'ouverture du
-  panneau et y revient lorsque le panneau est fermé depuis l'intérieur (RGAA 12.8).
+  slot `previewToggleAttrs` ; lorsque l'utilisateur ouvre le panneau, le focus va sur son
+  titre (voir [0008](0008-preview-panel.md)) et revient au bouton de bascule lorsque le
+  panneau est fermé depuis l'intérieur (RGAA 12.8).
 - À décider : si la barre d'outils est un
   simple groupe ou une barre d'outils APG (navigation aux flèches) ; l'étiquetage de la
   barre latérale repliée.

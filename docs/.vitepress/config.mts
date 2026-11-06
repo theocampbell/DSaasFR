@@ -15,6 +15,14 @@ export default defineConfig({
   ignoreDeadLinks: true,
   lastUpdated: true,
   head: [['meta', { name: 'theme-color', content: '#000091' }]],
+  // Component and recipe pages: no outline column, wider content, so live examples render
+  // at a desktop width (components switch layout below 62em) close to real size.
+  transformPageData(pageData) {
+    if (/^(composants|recettes)\//.test(pageData.relativePath)) {
+      pageData.frontmatter.aside ??= false
+      pageData.frontmatter.pageClass ??= 'dsaasfr-wide'
+    }
+  },
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/guide/pour-commencer', activeMatch: '/guide/' },

@@ -18,7 +18,7 @@ strictement les couleurs, la typographie, les espacements et l'accessibilité du
 ## Installation
 
 ```bash
-npm install @gouvminint/vue-dsfr vue-router @dsaasfr/vue
+npm install @gouvminint/vue-dsfr @gouvfr/dsfr vue-router @dsaasfr/vue
 ```
 
 ```ts

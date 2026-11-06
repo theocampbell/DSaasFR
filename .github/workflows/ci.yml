@@ -25,6 +25,7 @@ jobs:
           { echo '### Couverture des tests'; echo '```'; sed -n '/Coverage summary/,/^=*$/p' coverage.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
       - run: pnpm build
       - run: pnpm build-storybook --quiet
+      - run: pnpm docs:build
       - uses: actions/upload-artifact@v4
         with:
           name: storybook

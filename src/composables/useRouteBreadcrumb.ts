@@ -35,6 +35,10 @@ export function useRouteBreadcrumb() {
       const resolved = router.resolve(path)
       const record = resolved.matched[resolved.matched.length - 1]
       if (!record) continue
+      // A prefix that only matches a catch-all ("/:pathMatch(.*)*", e.g. "Page introuvable")
+      // is not a level of the trail — unless it is the current page itself.
+      const isCatchAll = /\(\.\*\)/.test(record.path)
+      if (isCatchAll && path !== prefixes[prefixes.length - 1]) continue
       const label = record.meta.breadcrumb ?? record.meta.title
       if (label === false || label === undefined) continue
       const text = typeof label === 'function' ? label(resolved as RouteLocationNormalizedLoaded) : label
