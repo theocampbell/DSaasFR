@@ -40,7 +40,7 @@
   --dsaasfr-dropdown-max-width: 22rem;
   --dsaasfr-chip-radius: 1rem;
   --dsaasfr-chip-height: 2rem;
-  --dsaasfr-chip-part-max-width: 16rem;
+  --dsaasfr-chip-part-max-width: 22rem;
 
   /* DSFR focus ring offset (2px), used to pull it inside clipped containers. */
   --dsaasfr-focus-offset: 2px;

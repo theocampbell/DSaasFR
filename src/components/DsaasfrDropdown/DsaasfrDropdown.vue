@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<DsaasfrDropdownProps>(), {
   placement: 'bottom-start',
   triggerClass: undefined,
   triggerLabel: undefined,
+  triggerTitle: undefined,
   autofocus: false,
   id: undefined,
 })
@@ -158,6 +159,7 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
       type="button"
       :class="triggerClass"
       :aria-label="triggerLabel"
+      :title="triggerTitle"
       :aria-expanded="open"
       :aria-controls="panelId"
       @click="open = !open"

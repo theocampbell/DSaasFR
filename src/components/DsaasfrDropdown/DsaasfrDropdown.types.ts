@@ -5,6 +5,8 @@ export interface DsaasfrDropdownProps {
   triggerClass?: string | string[] | Record<string, boolean>
   /** Accessible name of the trigger, when its visible content is not enough. Must contain the visible text. */
   triggerLabel?: string
+  /** Tooltip of the trigger (e.g. the full text of a shortened label). */
+  triggerTitle?: string
   /** Move focus to the first focusable element of the panel when it opens (forms, option lists). */
   autofocus?: boolean
   /** Base id (panel id = `${id}-panel`). Unique by default. */

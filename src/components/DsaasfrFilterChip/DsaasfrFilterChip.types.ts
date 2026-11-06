@@ -7,8 +7,10 @@ export interface DsaasfrFilterChipProps {
   operator?: string
   /** Selected values (labels), e.g. ["Personne A", "Personne B"]. */
   values?: string[]
-  /** Values shown before summarising ("A, B et 2 autres"). */
+  /** Values shown at most before summarising ("A, B et 2 autres"). */
   maxVisibleValues?: number
+  /** Length (characters) the shown values may take before the rest is summarised, so the chip stays on one line. */
+  maxValuesLength?: number
   /** Text shown when no value is selected yet. */
   emptyValuesText?: string
   /** Prefix of the chip's accessible name ("Filtre : Assigné à est A, B"). */

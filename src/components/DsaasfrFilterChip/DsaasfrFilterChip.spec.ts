@@ -58,6 +58,14 @@ describe('DsaasfrFilterChip', () => {
     expect(screen.getByRole('group', { name: 'Filtre : Assigné à est A, B, C, D' })).toBeTruthy()
   })
 
+  it('summarises long values by length so the chip stays on one line', () => {
+    setup({ values: ['Autorisation de défrichement', 'Certificat d’urbanisme', 'Dossier loi sur l’eau'] })
+
+    const button = screen.getByRole('button', { name: /Modifier les valeurs/ })
+    expect(button.textContent?.trim()).toBe('Autorisation de défrichement et 2 autres')
+    expect(button.getAttribute('title')).toBe('Autorisation de défrichement, Certificat d’urbanisme, Dossier loi sur l’eau')
+  })
+
   it('shows a placeholder when no value is selected yet', () => {
     setup({ values: [] })
 
