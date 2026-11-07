@@ -117,6 +117,16 @@ describe('DsaasfrAppShell', () => {
     scrollTo.mockRestore()
   })
 
+  it('sets the sidebar width from sidebarSize (DSFR-scale tokens)', () => {
+    const { container, rerender } = render(DsaasfrAppShell, { slots, props: { sidebarSize: 'lg' } })
+    const root = container.firstElementChild as HTMLElement
+    expect(root.style.getPropertyValue('--dsaasfr-shell-sidebar-width')).toBe('var(--dsaasfr-shell-sidebar-width-lg)')
+
+    return rerender({ sidebarSize: undefined }).then(() => {
+      expect(root.style.getPropertyValue('--dsaasfr-shell-sidebar-width')).toBe('')
+    })
+  })
+
   it('has no detectable accessibility violations', async () => {
     const { container } = render(DsaasfrAppShell, {
       slots: { ...slots, preview: '<p>Aperçu</p>' },

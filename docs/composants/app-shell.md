@@ -154,12 +154,34 @@ au-dessus de tout, par exemple pendant une migration. N’utilisez pas en même 
 </DsaasfrAppShell>
 ```
 
+## Largeur de la barre latérale
+
+Trois tailles, sur l’échelle d’espacement du DSFR, selon la longueur des libellés de
+navigation et du nom du service :
+
+<Example story="shell-dsaasfrappshell--large-sidebar" title="barre latérale large (lg, 20rem)" :height="420" :viewport="1280" />
+
+```vue
+<DsaasfrAppShell sidebar-size="lg">…</DsaasfrAppShell>   <!-- sm : 14rem · md : 16rem (défaut) · lg : 20rem -->
+```
+
+Pour une largeur sur mesure :
+
+```vue
+<DsaasfrAppShell style="--dsaasfr-shell-sidebar-width: 18rem">…</DsaasfrAppShell>
+```
+
+La largeur est fixe (pas de poignée de redimensionnement, qui devrait être utilisable au
+clavier). Sous 62em, la barre latérale devient l’en-tête mobile du DSFR et la taille ne
+s’applique pas.
+
 ## API
 
 ### Props
 
 | Nom | Type | Défaut | Description |
 |---|---|---|---|
+| `sidebarSize` | `'sm' \| 'md' \| 'lg'` | — (16rem) | Largeur de la barre latérale sur grand écran : `sm` 14rem (libellés courts), `md` 16rem, `lg` 20rem (libellés ou nom de service longs). Pour une autre largeur, définissez la variable CSS `--dsaasfr-shell-sidebar-width`. |
 | `previewLabel` | `string` | `'Aperçu'` | Nom accessible du panneau d’aperçu (région `complementary`), utilisé seulement si le contenu ne fournit pas de titre. `DsaasfrPreviewPanel` nomme la région par son propre titre. |
 | `mainId` | `string` | `'dsaasfr-main'` | Identifiant de `<main>`, cible du lien d’évitement « Contenu ». Sert aussi de base aux identifiants de la barre latérale (`<mainId>-sidebar`) et de l’aperçu (`<mainId>-preview`). |
 | `hideSkipLinks` | `boolean` | `false` | Masque les liens d’évitement. Uniquement si votre application affiche déjà les siens. |

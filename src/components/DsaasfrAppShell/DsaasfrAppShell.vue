@@ -30,6 +30,7 @@ import { previewContextKey } from './previewContext'
 import type { DsaasfrAppShellPreviewScope, DsaasfrAppShellProps } from './DsaasfrAppShell.types'
 
 const props = withDefaults(defineProps<DsaasfrAppShellProps>(), {
+  sidebarSize: undefined,
   previewLabel: 'Aperçu',
   mainId: 'dsaasfr-main',
   hideSkipLinks: false,
@@ -47,6 +48,11 @@ defineSlots<{
 }>()
 
 const slots = useSlots()
+
+// Size → DSFR-scale token. Without a size, the token's default (or a custom value set by
+// the app on --dsaasfr-shell-sidebar-width) applies.
+const sizeStyle = computed(() =>
+  props.sidebarSize ? { '--dsaasfr-shell-sidebar-width': `var(--dsaasfr-shell-sidebar-width-${props.sidebarSize})` } : undefined)
 const sidebarId = computed(() => `${props.mainId}-sidebar`)
 const hasPreview = computed(() => previewOpen.value && !!slots.preview)
 const skipLinks = computed(() => [
@@ -153,6 +159,7 @@ watch(hasPreview, async (open) => {
   <div
     class="dsaasfr-app-shell"
     :class="{ 'dsaasfr-app-shell--preview-open': hasPreview }"
+    :style="sizeStyle"
   >
     <div
       v-if="!hideSkipLinks"

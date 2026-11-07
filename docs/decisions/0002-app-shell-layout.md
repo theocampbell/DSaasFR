@@ -45,6 +45,14 @@ L'en-tête DSFR est remplacé par le bloc de marque de la barre latérale : voir
   latérale devient l'en-tête mobile du DSFR et les autres zones s'empilent : voir
   [0004](0004-narrow-screens.md).
 
+## Largeur de la barre latérale (2026-11-07)
+
+Trois tailles sur l’échelle d’espacement du DSFR, choisies par l’application selon ses
+libellés (`sidebarSize`) : `sm` 14rem, `md` 16rem (défaut), `lg` 20rem ; une largeur sur mesure
+reste possible avec `--dsaasfr-shell-sidebar-width`. Pas de redimensionnement à la souris :
+une poignée devrait être utilisable au clavier, et des tailles fixes gardent une mise en page
+prévisible.
+
 ## Défilement
 
 C'est la **page** qui défile ; la barre latérale, les lignes du fil d'Ariane et de la barre

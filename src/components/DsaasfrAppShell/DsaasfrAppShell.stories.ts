@@ -26,15 +26,15 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const template = (previewOpen: boolean) => ({
+const template = (previewOpen: boolean, sidebarSize?: 'sm' | 'md' | 'lg') => ({
   components: { DsaasfrAppShell, DsaasfrBreadcrumbBar, DsaasfrPreviewPanel, DsaasfrSidebar, DsaasfrToolbar, DsaasfrUserMenu },
   setup() {
     const preview = ref(previewOpen)
     const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers' }, { text: 'Dossier #2041' }]
-    return { preview, links, navItems, accountItems }
+    return { preview, links, navItems, accountItems, sidebarSize }
   },
   template: `
-    <DsaasfrAppShell v-model:preview-open="preview">
+    <DsaasfrAppShell v-model:preview-open="preview" :sidebar-size="sidebarSize">
       <template #sidebar>
         <DsaasfrSidebar service-title="Démarches Pro" service-description="Back-office instructeurs" :items="navItems">
           <template #footer>
@@ -84,3 +84,6 @@ export const SecondaryNavigation: Story = {
  * Narrow screens (< 62em: small window or high zoom) switch the sidebar to the DSFR
  * mobile header. Shrink the browser window or zoom to 400% to see it (decision 0004).
  */
+
+export const SmallSidebar: Story = { name: 'Barre latérale étroite (sm)', render: () => template(false, 'sm') }
+export const LargeSidebar: Story = { name: 'Barre latérale large (lg)', render: () => template(false, 'lg') }
