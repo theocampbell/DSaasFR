@@ -7,18 +7,38 @@
  * and closes the preview itself. Outside the shell, listen to `close`.
  * See docs/decisions/0008-preview-panel.md.
  */
-import { inject, onBeforeUnmount, onMounted, useId } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
 import { previewContextKey } from '../DsaasfrAppShell/previewContext'
 import type { DsaasfrPreviewPanelProps } from './DsaasfrPreviewPanel.types'
 
-withDefaults(defineProps<DsaasfrPreviewPanelProps>(), {
+const props = withDefaults(defineProps<DsaasfrPreviewPanelProps>(), {
   titleTag: 'h2',
   description: undefined,
   closeText: 'Fermer',
   closeLabel: 'Fermer l’aperçu',
+  hasPrevious: undefined,
+  hasNext: undefined,
+  previousLabel: 'Élément précédent',
+  nextLabel: 'Élément suivant',
 })
 
-const emit = defineEmits<{ close: [] }>()
+const emit = defineEmits<{ close: [], previous: [], next: [] }>()
+
+const navigation = computed(() => props.hasPrevious !== undefined || props.hasNext !== undefined)
+
+// Moving to another item keeps focus on the button (to press it again); the new item is
+// announced politely instead (RGAA 7.5).
+const announcement = ref('')
+let navigating = false
+function go(direction: 'previous' | 'next') {
+  navigating = true
+  if (direction === 'previous') emit('previous')
+  else emit('next')
+}
+watch(() => props.title, (title) => {
+  if (navigating) announcement.value = title
+  navigating = false
+})
 
 defineSlots<{
   default?: () => unknown
@@ -57,6 +77,29 @@ function close() {
           {{ description }}
         </p>
       </div>
+      <div
+        v-if="navigation"
+        class="dsaasfr-preview-panel__nav"
+      >
+        <button
+          type="button"
+          class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-arrow-up-s-line"
+          :title="previousLabel"
+          :disabled="hasPrevious === false"
+          @click="go('previous')"
+        >
+          {{ previousLabel }}
+        </button>
+        <button
+          type="button"
+          class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-arrow-down-s-line"
+          :title="nextLabel"
+          :disabled="hasNext === false"
+          @click="go('next')"
+        >
+          {{ nextLabel }}
+        </button>
+      </div>
       <!-- Official DSFR close button (as in fr-modal). -->
       <button
         type="button"
@@ -74,6 +117,13 @@ function close() {
     >
       <slot name="actions" />
     </div>
+
+    <p
+      class="fr-sr-only"
+      role="status"
+    >
+      {{ announcement }}
+    </p>
 
     <div class="dsaasfr-preview-panel__body">
       <slot />
@@ -112,7 +162,13 @@ function close() {
 }
 
 .dsaasfr-preview-panel__heading {
+  flex: 1;
   min-width: 0;
+}
+
+.dsaasfr-preview-panel__nav {
+  display: flex;
+  flex: 0 0 auto;
 }
 
 .dsaasfr-preview-panel__title {

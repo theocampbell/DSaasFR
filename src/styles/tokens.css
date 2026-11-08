@@ -28,7 +28,17 @@
 
   /* App shell dimensions (DRAFT: to be validated in docs/decisions/0002). */
   --dsaasfr-shell-sidebar-width: 16rem;
+  --dsaasfr-shell-sidebar-width-sm: 14rem;
+  --dsaasfr-shell-sidebar-width-md: 16rem;
+  --dsaasfr-shell-sidebar-width-lg: 20rem;
   --dsaasfr-shell-preview-width: clamp(20rem, 35vw, 40rem);
+  --dsaasfr-shell-preview-width-sm: clamp(18rem, 28vw, 24rem);
+  --dsaasfr-shell-preview-width-md: clamp(20rem, 35vw, 40rem);
+  --dsaasfr-shell-preview-width-lg: clamp(28rem, 50vw, 56rem);
+
+  /* Veil behind a floating preview: the DSFR modal backdrop value (fr-modal), which the
+     DSFR does not expose as a token. Same in light and dark themes, as in the DSFR. */
+  --dsaasfr-backdrop: hsl(0deg 0% 9% / 64%);
   --dsaasfr-shell-row-height: 3rem;
   --dsaasfr-shell-border-width: 1px;
 
@@ -40,7 +50,7 @@
   --dsaasfr-dropdown-max-width: 22rem;
   --dsaasfr-chip-radius: 1rem;
   --dsaasfr-chip-height: 2rem;
-  --dsaasfr-chip-part-max-width: 16rem;
+  --dsaasfr-chip-part-max-width: 22rem;
 
   /* DSFR focus ring offset (2px), used to pull it inside clipped containers. */
   --dsaasfr-focus-offset: 2px;

@@ -1,0 +1,95 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Documentation/Pour commencer" />
+
+# Pour commencer
+
+DSaaSFR **complète** Vue DSFR : votre application utilise Vue DSFR comme d'habitude, et
+DSaaSFR ajoute la structure applicative autour.
+
+## Prérequis
+
+Vue 3, vue-router et Vue DSFR, déjà en place dans la plupart des projets Vue DSFR.
+
+## Installation
+
+```bash
+npm install @gouvminint/vue-dsfr @gouvfr/dsfr vue-router @dsaasfr/vue
+```
+
+```ts
+// main.ts
+import { createApp } from 'vue'
+import VueDsfr from '@gouvminint/vue-dsfr'
+import DSaaSFR from '@dsaasfr/vue'
+
+import '@gouvfr/dsfr/dist/core/core.main.min.css'
+import '@gouvfr/dsfr/dist/component/component.main.min.css'
+import '@gouvfr/dsfr/dist/utility/utility.main.min.css'
+import '@gouvfr/dsfr/dist/scheme/scheme.min.css'   // thème sombre
+import '@gouvminint/vue-dsfr/styles'
+import '@dsaasfr/vue/styles'
+
+import App from './App.vue'
+import router from './router'
+
+createApp(App).use(router).use(VueDsfr).use(DSaaSFR).mount('#app')
+```
+
+`app.use(DSaaSFR)` enregistre tous les composants `Dsaasfr*`. Vous pouvez aussi les importer
+un par un : `import { DsaasfrAppShell } from '@dsaasfr/vue'`.
+
+## Premier écran
+
+La mise en page se place dans une **route parente** : toutes les pages authentifiées
+s'affichent dans son `<RouterView />`, la page de connexion reste en dehors.
+
+```vue
+<!-- AppLayout.vue -->
+<script setup lang="ts">
+import type { DsaasfrSidebarItem } from '@dsaasfr/vue'
+
+const nav: DsaasfrSidebarItem[] = [
+  { text: 'Tableau de bord', to: '/' },
+  { text: 'Dossiers', to: '/dossiers' },
+  { text: 'Administration', menuItems: [{ text: 'Agents', to: '/admin/agents' }] },
+]
+</script>
+
+<template>
+  <DsaasfrAppShell>
+    <template #sidebar>
+      <DsaasfrSidebar service-title="Mon service" :items="nav">
+        <template #footer>
+          <DsaasfrUserMenu name="Camille Martin" description="Instructrice" />
+        </template>
+      </DsaasfrSidebar>
+    </template>
+
+    <template #breadcrumb>
+      <DsaasfrBreadcrumbBar>
+        <template #actions>
+          <DsfrButton label="Nouveau dossier" icon="fr-icon-add-line" size="sm" />
+        </template>
+      </DsaasfrBreadcrumbBar>
+    </template>
+
+    <RouterView />
+  </DsaasfrAppShell>
+</template>
+```
+
+Le fil d'Ariane se construit à partir des titres déclarés dans les routes :
+
+```ts
+{ path: '/dossiers/:id', component: Dossier, meta: { title: route => `Dossier ${route.params.id}` } }
+```
+
+## Points à connaître
+
+- Les composants sont **présentationnels** : l'authentification, les droits et les données
+  restent dans votre application (filtrez par exemple les entrées de navigation selon le rôle
+  avant de les passer à `DsaasfrSidebar`).
+- Chaque page affiche son titre complet dans un `<h1>` (le niveau courant du fil d'Ariane peut
+  être raccourci).
+- Sur écran étroit ou à fort zoom (sous 62em), la barre latérale devient l'en-tête mobile du DSFR.

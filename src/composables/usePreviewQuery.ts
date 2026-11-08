@@ -5,7 +5,8 @@ import { routeLocationKey, routerKey } from 'vue-router'
  * Keeps the previewed item in the URL query (`?apercu=D-2026-2041`), so a preview can be
  * shared or reloaded, and the browser Back button closes it.
  *
- * - `open(id)` pushes a history entry (Back closes the preview);
+ * - `open(id)` pushes a history entry (Back closes the preview); `open(id, { replace: true })`
+ *   moves to another item without one (previous / next);
  * - `close()` replaces the entry (Back then goes to where the user was before opening).
  *
  * Bind `isOpen` to DsaasfrAppShell's `v-model:preview-open` and read `item` to know what
@@ -20,9 +21,11 @@ export function usePreviewQuery(key = 'apercu') {
     return typeof value === 'string' && value ? value : undefined
   })
 
-  function open(id: string) {
+  /** `replace: true` to move to another item without a new history entry (previous/next). */
+  function open(id: string, options: { replace?: boolean } = {}) {
     if (!router || !route || item.value === id) return
-    void router.push({ query: { ...route.query, [key]: id } })
+    const location = { query: { ...route.query, [key]: id } }
+    void (options.replace ? router.replace(location) : router.push(location))
   }
 
   function close() {

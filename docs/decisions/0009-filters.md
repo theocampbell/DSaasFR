@@ -76,6 +76,16 @@ Trois couches :
 - Prise en charge par la bibliothèque : un slot `footer` fixé sur DsaasfrDropdown, transmis
   par DsaasfrFilterChip (avec la `part` ouverte).
 
+### Une ligne sur grand écran (2026-11-06)
+
+Retour du responsable produit : une partie de l'étiquette passait sur deux lignes et cassait
+la mise en page. Sur grand écran, l'étiquette reste désormais **sur une ligne** : les valeurs
+sont résumées selon leur longueur (« Autorisation de défrichement et 2 autres », 32 caractères
+au plus, `maxValuesLength`), une valeur isolée très longue est raccourcie par « … » avec une
+info-bulle, et la liste complète reste dans le nom accessible du groupe. Sous 62em (fort
+zoom), le texte n'est jamais coupé : l'étiquette passe sur deux rangées (champ, condition et ×
+en haut, valeurs en dessous), conformément au RGAA 10.11.
+
 ## Conséquences pour l'accessibilité
 
 - Étiquette = groupe nommé : « Filtre : Statut est Accepté, Incomplet ».

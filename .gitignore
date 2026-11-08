@@ -9,3 +9,6 @@ coverage
 *.tsbuildinfo
 dist-playground
 _site
+coverage
+docs/.vitepress/cache
+docs/.vitepress/dist

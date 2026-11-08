@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<DsaasfrFilterChipProps>(), {
   operator: undefined,
   values: () => [],
   maxVisibleValues: 2,
+  maxValuesLength: 32,
   emptyValuesText: 'Choisir…',
   groupLabel: 'Filtre',
   editFieldLabel: 'Modifier le champ :',
@@ -38,13 +39,24 @@ const slots = defineSlots<{
   footer?: (scope: { part: DsaasfrFilterChipPart, close: (returnFocus?: boolean) => void }) => unknown
 }>()
 
+/**
+ * Values summary that keeps the chip on one line: as many values as fit in
+ * `maxValuesLength` characters (at most `maxVisibleValues`, at least one), then
+ * "et N autres". A single very long value is shortened by CSS with a tooltip.
+ */
 const valuesText = computed(() => {
-  const { values, maxVisibleValues } = props
+  const { values, maxVisibleValues, maxValuesLength } = props
   if (!values.length) return props.emptyValuesText
-  if (values.length <= maxVisibleValues) return values.join(', ')
-  const rest = values.length - maxVisibleValues
-  return `${values.slice(0, maxVisibleValues).join(', ')} et ${rest} autre${rest > 1 ? 's' : ''}`
+  const shown: string[] = []
+  for (const value of values) {
+    const next = [...shown, value].join(', ')
+    if (shown.length && (shown.length >= maxVisibleValues || next.length > maxValuesLength)) break
+    shown.push(value)
+  }
+  const rest = values.length - shown.length
+  return rest ? `${shown.join(', ')} et ${rest} autre${rest > 1 ? 's' : ''}` : shown.join(', ')
 })
+const fullValues = computed(() => props.values.join(', '))
 
 const groupName = computed(() =>
   [`${props.groupLabel} :`, props.field, props.operator, props.values.length ? props.values.join(', ') : props.emptyValuesText]
@@ -86,6 +98,7 @@ function setOpen(part: DsaasfrFilterChipPart, open: boolean) {
         autofocus
         :trigger-class="['dsaasfr-filter-chip__button', 'fr-text--sm', 'fr-m-0', p.part === 'field' ? 'fr-text--bold' : '']"
         :trigger-label="`${p.label} ${p.text}`"
+        :trigger-title="p.part === 'values' && fullValues !== p.text ? fullValues : undefined"
         :open="openPart === p.part"
         @update:open="setOpen(p.part, $event)"
       >
@@ -130,7 +143,6 @@ function setOpen(part: DsaasfrFilterChipPart, open: boolean) {
 /* A DSFR neutral tag (fr-tag) split into segments: same surface, radius, height, text. */
 .dsaasfr-filter-chip {
   display: inline-flex;
-  flex-wrap: wrap;
   align-items: stretch;
   max-width: 100%;
   border-radius: var(--dsaasfr-chip-radius);
@@ -174,11 +186,15 @@ function setOpen(part: DsaasfrFilterChipPart, open: boolean) {
   text-align: left;
 }
 
-/* Never cut: a long part wraps its text (and the chip wraps its parts) instead of
-   being truncated, so values stay readable at 320px / 400% zoom (RGAA 10.11). */
+/* Wide screens: one line. Values are summarised to fit (valuesText); a single very long
+   value is shortened with an ellipsis and a tooltip, its full text stays in the names. */
 .dsaasfr-filter-chip :deep(.dsaasfr-filter-chip__button) {
+  display: block;
   max-width: var(--dsaasfr-chip-part-max-width);
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  line-height: var(--dsaasfr-chip-height);
+  text-overflow: ellipsis;
+  white-space: nowrap;
   background-color: var(--idle);
 }
 
@@ -205,5 +221,43 @@ function setOpen(part: DsaasfrFilterChipPart, open: boolean) {
 .dsaasfr-filter-chip > :first-child :deep(.dsaasfr-filter-chip__button),
 .dsaasfr-filter-chip > .dsaasfr-filter-chip__text:first-child {
   border-radius: var(--dsaasfr-chip-radius) 0 0 var(--dsaasfr-chip-radius);
+}
+
+/* Narrow screens / high zoom: never cut text (RGAA 10.11). Parts wrap their text and the
+   chip wraps its parts. */
+@media (width < 62em) {
+  .dsaasfr-filter-chip {
+    flex-wrap: wrap;
+  }
+
+  /* Field, condition and × on the first row; the values on a full second row. */
+  .dsaasfr-filter-chip__part--values {
+    order: 1;
+    flex-basis: 100%;
+    border-top: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
+  }
+
+  .dsaasfr-filter-chip .dsaasfr-filter-chip__part--values {
+    border-left: 0;
+  }
+
+  .dsaasfr-filter-chip__remove {
+    margin-left: auto;
+  }
+
+  .dsaasfr-filter-chip__part--values :deep(.dsaasfr-filter-chip__button) {
+    width: 100%;
+    max-width: none;
+    padding-left: var(--dsaasfr-space-3v);
+    border-radius: 0 0 var(--dsaasfr-chip-radius) var(--dsaasfr-chip-radius);
+  }
+
+  .dsaasfr-filter-chip :deep(.dsaasfr-filter-chip__button) {
+    display: flex;
+    overflow: visible;
+    line-height: inherit;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 }
 </style>

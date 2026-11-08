@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import { navItems } from '../DsaasfrAppShell/DsaasfrAppShell.stories'
+import { navItems } from '../../../.storybook/fixtures'
 import DsaasfrSidebar from './DsaasfrSidebar.vue'
 
 const meta = {

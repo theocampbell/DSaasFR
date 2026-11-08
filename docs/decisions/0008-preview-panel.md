@@ -44,6 +44,22 @@ visible et l'aperçu ouvert pendant que l'on passe à l'élément suivant.
   DsfrModal ; le bouton de fermeture utilise le balisage officiel `fr-btn--close fr-btn`.
   Les fonds de l'en-tête et du pied héritent de la surface du panneau.
 
+## Aperçu flottant (2026-11-08)
+
+Demande du responsable produit : pour un dossier, un panneau flottant plutôt qu’une colonne,
+pour ne pas resserrer le tableau ; la poussée reste adaptée aux documents. Le premier essai
+de superposition (62–78em) avait été retiré parce que le focus pouvait tomber sur des
+éléments cachés sous le panneau. D’où `previewMode="overlay"`, qui suit le modèle de la
+modale DSFR : la page derrière est **mise en pause** (inerte) sous un voile (valeur du fond
+de `fr-modal`, sans jeton DSFR), au niveau des modales DSFR (1750), surface et ombre
+« lifted » comme `fr-modal`. Pour parcourir la liste sans fermer, `DsaasfrPreviewPanel`
+propose **précédent / suivant** (le focus reste sur le bouton, le nouvel élément est annoncé ;
+`usePreviewQuery().open(id, { replace: true })` n’ajoute pas d’entrée d’historique). Trois
+largeurs : `previewSize` `sm` / `md` / `lg`. Tant que la page est en pause (aperçu flottant,
+ou plein écran sous 62em), l’aperçu est exposé comme une **boîte de dialogue modale**
+(`role="dialog"`, `aria-modal="true"`, nommée par son titre), comme `DsfrModal` ; en mode
+`push`, il reste une région `complementary`.
+
 ## Conséquences pour l'accessibilité
 
 - Exception à l'anneau de focus du DSFR : le titre reçoit le focus par programmation à

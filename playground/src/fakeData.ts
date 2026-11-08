@@ -8,12 +8,20 @@ const statuses = ['À instruire', 'En cours', 'Incomplet', 'Accepté', 'Refusé'
 const pick = <T>(list: T[], i: number, salt: number) => list[(i * 7 + salt * 3) % list.length]!
 const date = (i: number) => `${String((i % 28) + 1).padStart(2, '0')}/${String((i % 12) + 1).padStart(2, '0')}/2026`
 
-export const dossiers = Array.from({ length: 40 }, (_, i) => [
-  `D-2026-${String(2041 - i).padStart(4, '0')}`,
+// Every status × type × commune combination exists once (5 × 5 × 10 = 250 case files),
+// so any single filter value returns results; listed in a stable, mixed order.
+const combinations = statuses.flatMap(statut => types.flatMap(type => communes.map(commune => ({ statut, type, commune }))))
+const mixed = combinations
+  .map((c, i) => ({ c, key: (i * 7919) % combinations.length }))
+  .sort((a, b) => a.key - b.key)
+  .map(({ c }) => c)
+
+export const dossiers = mixed.map(({ statut, type, commune }, i) => [
+  `D-2026-${String(2250 - i).padStart(4, '0')}`,
   `${pick(firstNames, i, 1)} ${pick(lastNames, i, 2)}`,
-  pick(types, i, 3),
-  pick(communes, i, 4),
-  pick(statuses, i, 5),
+  type,
+  commune,
+  statut,
   date(i),
 ])
 

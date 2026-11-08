@@ -30,6 +30,9 @@ import { previewContextKey } from './previewContext'
 import type { DsaasfrAppShellPreviewScope, DsaasfrAppShellProps } from './DsaasfrAppShell.types'
 
 const props = withDefaults(defineProps<DsaasfrAppShellProps>(), {
+  sidebarSize: undefined,
+  previewMode: 'push',
+  previewSize: undefined,
   previewLabel: 'Aperçu',
   mainId: 'dsaasfr-main',
   hideSkipLinks: false,
@@ -47,6 +50,13 @@ defineSlots<{
 }>()
 
 const slots = useSlots()
+
+// Size → DSFR-scale token. Without a size, the token's default (or a custom value set by
+// the app on --dsaasfr-shell-sidebar-width) applies.
+const sizeStyle = computed(() => ({
+  ...(props.sidebarSize && { '--dsaasfr-shell-sidebar-width': `var(--dsaasfr-shell-sidebar-width-${props.sidebarSize})` }),
+  ...(props.previewSize && { '--dsaasfr-shell-preview-width': `var(--dsaasfr-shell-preview-width-${props.previewSize})` }),
+}))
 const sidebarId = computed(() => `${props.mainId}-sidebar`)
 const hasPreview = computed(() => previewOpen.value && !!slots.preview)
 const skipLinks = computed(() => [
@@ -111,9 +121,11 @@ provide(previewContextKey, {
   registerHeading: (id) => { previewHeadingId.value = id },
 })
 
-// Below 62em the preview covers the whole screen: the rest of the page is inert.
+// The preview pauses the rest of the page (inert) when it covers it: full screen below
+// 62em, or floating (`overlay`) on wide screens.
 const narrow = useNarrowViewport()
-const pageInert = computed(() => (narrow.value && hasPreview.value) || undefined)
+const overlay = computed(() => hasPreview.value && props.previewMode === 'overlay' && !narrow.value)
+const pageInert = computed(() => (hasPreview.value && (narrow.value || overlay.value)) || undefined)
 
 function onPreviewKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
@@ -152,7 +164,11 @@ watch(hasPreview, async (open) => {
 <template>
   <div
     class="dsaasfr-app-shell"
-    :class="{ 'dsaasfr-app-shell--preview-open': hasPreview }"
+    :class="{
+      'dsaasfr-app-shell--preview-open': hasPreview && !overlay,
+      'dsaasfr-app-shell--preview-overlay': overlay,
+    }"
+    :style="sizeStyle"
   >
     <div
       v-if="!hideSkipLinks"
@@ -218,10 +234,21 @@ watch(hasPreview, async (open) => {
         </main>
       </div>
 
+      <!-- Floating preview: veil over the paused page; clicking it closes the preview.
+           While the page is paused (floating, or full screen below 62em) the preview is a
+           modal dialog, like DsfrModal; otherwise a complementary region. -->
+      <div
+        v-if="overlay"
+        class="dsaasfr-app-shell__backdrop"
+        aria-hidden="true"
+        @click="closePreview"
+      />
       <aside
         v-if="hasPreview"
         :id="previewId"
         class="dsaasfr-app-shell__preview"
+        :role="pageInert ? 'dialog' : undefined"
+        :aria-modal="pageInert ? 'true' : undefined"
         :aria-labelledby="previewHeadingId"
         :aria-label="previewHeadingId ? undefined : previewLabel"
         tabindex="-1"
@@ -344,6 +371,27 @@ watch(hasPreview, async (open) => {
 
 .dsaasfr-app-shell__preview:focus {
   outline: none;
+}
+
+/* Floating preview (previewMode="overlay"): above the page and a DSFR-modal veil, at the
+   DSFR modal layer; lifted surface and shadow, as fr-modal. */
+.dsaasfr-app-shell__backdrop {
+  position: fixed;
+  z-index: 1749;
+  inset: 0;
+  background-color: var(--dsaasfr-backdrop);
+}
+
+.dsaasfr-app-shell--preview-overlay .dsaasfr-app-shell__preview {
+  position: fixed;
+  z-index: 1750;
+  top: 0;
+  right: 0;
+  width: var(--dsaasfr-shell-preview-width);
+  max-width: 100%;
+  border-left: 0;
+  background-color: var(--background-lifted-grey);
+  box-shadow: var(--lifted-shadow);
 }
 
 /* Below 62em (DSFR "lg", i.e. high zoom) nothing is pinned: pinned areas would eat the

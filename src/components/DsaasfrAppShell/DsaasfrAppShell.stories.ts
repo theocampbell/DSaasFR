@@ -5,8 +5,7 @@ import { DsaasfrPreviewPanel } from '../DsaasfrPreviewPanel'
 import { DsaasfrToolbar } from '../DsaasfrToolbar'
 import { DsaasfrSidebar } from '../DsaasfrSidebar'
 import { DsaasfrUserMenu } from '../DsaasfrUserMenu'
-import { accountItems } from '../DsaasfrUserMenu/DsaasfrUserMenu.stories'
-import type { DsaasfrSidebarItem } from '../DsaasfrSidebar'
+import { accountItems, navItems } from '../../../.storybook/fixtures'
 import DsaasfrAppShell from './DsaasfrAppShell.vue'
 
 const meta = {
@@ -27,30 +26,15 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const navItems: DsaasfrSidebarItem[] = [
-  { text: 'Tableau de bord', to: '/' },
-  { text: 'Dossiers', to: '/dossiers' },
-  { text: 'Usagers', to: '/usagers' },
-  { text: 'Statistiques', to: '/statistiques' },
-  {
-    text: 'Administration',
-    menuItems: [
-      { text: 'Agents', to: '/admin/agents' },
-      { text: 'Démarches', to: '/admin/demarches' },
-      { text: 'Paramètres', to: '/admin/parametres' },
-    ],
-  },
-]
-
-const template = (previewOpen: boolean) => ({
+const template = (previewOpen: boolean, sidebarSize?: 'sm' | 'md' | 'lg', previewMode: 'push' | 'overlay' = 'push') => ({
   components: { DsaasfrAppShell, DsaasfrBreadcrumbBar, DsaasfrPreviewPanel, DsaasfrSidebar, DsaasfrToolbar, DsaasfrUserMenu },
   setup() {
     const preview = ref(previewOpen)
     const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers' }, { text: 'Dossier #2041' }]
-    return { preview, links, navItems, accountItems }
+    return { preview, links, navItems, accountItems, sidebarSize, previewMode }
   },
   template: `
-    <DsaasfrAppShell v-model:preview-open="preview">
+    <DsaasfrAppShell v-model:preview-open="preview" :sidebar-size="sidebarSize" :preview-mode="previewMode">
       <template #sidebar>
         <DsaasfrSidebar service-title="Démarches Pro" service-description="Back-office instructeurs" :items="navItems">
           <template #footer>
@@ -100,3 +84,7 @@ export const SecondaryNavigation: Story = {
  * Narrow screens (< 62em: small window or high zoom) switch the sidebar to the DSFR
  * mobile header. Shrink the browser window or zoom to 400% to see it (decision 0004).
  */
+
+export const SmallSidebar: Story = { name: 'Barre latérale étroite (sm)', render: () => template(false, 'sm') }
+export const LargeSidebar: Story = { name: 'Barre latérale large (lg)', render: () => template(false, 'lg') }
+export const FloatingPreview: Story = { name: 'Aperçu flottant (overlay)', render: () => template(true, undefined, 'overlay') }

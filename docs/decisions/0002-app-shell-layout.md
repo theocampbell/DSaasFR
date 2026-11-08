@@ -45,6 +45,14 @@ L'en-tête DSFR est remplacé par le bloc de marque de la barre latérale : voir
   latérale devient l'en-tête mobile du DSFR et les autres zones s'empilent : voir
   [0004](0004-narrow-screens.md).
 
+## Largeur de la barre latérale (2026-11-07)
+
+Trois tailles sur l’échelle d’espacement du DSFR, choisies par l’application selon ses
+libellés (`sidebarSize`) : `sm` 14rem, `md` 16rem (défaut), `lg` 20rem ; une largeur sur mesure
+reste possible avec `--dsaasfr-shell-sidebar-width`. Pas de redimensionnement à la souris :
+une poignée devrait être utilisable au clavier, et des tailles fixes gardent une mise en page
+prévisible.
+
 ## Défilement
 
 C'est la **page** qui défile ; la barre latérale, les lignes du fil d'Ariane et de la barre
@@ -65,8 +73,9 @@ d'espace disponible au contenu.
   fil d'Ariane, `main` (cible du lien d'évitement), `aside` « Aperçu ».
 - Liens d'évitement : « Contenu » et « Menu ».
 - Aperçu : le bouton de bascule reçoit `aria-controls` + `aria-expanded` via la prop de
-  slot `previewToggleAttrs` ; le focus reste sur le bouton de bascule à l'ouverture du
-  panneau et y revient lorsque le panneau est fermé depuis l'intérieur (RGAA 12.8).
+  slot `previewToggleAttrs` ; lorsque l'utilisateur ouvre le panneau, le focus va sur son
+  titre (voir [0008](0008-preview-panel.md)) et revient au bouton de bascule lorsque le
+  panneau est fermé depuis l'intérieur (RGAA 12.8).
 - À décider : si la barre d'outils est un
   simple groupe ou une barre d'outils APG (navigation aux flèches) ; l'étiquetage de la
   barre latérale repliée.

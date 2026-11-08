@@ -9,10 +9,16 @@ DSaaSFR ne remplace pas Vue DSFR : il ajoute les patterns d'application qui manq
 (shell applicatif, navigation latérale, barre d'actions, panneau d'aperçu…), en respectant
 strictement les couleurs, la typographie, les espacements et l'accessibilité du DSFR.
 
+## Documentation
+
+- [Documentation](https://theocampbell.github.io/DSaasFR/) · [Storybook](https://theocampbell.github.io/DSaasFR/storybook/)
+- [Bac à sable](https://theocampbell.github.io/DSaasFR/playground/) : une fausse application de back-office
+- [Fiches de décision](docs/decisions) · [Guide du contributeur](CONTRIBUTING.md) · [Journal des modifications](CHANGELOG.md)
+
 ## Installation
 
 ```bash
-npm install @gouvminint/vue-dsfr vue-router @dsaasfr/vue
+npm install @gouvminint/vue-dsfr @gouvfr/dsfr vue-router @dsaasfr/vue
 ```
 
 ```ts

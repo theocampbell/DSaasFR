@@ -32,6 +32,8 @@ export default {
       files: ['src/styles/tokens.css'],
       rules: {
         'declaration-property-unit-disallowed-list': null,
+        // Only for --dsaasfr-backdrop, copied from the DSFR modal (no DSFR token exists).
+        'function-disallowed-list': null,
       },
     },
   ],

@@ -59,8 +59,30 @@ export function clearFilters() {
 export const selectionOf = (filters: Filter[]) =>
   Object.fromEntries(fields.map(f => [f.key, [...(filters.find(a => a.field === f.key)?.values ?? [])]]))
 
-/** Stand-in for the server query. */
-export const filteredDossiers = computed(() => dossiers.filter(row => applied.every((f) => {
+const matches = (row: string[], f: Filter) => {
+  if (!f.values.length) return true
   const value = row[fields.find(d => d.key === f.field)!.column]!
   return f.operator === 'is' ? f.values.includes(value) : !f.values.includes(value)
-})))
+}
+
+/** Stand-in for the server query. */
+export const countResults = (filters: Filter[]) => dossiers.filter(row => filters.every(f => matches(row, f))).length
+export const filteredDossiers = computed(() => dossiers.filter(row => applied.every(f => matches(row, f))))
+
+/**
+ * Faceted count: how many results `value` would give for `field`, combined with the
+ * other fields' filters (on a real back-office, the search server returns these counts
+ * with the results). Lets the UI disable values that would return nothing.
+ */
+export function facetCount(filters: Filter[], field: string, value: string) {
+  const others = filters.filter(f => f.field !== field)
+  return countResults([...others, { field, operator: 'is', values: [value] }])
+}
+
+/** Draft selection (field → values) as filters, keeping the applied operators. */
+export const filtersOf = (selection: Record<string, string[]>): Filter[] =>
+  fields.filter(f => selection[f.key]?.length).map(f => ({
+    field: f.key,
+    operator: applied.find(a => a.field === f.key)?.operator ?? 'is',
+    values: selection[f.key]!,
+  }))

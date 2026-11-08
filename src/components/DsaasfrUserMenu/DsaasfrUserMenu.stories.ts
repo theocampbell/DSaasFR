@@ -1,15 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import DsaasfrUserMenu from './DsaasfrUserMenu.vue'
-import type { DsaasfrUserMenuItem } from './DsaasfrUserMenu.types'
-
-export const accountItems: DsaasfrUserMenuItem[] = [
-  { text: 'Mon profil', to: '/profil', icon: 'fr-icon-user-line' },
-  { text: 'Préférences', to: '/preferences', icon: 'fr-icon-settings-5-line' },
-  { text: 'Notifications', to: '/notifications', icon: 'fr-icon-notification-3-line' },
-  { text: 'Paramètres d’affichage', icon: 'fr-icon-theme-fill' },
-  { text: 'Aide', href: '#aide', icon: 'fr-icon-question-line' },
-  { text: 'Se déconnecter', icon: 'fr-icon-logout-box-r-line', separated: true },
-]
+import { accountItems } from '../../../.storybook/fixtures'
 
 const meta = {
   title: 'Shell/DsaasfrUserMenu',
