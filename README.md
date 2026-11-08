@@ -115,15 +115,20 @@ agents spécialisés dans [.claude/agents](.claude/agents).
 
 ## Publication
 
-Le paquet est publié sur npm sous le nom `@dsaasfr/vue`, automatiquement :
+Le paquet est publié sur npm sous le nom `@dsaasfr/vue`.
 
-1. le travail est fusionné dans `develop` (commits conventionnels : `feat:`, `fix:`…) ;
-2. pour publier, ouvrez une PR `develop → main` et fusionnez-la avec **« Create a merge
-   commit »** (pas « Squash and merge ») ;
-3. le workflow `release.yml` calcule la version à partir des commits, publie sur npm (avec
-   provenance, via le *trusted publisher* npm), crée le tag et la release GitHub avec les
-   notes de version.
+**Première publication** (une seule fois, depuis votre poste) :
 
-Dans le dépôt, `package.json` reste en version `0.0.0-development` : la vraie version est
-fixée au moment de la publication. Avec la publication échelonnée de npm, approuvez la
-version dans l'onglet *Staged Packages*.
+```bash
+npm login                     # compte npm avec 2FA, membre de l'organisation dsaasfr
+pnpm install
+npm publish                   # lance d'abord pnpm check (prepublishOnly)
+```
+
+**Publications suivantes** (automatiques) : sur npmjs.com, déclarez le workflow
+`.github/workflows/release.yml` comme *trusted publisher* du paquet, puis :
+
+```bash
+npm version patch             # ou minor ; met à jour package.json et crée le tag v0.1.1
+git push --follow-tags        # le workflow vérifie, construit et publie avec provenance
+```

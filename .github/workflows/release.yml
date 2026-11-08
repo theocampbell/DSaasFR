@@ -1,10 +1,8 @@
 name: Release
 
 # On every push to `main` (merge of `develop`), semantic-release reads the conventional
-# commits since the last release, computes the version, publishes @dsaasfr/vue to npm
-# (version set at publish time; package.json stays 0.0.0-development in git), tags the
-# commit and creates the GitHub release with the notes. Nothing is committed back to
-# `main`, which is protected (changes only through pull requests).
+# commits since the last release, computes the version, updates CHANGELOG.md and
+# package.json, publishes @dsaasfr/vue to npm and creates the GitHub release.
 # `next` publishes pre-releases on the `next` dist-tag.
 #
 # npm trusted publishing (OIDC): no npm token stored in GitHub; provenance is generated
@@ -15,7 +13,7 @@ on:
     branches: [main, next]
 
 permissions:
-  contents: write        # push the release tag, create the GitHub release
+  contents: write        # push the release commit and tag
   issues: write          # comment on released issues
   pull-requests: write   # comment on released PRs
   id-token: write        # npm trusted publishing

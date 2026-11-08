@@ -1,10 +1,5 @@
 # Journal des modifications
 
-À partir de la 0.2.0, les notes de chaque version sont publiées automatiquement dans les
-[releases GitHub](https://github.com/theocampbell/DSaasFR/releases) (générées par
-semantic-release à partir des commits conventionnels). La branche `main` étant protégée, la
-publication ne commite plus ce fichier.
-
 ## 0.1.0 (2026-11-04)
 
 Première version publiée sur npm : `@dsaasfr/vue`.

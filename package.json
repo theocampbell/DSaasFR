@@ -1,6 +1,6 @@
 {
   "name": "@dsaasfr/vue",
-  "version": "0.0.0-development",
+  "version": "0.1.0",
   "description": "Composants Vue 3 orientés application (SaaS, back-office) construits sur Vue DSFR et le Système de Design de l'État (DSFR). Proposition communautaire, non officielle.",
   "keywords": [
     "vue",
@@ -83,6 +83,8 @@
     "@gouvfr/dsfr": "~1.14.4",
     "@gouvminint/vue-dsfr": "^8.21.0",
     "@iconify/vue": "^5.0.5",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/git": "^11.0.1",
     "@storybook/addon-a11y": "^10.6.5",
     "@storybook/addon-docs": "^10.6.5",
     "@storybook/vue3-vite": "^10.6.5",
@@ -199,7 +201,23 @@
           }
         }
       ],
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogTitle": "# Journal des modifications"
+        }
+      ],
       "@semantic-release/npm",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md",
+            "package.json"
+          ],
+          "message": "chore(release): 🔖 ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ],
       "@semantic-release/github"
     ]
   },
