@@ -125,6 +125,89 @@ describe('DsaasfrPreviewPanel on its own', () => {
   })
 })
 
+describe('DsaasfrPreviewPanel previous / next', () => {
+  it('shows the navigation only when asked, and disables unavailable directions', async () => {
+    const { rerender } = render(DsaasfrPreviewPanel, { props: { title: 'Dossier 1' } })
+    expect(screen.queryByRole('button', { name: 'Élément suivant' })).toBeNull()
+
+    await rerender({ title: 'Dossier 1', hasPrevious: false, hasNext: true })
+    expect((screen.getByRole('button', { name: 'Élément précédent' }) as HTMLButtonElement).disabled).toBe(true)
+    expect((screen.getByRole('button', { name: 'Élément suivant' }) as HTMLButtonElement).disabled).toBe(false)
+  })
+
+  it('emits next, keeps focus on the button and announces the new item', async () => {
+    const user = userEvent.setup()
+    const Host = defineComponent({
+      setup() {
+        const n = ref(1)
+        return () => h(DsaasfrPreviewPanel, {
+          title: `Dossier ${n.value}`, hasPrevious: n.value > 1, hasNext: true,
+          nextLabel: 'Dossier suivant', onNext: () => n.value++,
+        })
+      },
+    })
+    render(Host)
+    const next = screen.getByRole('button', { name: 'Dossier suivant' })
+
+    await user.click(next)
+
+    expect(screen.getByRole('heading', { name: 'Dossier 2' })).toBeTruthy()
+    expect(document.activeElement).toBe(next)
+    expect(screen.getByRole('status').textContent?.trim()).toBe('Dossier 2')
+  })
+})
+
+describe('DsaasfrAppShell previewMode="overlay"', () => {
+  function renderOverlay() {
+    const Host = defineComponent({
+      setup() {
+        const open = ref(false)
+        return () => h(DsaasfrAppShell, {
+          'previewMode': 'overlay',
+          'previewSize': 'lg',
+          'previewOpen': open.value,
+          'onUpdate:previewOpen': (v: boolean) => (open.value = v),
+        }, {
+          toolbar: () => h('button', { type: 'button', onClick: () => (open.value = true) }, 'Aperçu'),
+          default: () => h('h1', 'Dossiers'),
+          preview: () => h(DsaasfrPreviewPanel, { title: 'Dossier 1' }),
+        })
+      },
+    })
+    const user = userEvent.setup()
+    const result = render(Host)
+    return { ...result, user, opener: screen.getByRole('button', { name: 'Aperçu' }) }
+  }
+
+  it('pauses the page behind the floating preview on wide screens', async () => {
+    mockViewport(false)
+    const { user, opener } = renderOverlay()
+    await user.click(opener)
+    await screen.findByRole('complementary')
+
+    expect(screen.getByRole('main').closest('[inert]')).toBeTruthy()
+    expect(screen.getByRole('complementary').closest('[inert]')).toBeNull()
+  })
+
+  it('closes when the veil is clicked and returns focus to the opener', async () => {
+    mockViewport(false)
+    const { user, opener, container } = renderOverlay()
+    await user.click(opener)
+    await screen.findByRole('complementary')
+
+    await user.click(container.querySelector('[aria-hidden="true"]') as HTMLElement)
+
+    expect(screen.queryByRole('complementary')).toBeNull()
+    await vi.waitFor(() => expect(document.activeElement).toBe(opener))
+  })
+
+  it('sets the preview width from previewSize', () => {
+    const { container } = render(DsaasfrAppShell, { props: { previewSize: 'lg' }, slots: { default: '<h1>X</h1>' } })
+    expect((container.firstElementChild as HTMLElement).style.getPropertyValue('--dsaasfr-shell-preview-width'))
+      .toBe('var(--dsaasfr-shell-preview-width-lg)')
+  })
+})
+
 describe('usePreviewQuery', () => {
   async function setup() {
     const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/:p(.*)*', component: { render: () => null } }] })

@@ -4,6 +4,10 @@ Garde l’élément affiché dans le panneau d’aperçu dans un paramètre de l
 (`?apercu=D-2026-2041`). L’aperçu peut ainsi être partagé par un lien ou rechargé, et le
 bouton Retour du navigateur le ferme.
 
+::: tip Précédent / suivant
+`open(id, { replace: true })` change d’élément sans ajouter d’entrée à l’historique : « Retour » ferme toujours l’aperçu au lieu de reparcourir les éléments vus.
+:::
+
 ## Signature
 
 ```ts
@@ -25,7 +29,7 @@ function usePreviewQuery(key?: string): {
 |---|---|---|
 | `item` | `ComputedRef<string \| undefined>` | Identifiant lu dans l’URL, ou `undefined` si le paramètre est absent ou vide. |
 | `isOpen` | `WritableComputedRef<boolean>` | `true` si un élément est dans l’URL. Écrire `false` ferme l’aperçu. À lier à `v-model:preview-open`. |
-| `open(id)` | `(id: string) => void` | Ouvre l’aperçu de l’élément `id`. Sans effet si cet élément est déjà affiché. |
+| `open(id, { replace? })` | `(id: string) => void` | Ouvre l’aperçu de l’élément `id`. Sans effet si cet élément est déjà affiché. |
 | `close()` | `() => void` | Ferme l’aperçu. Sans effet s’il est déjà fermé. |
 
 Les autres paramètres de l’URL (filtres, page, tri) sont conservés.

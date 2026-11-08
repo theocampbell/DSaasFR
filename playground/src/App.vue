@@ -7,11 +7,22 @@ import type { DsaasfrSidebarItem, DsaasfrUserMenuItem } from '@dsaasfr/vue'
 import FilterControls from './FilterControls.vue'
 import PageBody from './PageBody.vue'
 import { describePreview, dossiers } from './fakeData'
+import { filteredDossiers } from './filters'
 
 const route = useRoute()
 // Preview in the URL (?apercu=…): shareable, Back closes it.
 const preview = usePreviewQuery()
 const previewed = computed(() => describePreview(preview.item.value))
+
+// Case files: floating preview with previous / next through the filtered list (the table
+// is not squeezed). Documents: pushed preview, read alongside the page.
+const isDocument = computed(() => preview.item.value?.includes('/') ?? false)
+const listIds = computed(() => filteredDossiers.value.map(row => row[0]!))
+const position = computed(() => listIds.value.indexOf(preview.item.value ?? ''))
+function step(delta: number) {
+  const id = listIds.value[position.value + delta]
+  if (id) preview.open(id, { replace: true })
+}
 
 const items: DsaasfrSidebarItem[] = [
   { text: 'Tableau de bord', to: '/' },
@@ -65,7 +76,11 @@ const accountItems: DsaasfrUserMenuItem[] = [
 </script>
 
 <template>
-  <DsaasfrAppShell v-model:preview-open="preview.isOpen.value">
+  <DsaasfrAppShell
+    v-model:preview-open="preview.isOpen.value"
+    :preview-mode="isDocument ? 'push' : 'overlay'"
+    :preview-size="isDocument ? 'md' : 'lg'"
+  >
     <template #sidebar>
       <DsaasfrSidebar
         service-title="Démarches Pro"
@@ -150,6 +165,12 @@ const accountItems: DsaasfrUserMenuItem[] = [
       <DsaasfrPreviewPanel
         :title="previewed.title"
         :description="previewed.description"
+        :has-previous="isDocument ? undefined : position > 0"
+        :has-next="isDocument ? undefined : position > -1 && position < listIds.length - 1"
+        previous-label="Dossier précédent"
+        next-label="Dossier suivant"
+        @previous="step(-1)"
+        @next="step(1)"
       >
         <template
           v-if="previewed.link"

@@ -32,6 +32,13 @@
   --dsaasfr-shell-sidebar-width-md: 16rem;
   --dsaasfr-shell-sidebar-width-lg: 20rem;
   --dsaasfr-shell-preview-width: clamp(20rem, 35vw, 40rem);
+  --dsaasfr-shell-preview-width-sm: clamp(18rem, 28vw, 24rem);
+  --dsaasfr-shell-preview-width-md: clamp(20rem, 35vw, 40rem);
+  --dsaasfr-shell-preview-width-lg: clamp(28rem, 50vw, 56rem);
+
+  /* Veil behind a floating preview: the DSFR modal backdrop value (fr-modal), which the
+     DSFR does not expose as a token. Same in light and dark themes, as in the DSFR. */
+  --dsaasfr-backdrop: hsl(0deg 0% 9% / 64%);
   --dsaasfr-shell-row-height: 3rem;
   --dsaasfr-shell-border-width: 1px;
 

@@ -9,4 +9,13 @@ export interface DsaasfrPreviewPanelProps {
   closeText?: string
   /** Accessible name of the close button (must contain the visible text). */
   closeLabel?: string
+  /**
+   * Previous / next navigation in the header (e.g. to move through a list without closing
+   * the preview). Shown when either is set; `false` disables that button.
+   */
+  hasPrevious?: boolean
+  hasNext?: boolean
+  /** Accessible names of the previous / next buttons. */
+  previousLabel?: string
+  nextLabel?: string
 }

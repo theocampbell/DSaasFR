@@ -26,15 +26,15 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const template = (previewOpen: boolean, sidebarSize?: 'sm' | 'md' | 'lg') => ({
+const template = (previewOpen: boolean, sidebarSize?: 'sm' | 'md' | 'lg', previewMode: 'push' | 'overlay' = 'push') => ({
   components: { DsaasfrAppShell, DsaasfrBreadcrumbBar, DsaasfrPreviewPanel, DsaasfrSidebar, DsaasfrToolbar, DsaasfrUserMenu },
   setup() {
     const preview = ref(previewOpen)
     const links = [{ to: '/', text: 'Accueil' }, { to: '/dossiers', text: 'Dossiers' }, { text: 'Dossier #2041' }]
-    return { preview, links, navItems, accountItems, sidebarSize }
+    return { preview, links, navItems, accountItems, sidebarSize, previewMode }
   },
   template: `
-    <DsaasfrAppShell v-model:preview-open="preview" :sidebar-size="sidebarSize">
+    <DsaasfrAppShell v-model:preview-open="preview" :sidebar-size="sidebarSize" :preview-mode="previewMode">
       <template #sidebar>
         <DsaasfrSidebar service-title="Démarches Pro" service-description="Back-office instructeurs" :items="navItems">
           <template #footer>
@@ -87,3 +87,4 @@ export const SecondaryNavigation: Story = {
 
 export const SmallSidebar: Story = { name: 'Barre latérale étroite (sm)', render: () => template(false, 'sm') }
 export const LargeSidebar: Story = { name: 'Barre latérale large (lg)', render: () => template(false, 'lg') }
+export const FloatingPreview: Story = { name: 'Aperçu flottant (overlay)', render: () => template(true, undefined, 'overlay') }

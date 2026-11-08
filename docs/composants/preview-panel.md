@@ -89,6 +89,40 @@ La mise en page est assurée par le shell :
 - **Sous 62em** (fenêtre étroite, zoom fort) : le panneau passe en **plein écran**, au-dessus
   de la page et en dessous des modales DSFR. Le reste de la page est inerte.
 
+## Pousser la page ou flotter par-dessus
+
+Le shell propose deux façons d’ouvrir l’aperçu, à choisir selon l’usage (`preview-mode` sur
+[DsaasfrAppShell](/composants/app-shell)) :
+
+| | `push` (défaut) | `overlay` |
+|---|---|---|
+| Rendu | Colonne à droite, le contenu se resserre | Panneau flottant, la page est assombrie |
+| Page derrière | Utilisable | En pause (inerte), clic sur le voile = fermer |
+| Pour | Un document lu à côté de la page | Un coup d’œil à un élément sans resserrer un tableau |
+
+<Example story="shell-dsaasfrappshell--floating-preview" title="aperçu flottant au-dessus de la liste" :height="480" :viewport="1280" />
+
+```vue
+<DsaasfrAppShell v-model:preview-open="isOpen" preview-mode="overlay" preview-size="lg">
+  …
+  <template #preview>
+    <DsaasfrPreviewPanel
+      :title="`Dossier ${id}`"
+      :has-previous="index > 0"
+      :has-next="index < ids.length - 1"
+      previous-label="Dossier précédent"
+      next-label="Dossier suivant"
+      @previous="open(ids[index - 1], { replace: true })"
+      @next="open(ids[index + 1], { replace: true })"
+    >…</DsaasfrPreviewPanel>
+  </template>
+</DsaasfrAppShell>
+```
+
+En mode `overlay`, la page étant en pause, ajoutez **précédent / suivant** : l’utilisateur
+parcourt la liste sans refermer l’aperçu. Le focus reste sur le bouton et le nouvel élément
+est annoncé aux lecteurs d’écran.
+
 ## API
 
 ### Props
@@ -99,6 +133,10 @@ La mise en page est assurée par le shell :
 | `titleTag` | `'h2' \| 'h3' \| 'h4'` | `'h2'` | Niveau de titre. |
 | `description` | `string` | — | Ligne facultative sous le titre (type, statut…). |
 | `closeText` | `string` | `'Fermer'` | Texte visible du bouton de fermeture (celui de la modale DSFR). |
+| `hasPrevious` | `boolean` | — | Affiche la navigation précédent / suivant ; `false` désactive « précédent ». |
+| `hasNext` | `boolean` | — | Idem pour « suivant ». |
+| `previousLabel` | `string` | `'Élément précédent'` | Nom du bouton « précédent » (par exemple « Dossier précédent »). |
+| `nextLabel` | `string` | `'Élément suivant'` | Nom du bouton « suivant ». |
 | `closeLabel` | `string` | `'Fermer l’aperçu'` | Nom accessible du bouton de fermeture. Il doit contenir le texte visible. |
 
 ### Emplacements (slots)
@@ -114,6 +152,8 @@ La mise en page est assurée par le shell :
 | Nom | Charge utile | Description |
 |---|---|---|
 | `close` | — | Émis au clic sur « Fermer ». Dans le shell, le panneau est aussi fermé par le shell. |
+| `previous` | — | Bouton « précédent » activé. |
+| `next` | — | Bouton « suivant » activé. |
 
 ## Accessibilité
 

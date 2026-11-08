@@ -1,6 +1,20 @@
 export type DsaasfrAppShellSidebarSize = 'sm' | 'md' | 'lg'
 
+export type DsaasfrAppShellPreviewSize = 'sm' | 'md' | 'lg'
+export type DsaasfrAppShellPreviewMode = 'push' | 'overlay'
+
 export interface DsaasfrAppShellProps {
+  /**
+   * How the preview opens on wide screens:
+   * - `push` (default): a column next to the content, the page stays usable (documents
+   *   read alongside the page);
+   * - `overlay`: floats over the page, which is dimmed and paused (quick look at an item
+   *   without squeezing a table; pair with previous/next in DsaasfrPreviewPanel).
+   * Below 62em the preview is always full screen.
+   */
+  previewMode?: DsaasfrAppShellPreviewMode
+  /** Preview width: `sm` (≈24rem max), `md` (default, ≈35% of the screen), `lg` (≈half). */
+  previewSize?: DsaasfrAppShellPreviewSize
   /**
    * Sidebar width on wide screens: `sm` 14rem (short labels), `md` 16rem (default),
    * `lg` 20rem (long labels or service name). For any other width, set the
