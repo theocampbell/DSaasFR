@@ -48,7 +48,7 @@ vérifiés par commitlint :
 | `feat!:` ou `BREAKING CHANGE:` | majeure | changement incompatible de l'API |
 | `refactor:`, `test:`, `ci:`, `chore:`, `style:` | aucune | |
 
-Le numéro de version, le [journal des modifications](CHANGELOG.md) et la release GitHub
+Le numéro de version et la release GitHub (avec les notes de version)
 sont générés automatiquement par semantic-release à partir de ces messages.
 
 ## Règles du projet
