@@ -55,7 +55,10 @@ de `fr-modal`, sans jeton DSFR), au niveau des modales DSFR (1750), surface et o
 « lifted » comme `fr-modal`. Pour parcourir la liste sans fermer, `DsaasfrPreviewPanel`
 propose **précédent / suivant** (le focus reste sur le bouton, le nouvel élément est annoncé ;
 `usePreviewQuery().open(id, { replace: true })` n’ajoute pas d’entrée d’historique). Trois
-largeurs : `previewSize` `sm` / `md` / `lg`.
+largeurs : `previewSize` `sm` / `md` / `lg`. Tant que la page est en pause (aperçu flottant,
+ou plein écran sous 62em), l’aperçu est exposé comme une **boîte de dialogue modale**
+(`role="dialog"`, `aria-modal="true"`, nommée par son titre), comme `DsfrModal` ; en mode
+`push`, il reste une région `complementary`.
 
 ## Conséquences pour l'accessibilité
 

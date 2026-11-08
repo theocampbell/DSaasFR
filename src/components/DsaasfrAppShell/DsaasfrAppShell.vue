@@ -234,7 +234,9 @@ watch(hasPreview, async (open) => {
         </main>
       </div>
 
-      <!-- Floating preview: veil over the paused page; clicking it closes the preview. -->
+      <!-- Floating preview: veil over the paused page; clicking it closes the preview.
+           While the page is paused (floating, or full screen below 62em) the preview is a
+           modal dialog, like DsfrModal; otherwise a complementary region. -->
       <div
         v-if="overlay"
         class="dsaasfr-app-shell__backdrop"
@@ -245,6 +247,8 @@ watch(hasPreview, async (open) => {
         v-if="hasPreview"
         :id="previewId"
         class="dsaasfr-app-shell__preview"
+        :role="pageInert ? 'dialog' : undefined"
+        :aria-modal="pageInert ? 'true' : undefined"
         :aria-labelledby="previewHeadingId"
         :aria-label="previewHeadingId ? undefined : previewLabel"
         tabindex="-1"

@@ -83,20 +83,21 @@ describe('DsaasfrPreviewPanel in DsaasfrAppShell', () => {
     expect(document.activeElement).toBe(document.body)
   })
 
-  it('makes the rest of the page inert on narrow screens (full-screen preview)', async () => {
+  it('makes the rest of the page inert on narrow screens (full-screen preview, a modal dialog)', async () => {
     mockViewport(true)
     const { user, opener } = renderShell()
     await user.click(opener)
-    await screen.findByRole('complementary')
+    const dialog = await screen.findByRole('dialog', { name: 'Dossier D-2026-2041' })
+    expect(dialog.getAttribute('aria-modal')).toBe('true')
     await nextTick()
 
     expect(screen.getByRole('main').closest('[inert]')).toBeTruthy()
     expect(screen.getByRole('navigation', { name: 'Navigation principale' }).closest('[inert]')).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Contenu' }).closest('[inert]')).toBeTruthy()
-    expect(screen.getByRole('complementary').closest('[inert]')).toBeNull()
+    expect(dialog.closest('[inert]')).toBeNull()
   })
 
-  it('keeps the page interactive on wide screens', async () => {
+  it('keeps the page interactive and the preview a side region in push mode', async () => {
     mockViewport(false)
     const { user, opener } = renderShell()
     await user.click(opener)
@@ -179,25 +180,27 @@ describe('DsaasfrAppShell previewMode="overlay"', () => {
     return { ...result, user, opener: screen.getByRole('button', { name: 'Aperçu' }) }
   }
 
-  it('pauses the page behind the floating preview on wide screens', async () => {
+  it('is a modal dialog over the paused page on wide screens', async () => {
     mockViewport(false)
     const { user, opener } = renderOverlay()
     await user.click(opener)
-    await screen.findByRole('complementary')
+    const dialog = await screen.findByRole('dialog', { name: 'Dossier 1' })
 
+    expect(dialog.getAttribute('aria-modal')).toBe('true')
     expect(screen.getByRole('main').closest('[inert]')).toBeTruthy()
-    expect(screen.getByRole('complementary').closest('[inert]')).toBeNull()
+    expect(dialog.closest('[inert]')).toBeNull()
+    expect(screen.queryByRole('complementary')).toBeNull()
   })
 
   it('closes when the veil is clicked and returns focus to the opener', async () => {
     mockViewport(false)
     const { user, opener, container } = renderOverlay()
     await user.click(opener)
-    await screen.findByRole('complementary')
+    await screen.findByRole('dialog')
 
     await user.click(container.querySelector('[aria-hidden="true"]') as HTMLElement)
 
-    expect(screen.queryByRole('complementary')).toBeNull()
+    expect(screen.queryByRole('dialog')).toBeNull()
     await vi.waitFor(() => expect(document.activeElement).toBe(opener))
   })
 
