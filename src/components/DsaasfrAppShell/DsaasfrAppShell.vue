@@ -427,7 +427,8 @@ watch(hasPreview, async (open) => {
 /* Floating preview (previewMode="overlay"): contained in the list area (below the
    breadcrumb / toolbar rows, right of the sidebar, both measured in the script), over a
    DSFR-modal veil limited to that area, at the DSFR modal layer; lifted surface and
-   shadow, as fr-modal. As tall as its content, scrolling past the bottom of the screen. */
+   shadow, as fr-modal. It fills the area minus a band of veil on every side, and its
+   content scrolls inside (the panel header stays pinned). */
 .dsaasfr-app-shell__backdrop {
   position: fixed;
   z-index: 1749;
@@ -440,10 +441,11 @@ watch(hasPreview, async (open) => {
   z-index: 1750;
   top: calc(var(--dsaasfr-shell-list-top) + var(--dsaasfr-space-2w));
   right: var(--dsaasfr-space-2w);
+  bottom: var(--dsaasfr-space-2w);
   width: var(--dsaasfr-shell-preview-width);
   max-width: calc(100% - var(--dsaasfr-shell-list-left) - 2 * var(--dsaasfr-space-2w));
   height: auto;
-  max-height: calc(100dvh - var(--dsaasfr-shell-list-top) - 2 * var(--dsaasfr-space-2w));
+  overscroll-behavior: contain;
   border-left: 0;
   background-color: var(--background-lifted-grey);
   box-shadow: var(--lifted-shadow);

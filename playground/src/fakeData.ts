@@ -55,6 +55,36 @@ export interface PreviewContent {
   link?: string
   fields?: [string, string][]
   document?: boolean
+  /** Case history, most recent first: [date, event]. Long on purpose (scrolling demo). */
+  history?: [string, string][]
+}
+
+const historyEvents = [
+  'Dossier déposé en ligne',
+  'Accusé de réception envoyé au demandeur',
+  'Dossier attribué à l’instructeur',
+  'Pièce justificative ajoutée : plan de situation',
+  'Demande de pièces complémentaires',
+  'Pièces complémentaires reçues',
+  'Consultation de l’architecte des Bâtiments de France',
+  'Avis favorable de l’architecte des Bâtiments de France',
+  'Consultation du service de l’eau',
+  'Avis réservé du service de l’eau',
+  'Échange téléphonique avec le demandeur',
+  'Note interne ajoutée',
+  'Visite sur site programmée',
+  'Compte rendu de visite ajouté',
+  'Projet de décision rédigé',
+  'Projet de décision transmis pour signature',
+]
+
+function historyOf(index: number): [string, string][] {
+  return historyEvents
+    .map((event, n): [string, string] => [
+      `${String(((index + n) % 28) + 1).padStart(2, '0')}/${String((n % 12) + 1).padStart(2, '0')}/2026`,
+      event,
+    ])
+    .reverse()
 }
 
 /** Preview ids: `D-2026-2041` (case file) or `D-2026-2041/2` (document 2 of it). */
@@ -71,5 +101,6 @@ export function describePreview(id: string | undefined): PreviewContent | undefi
     description: row[2],
     link: `/dossiers/${row[0]}`,
     fields: [['Demandeur', row[1]!], ['Commune', row[3]!], ['Statut', row[4]!], ['Dépôt', row[5]!]],
+    history: historyOf(dossiers.indexOf(row)),
   }
 }

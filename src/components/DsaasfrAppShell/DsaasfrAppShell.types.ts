@@ -9,7 +9,7 @@ export interface DsaasfrAppShellProps {
    * - `push` (default): a column next to the content, the page stays usable (documents
    *   read alongside the page);
    * - `overlay`: floats over the list area (below the breadcrumb / toolbar rows, right of
-   *   the sidebar), as tall as its content; the page is paused and the list area dimmed;
+   *   the sidebar), filling it with a band of veil around, content scrolling inside; the page is paused and the list area dimmed;
    *   a click outside closes it (quick look at an item without squeezing a table; pair
    *   with previous/next in DsaasfrPreviewPanel).
    * Below 62em the preview is always full screen.

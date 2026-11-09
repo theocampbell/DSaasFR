@@ -96,7 +96,7 @@ Le shell propose deux façons d’ouvrir l’aperçu, à choisir selon l’usage
 
 | | `push` (défaut) | `overlay` |
 |---|---|---|
-| Rendu | Colonne à droite, le contenu se resserre | Panneau flottant dans la zone de la liste (sous le fil d’Ariane et la barre d’outils), à la hauteur de son contenu ; la liste est assombrie |
+| Rendu | Colonne à droite, le contenu se resserre | Panneau flottant dans la zone de la liste (sous le fil d’Ariane et la barre d’outils), qui remplit cette zone en laissant une bande sombre autour ; un contenu long défile à l’intérieur |
 | Page derrière | Utilisable | En pause (inerte), clic en dehors du panneau = fermer |
 | Pour | Un document lu à côté de la page | Un coup d’œil à un élément sans resserrer un tableau |
 

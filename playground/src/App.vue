@@ -199,6 +199,25 @@ const accountItems: DsaasfrUserMenuItem[] = [
             </dd>
           </template>
         </dl>
+        <template v-if="previewed.history">
+          <h3 class="fr-h6 fr-mb-2w">
+            Historique
+          </h3>
+          <ol class="fr-raw-list fr-mb-3w">
+            <li
+              v-for="([date, event], n) in previewed.history"
+              :key="n"
+              class="fr-mb-2w"
+            >
+              <p class="fr-text--xs fr-mb-0 playground-mention">
+                {{ date }}
+              </p>
+              <p class="fr-text--sm fr-mb-0">
+                {{ event }}
+              </p>
+            </li>
+          </ol>
+        </template>
         <div
           v-if="previewed.document"
           class="fr-p-3w fr-mb-3w playground-document"
@@ -235,6 +254,10 @@ const accountItems: DsaasfrUserMenuItem[] = [
 
 <style scoped>
 /* Simulated document page (demo only). */
+.playground-mention {
+  color: var(--text-mention-grey);
+}
+
 .playground-document {
   border: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
   background-color: var(--background-alt-grey);

@@ -65,8 +65,9 @@ ou plein écran sous 62em), l’aperçu est exposé comme une **boîte de dialog
 Retour du responsable produit : en pleine hauteur, l’aperçu flottant « prend tout l’écran ».
 Le comportement modal est conservé (page en pause, focus dans le panneau, Échap), seul le
 rendu change : le panneau flotte **dans la zone de la liste**, sous les lignes fil d’Ariane /
-barre d’outils et à droite de la barre latérale, avec une marge (`2w`), et prend **la hauteur
-de son contenu** (défilement interne au-delà de l’écran). Le voile ne couvre que cette zone :
+barre d’outils et à droite de la barre latérale, et **remplit cette zone** en laissant
+toujours une **bande du voile** (`2w`) visible sur chaque côté ; un contenu long **défile à
+l’intérieur** du panneau (en-tête fixé), sans faire défiler la page derrière. Le voile ne couvre que cette zone :
 la barre latérale et les lignes fixées restent lisibles, mais inertes. Pour que leur aspect
 non assombri ne piège pas l’utilisateur de la souris, **un clic n’importe où en dehors du
 panneau le ferme**, comme un clic sur le voile. Les bords de la zone sont mesurés par le shell
