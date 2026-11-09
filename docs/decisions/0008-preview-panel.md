@@ -60,6 +60,19 @@ ou plein écran sous 62em), l’aperçu est exposé comme une **boîte de dialog
 (`role="dialog"`, `aria-modal="true"`, nommée par son titre), comme `DsfrModal` ; en mode
 `push`, il reste une région `complementary`.
 
+### Aperçu flottant contenu dans la zone de la liste (2026-11-09)
+
+Retour du responsable produit : en pleine hauteur, l’aperçu flottant « prend tout l’écran ».
+Le comportement modal est conservé (page en pause, focus dans le panneau, Échap), seul le
+rendu change : le panneau flotte **dans la zone de la liste**, sous les lignes fil d’Ariane /
+barre d’outils et à droite de la barre latérale, avec une marge (`2w`), et prend **la hauteur
+de son contenu** (défilement interne au-delà de l’écran). Le voile ne couvre que cette zone :
+la barre latérale et les lignes fixées restent lisibles, mais inertes. Pour que leur aspect
+non assombri ne piège pas l’utilisateur de la souris, **un clic n’importe où en dehors du
+panneau le ferme**, comme un clic sur le voile. Les bords de la zone sont mesurés par le shell
+(défilement, redimensionnement) et passés au CSS (`--dsaasfr-shell-list-top` / `-left`).
+Sous 62em, l’aperçu reste en plein écran.
+
 ## Conséquences pour l'accessibilité
 
 - Exception à l'anneau de focus du DSFR : le titre reçoit le focus par programmation à

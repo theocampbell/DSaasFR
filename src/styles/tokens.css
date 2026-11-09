@@ -39,6 +39,10 @@
   /* Veil behind a floating preview: the DSFR modal backdrop value (fr-modal), which the
      DSFR does not expose as a token. Same in light and dark themes, as in the DSFR. */
   --dsaasfr-backdrop: hsl(0deg 0% 9% / 64%);
+
+  /* Edges of the list area, measured by DsaasfrAppShell while the preview floats. */
+  --dsaasfr-shell-list-top: 0px;
+  --dsaasfr-shell-list-left: 0px;
   --dsaasfr-shell-row-height: 3rem;
   --dsaasfr-shell-border-width: 1px;
 

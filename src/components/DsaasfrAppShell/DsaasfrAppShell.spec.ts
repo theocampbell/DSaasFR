@@ -98,6 +98,37 @@ describe('DsaasfrAppShell', () => {
     expect(document.activeElement).toBe(toggle)
   })
 
+  it('closes the floating preview on a click outside it, not inside', async () => {
+    const user = userEvent.setup()
+    const Host = defineComponent({
+      setup() {
+        const open = ref(true)
+        return () =>
+          h(
+            DsaasfrAppShell,
+            {
+              previewMode: 'overlay',
+              previewOpen: open.value,
+              'onUpdate:previewOpen': (v: boolean) => (open.value = v),
+            },
+            {
+              default: () => h('h1', 'Dossiers'),
+              preview: () => h('p', 'Dossier 42'),
+            },
+          )
+      },
+    })
+
+    render(Host)
+    expect(screen.getByRole('dialog', { name: 'Aperçu' })).toBeTruthy()
+
+    await user.click(screen.getByText('Dossier 42'))
+    expect(screen.getByRole('dialog', { name: 'Aperçu' })).toBeTruthy()
+
+    await user.click(screen.getByText('Dossiers'))
+    expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
   it('scrolls the page back to the top when the page changes', async () => {
     const router = createRouter({
       history: createMemoryHistory(),

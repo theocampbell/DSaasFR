@@ -182,7 +182,7 @@ s’applique pas.
 | Nom | Type | Défaut | Description |
 |---|---|---|---|
 | `sidebarSize` | `'sm' \| 'md' \| 'lg'` | — (16rem) | Largeur de la barre latérale sur grand écran : `sm` 14rem (libellés courts), `md` 16rem, `lg` 20rem (libellés ou nom de service longs). Pour une autre largeur, définissez la variable CSS `--dsaasfr-shell-sidebar-width`. |
-| `previewMode` | `'push' \| 'overlay'` | `'push'` | Ouverture de l’aperçu sur grand écran : `push` en colonne à côté du contenu (la page reste utilisable), `overlay` par-dessus la page, assombrie et mise en pause. Sous 62em, l’aperçu est toujours en plein écran. |
+| `previewMode` | `'push' \| 'overlay'` | `'push'` | Ouverture de l’aperçu sur grand écran : `push` en colonne à côté du contenu (la page reste utilisable), `overlay` flottant dans la zone de la liste (sous les lignes fixées, à droite de la barre latérale), à la hauteur de son contenu ; la page est mise en pause, un clic en dehors ferme l’aperçu. Sous 62em, l’aperçu est toujours en plein écran. |
 | `previewSize` | `'sm' \| 'md' \| 'lg'` | — (`md`) | Largeur de l’aperçu : `sm` (24rem au plus), `md` (≈ 35 % de l’écran), `lg` (≈ la moitié). |
 | `previewLabel` | `string` | `'Aperçu'` | Nom accessible du panneau d’aperçu (région `complementary`), utilisé seulement si le contenu ne fournit pas de titre. `DsaasfrPreviewPanel` nomme la région par son propre titre. |
 | `mainId` | `string` | `'dsaasfr-main'` | Identifiant de `<main>`, cible du lien d’évitement « Contenu ». Sert aussi de base aux identifiants de la barre latérale (`<mainId>-sidebar`) et de l’aperçu (`<mainId>-preview`). |

@@ -96,8 +96,8 @@ Le shell propose deux façons d’ouvrir l’aperçu, à choisir selon l’usage
 
 | | `push` (défaut) | `overlay` |
 |---|---|---|
-| Rendu | Colonne à droite, le contenu se resserre | Panneau flottant, la page est assombrie |
-| Page derrière | Utilisable | En pause (inerte), clic sur le voile = fermer |
+| Rendu | Colonne à droite, le contenu se resserre | Panneau flottant dans la zone de la liste (sous le fil d’Ariane et la barre d’outils), à la hauteur de son contenu ; la liste est assombrie |
+| Page derrière | Utilisable | En pause (inerte), clic en dehors du panneau = fermer |
 | Pour | Un document lu à côté de la page | Un coup d’œil à un élément sans resserrer un tableau |
 
 <Example story="shell-dsaasfrappshell--floating-preview" title="aperçu flottant au-dessus de la liste" :height="480" :viewport="1280" />

@@ -105,12 +105,14 @@ onMounted(() => {
   observer = new ResizeObserver(() => {
     const pinned = bars.value && getComputedStyle(bars.value).position === 'sticky'
     root.style.setProperty('scroll-padding-top', pinned ? `${bars.value!.offsetHeight}px` : '')
+    if (overlay.value) measureListArea()
   })
   observer.observe(bars.value)
 })
 onBeforeUnmount(() => {
   observer?.disconnect()
   document.documentElement.style.removeProperty('scroll-padding-top')
+  stopTrackingListArea()
 })
 
 // Preview panel context: DsaasfrPreviewPanel registers its heading (region name and
@@ -126,6 +128,49 @@ provide(previewContextKey, {
 const narrow = useNarrowViewport()
 const overlay = computed(() => hasPreview.value && props.previewMode === 'overlay' && !narrow.value)
 const pageInert = computed(() => (hasPreview.value && (narrow.value || overlay.value)) || undefined)
+
+// The floating preview stays inside the list area: below the breadcrumb / toolbar rows,
+// right of the sidebar. Their edges move with scrolling (header slot) and resizing, so
+// they are measured while the preview floats and handed to the CSS.
+const shell = useTemplateRef<HTMLElement>('shell')
+const content = useTemplateRef<HTMLElement>('content')
+function measureListArea() {
+  if (!shell.value || !content.value) return
+  const top = bars.value
+    ? bars.value.getBoundingClientRect().bottom
+    : content.value.getBoundingClientRect().top
+  shell.value.style.setProperty('--dsaasfr-shell-list-top', `${Math.max(0, top)}px`)
+  shell.value.style.setProperty('--dsaasfr-shell-list-left', `${content.value.getBoundingClientRect().left}px`)
+}
+function stopTrackingListArea() {
+  if (typeof window === 'undefined') return
+  window.removeEventListener('scroll', measureListArea)
+  window.removeEventListener('resize', measureListArea)
+}
+watch(overlay, (floating) => {
+  if (typeof window === 'undefined') return
+  if (!floating) return stopTrackingListArea()
+  measureListArea()
+  window.addEventListener('scroll', measureListArea, { passive: true })
+  window.addEventListener('resize', measureListArea)
+}, { flush: 'post', immediate: true })
+
+// While the preview floats, the rest of the page is inert: a click there (sidebar, bars,
+// list) lands on the shell and closes the preview, like a click on the veil. Only a
+// press that starts while the preview floats counts: the click that opens it (a list
+// row) may bubble here after the route has already changed.
+let pressedWhileFloating = false
+function onShellPointerdown() {
+  pressedWhileFloating = overlay.value
+}
+function onShellClick(event: MouseEvent) {
+  const outsideClick = pressedWhileFloating
+  pressedWhileFloating = false
+  if (!outsideClick || !overlay.value) return
+  const panel = document.getElementById(previewId.value)
+  if (panel && event.target instanceof Node && panel.contains(event.target)) return
+  closePreview()
+}
 
 function onPreviewKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
@@ -162,13 +207,18 @@ watch(hasPreview, async (open) => {
 </script>
 
 <template>
+  <!-- Click outside the floating preview closes it; keyboard: Échap (onPreviewKeydown). -->
+  <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events, vuejs-accessibility/no-static-element-interactions -->
   <div
+    ref="shell"
     class="dsaasfr-app-shell"
     :class="{
       'dsaasfr-app-shell--preview-open': hasPreview && !overlay,
       'dsaasfr-app-shell--preview-overlay': overlay,
     }"
     :style="sizeStyle"
+    @pointerdown.capture="onShellPointerdown"
+    @click="onShellClick"
   >
     <div
       v-if="!hideSkipLinks"
@@ -197,6 +247,7 @@ watch(hasPreview, async (open) => {
       </div>
 
       <div
+        ref="content"
         class="dsaasfr-app-shell__content"
         :inert="pageInert"
       >
@@ -234,14 +285,14 @@ watch(hasPreview, async (open) => {
         </main>
       </div>
 
-      <!-- Floating preview: veil over the paused page; clicking it closes the preview.
-           While the page is paused (floating, or full screen below 62em) the preview is a
-           modal dialog, like DsfrModal; otherwise a complementary region. -->
+      <!-- Floating preview: veil over the list area of the paused page (a click anywhere
+           outside the panel closes it, see onShellClick). While the page is paused
+           (floating, or full screen below 62em) the preview is a modal dialog, like
+           DsfrModal; otherwise a complementary region. -->
       <div
         v-if="overlay"
         class="dsaasfr-app-shell__backdrop"
         aria-hidden="true"
-        @click="closePreview"
       />
       <aside
         v-if="hasPreview"
@@ -373,22 +424,26 @@ watch(hasPreview, async (open) => {
   outline: none;
 }
 
-/* Floating preview (previewMode="overlay"): above the page and a DSFR-modal veil, at the
-   DSFR modal layer; lifted surface and shadow, as fr-modal. */
+/* Floating preview (previewMode="overlay"): contained in the list area (below the
+   breadcrumb / toolbar rows, right of the sidebar, both measured in the script), over a
+   DSFR-modal veil limited to that area, at the DSFR modal layer; lifted surface and
+   shadow, as fr-modal. As tall as its content, scrolling past the bottom of the screen. */
 .dsaasfr-app-shell__backdrop {
   position: fixed;
   z-index: 1749;
-  inset: 0;
+  inset: var(--dsaasfr-shell-list-top) 0 0 var(--dsaasfr-shell-list-left);
   background-color: var(--dsaasfr-backdrop);
 }
 
 .dsaasfr-app-shell--preview-overlay .dsaasfr-app-shell__preview {
   position: fixed;
   z-index: 1750;
-  top: 0;
-  right: 0;
+  top: calc(var(--dsaasfr-shell-list-top) + var(--dsaasfr-space-2w));
+  right: var(--dsaasfr-space-2w);
   width: var(--dsaasfr-shell-preview-width);
-  max-width: 100%;
+  max-width: calc(100% - var(--dsaasfr-shell-list-left) - 2 * var(--dsaasfr-space-2w));
+  height: auto;
+  max-height: calc(100dvh - var(--dsaasfr-shell-list-top) - 2 * var(--dsaasfr-space-2w));
   border-left: 0;
   background-color: var(--background-lifted-grey);
   box-shadow: var(--lifted-shadow);
