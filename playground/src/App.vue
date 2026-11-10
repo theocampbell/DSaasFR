@@ -40,14 +40,15 @@ const items: DsaasfrSidebarItem[] = [
 // Toolbar row only on list pages.
 const listCount = computed(() => ({ '/dossiers': `${dossiers.length} dossiers`, '/usagers': '30 usagers' } as Record<string, string>)[route.path])
 
-// Key action, top right of the breadcrumb row, only on pages that have one
-// (demo: buttons do nothing).
+// Key action, top right of the breadcrumb row, only on pages that have one. Demo: the
+// buttons do nothing, so they are labelled « Action principale » to show the position
+// of the page's primary action (a real app would say « Nouveau dossier »…).
 const keyAction = computed(() => {
   const path = route.path
-  if (/^\/dossiers\/[^/]+\/pieces/.test(path)) return { label: 'Ajouter une pièce', icon: 'fr-icon-attachment-line' }
-  if (/^\/dossiers\/[^/]+$/.test(path)) return { label: 'Rendre une décision', icon: 'fr-icon-check-line' }
-  if (path === '/dossiers') return { label: 'Nouveau dossier', icon: 'fr-icon-add-line' }
-  if (path === '/admin/agents') return { label: 'Ajouter un agent', icon: 'fr-icon-user-add-line' }
+  if (/^\/dossiers\/[^/]+\/pieces/.test(path)) return { label: 'Action principale', icon: 'fr-icon-attachment-line' }
+  if (/^\/dossiers\/[^/]+$/.test(path)) return { label: 'Action principale', icon: 'fr-icon-check-line' }
+  if (path === '/dossiers') return { label: 'Action principale', icon: 'fr-icon-add-line' }
+  if (path === '/admin/agents') return { label: 'Action principale', icon: 'fr-icon-user-add-line' }
   return undefined
 })
 
@@ -79,7 +80,6 @@ const accountItems: DsaasfrUserMenuItem[] = [
   <DsaasfrAppShell
     v-model:preview-open="preview.isOpen.value"
     :preview-mode="isDocument ? 'push' : 'overlay'"
-    :preview-size="isDocument ? 'md' : 'lg'"
   >
     <template #sidebar>
       <DsaasfrSidebar

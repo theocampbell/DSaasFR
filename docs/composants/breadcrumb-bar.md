@@ -16,7 +16,7 @@ construits à partir de l’URL et des titres déclarés dans les routes.
 
 ## Exemple
 
-<Example story="shell-dsaasfrbreadcrumbbar--with-key-action" title="fil d’Ariane à deux niveaux et bouton Nouveau dossier" :height="110" />
+<Example story="shell-dsaasfrbreadcrumbbar--with-key-action" title="fil d’Ariane à deux niveaux et action principale" :height="110" />
 
 Sans la prop `items`, les niveaux viennent des routes :
 
