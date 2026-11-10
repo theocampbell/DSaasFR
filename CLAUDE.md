@@ -3,7 +3,7 @@
 DSaaSFR is a Vue 3 component library that adds **SaaS application patterns** (app shell,
 navigation, toolbars, preview panel, data views…) on top of **Vue DSFR**
 (`@gouvminint/vue-dsfr`) and the **DSFR** (`@gouvfr/dsfr`). It is used by French
-government applications. It is a POC, a community proposal, NOT an official DSFR product.
+government applications. It is an experimental project (POC), NOT an official DSFR product.
 
 ## Non-negotiable rules
 

@@ -113,7 +113,7 @@ export default defineConfig({
       text: 'Proposer une modification de cette page',
     },
     footer: {
-      message: 'Proposition communautaire, non officielle. Code sous licence MIT.',
+      message: 'Projet expérimental, non officiel. Code sous licence MIT.',
       copyright: 'Construit sur Vue DSFR et le Système de Design de l’État.',
     },
     search: {

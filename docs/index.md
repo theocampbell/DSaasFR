@@ -4,7 +4,7 @@ layout: home
 hero:
   name: DSaaSFR
   text: L’interface des applications métier, sur le DSFR
-  tagline: Composants Vue 3 pour les outils internes, back-offices et applications en mode SaaS de l’État, construits sur Vue DSFR. Proposition communautaire, non officielle.
+  tagline: Composants Vue 3 pour les outils internes, back-offices et applications en mode SaaS de l’État, construits sur Vue DSFR. Projet expérimental, non officiel.
   actions:
     - theme: brand
       text: Pour commencer

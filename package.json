@@ -1,7 +1,7 @@
 {
   "name": "@dsaasfr/vue",
   "version": "0.0.0-development",
-  "description": "Composants Vue 3 orientés application (SaaS, back-office) construits sur Vue DSFR et le Système de Design de l'État (DSFR). Proposition communautaire, non officielle.",
+  "description": "Composants Vue 3 orientés application (SaaS, back-office) construits sur Vue DSFR et le Système de Design de l'État (DSFR). Projet expérimental, non officiel.",
   "keywords": [
     "vue",
     "vue3",

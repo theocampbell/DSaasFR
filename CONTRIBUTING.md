@@ -1,6 +1,6 @@
 # Contribuer à DSaaSFR
 
-Merci de votre intérêt ! DSaaSFR est une **proposition communautaire** : toute remarque,
+Merci de votre intérêt ! DSaaSFR est un **projet expérimental et ouvert** : toute remarque,
 question ou contribution est bienvenue, y compris un simple retour d'usage.
 
 ## Avant de commencer

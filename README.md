@@ -1,6 +1,6 @@
 # DSaaSFR
 
-> **POC / proposition communautaire** — composants Vue 3 orientés application (SaaS,
+> **Projet expérimental, non officiel** — composants Vue 3 orientés application (SaaS,
 > back-office) construits **sur** [Vue DSFR](https://vue-ds.fr) et le
 > [Système de Design de l'État](https://www.systeme-de-design.gouv.fr).
 > Ce n'est pas un produit officiel du DSFR.

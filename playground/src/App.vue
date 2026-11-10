@@ -147,7 +147,7 @@ const accountItems: DsaasfrUserMenuItem[] = [
     <DsfrNotice
       class="fr-mb-3w"
       title="Démonstration"
-      desc="Ce site est un bac à sable du projet DSaaSFR (proposition communautaire). Ce n’est pas un service public réel et aucune donnée n’est enregistrée."
+      desc="Ce site est un bac à sable du projet DSaaSFR (projet expérimental, non officiel). Ce n’est pas un service public réel et aucune donnée n’est enregistrée."
     />
 
     <h1 class="fr-h3">
