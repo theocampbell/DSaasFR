@@ -2,7 +2,7 @@
 
 - **Statut** : Proposé
 - **Date** : 2026-11-11
-- **Composants** : DsaasfrSearchableCheckboxSet (DsaasfrDropdown ajusté ; DsaasfrFilterChip, depuis retiré, voir 0009)
+- **Composants** : DsaasfrSearchableCheckboxSet, DsaasfrFilterModal (DsaasfrDropdown ajusté ; DsaasfrFilterChip, depuis retiré, voir 0009)
 
 ## Point de départ DSFR
 

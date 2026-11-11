@@ -1,29 +1,21 @@
 <script setup lang="ts">
-// "Communes" button + modal: communes are chosen in a DsfrModal opened directly from a
-// toolbar button, next to the other group buttons (Instruction, Projet). One layer, the
-// standard DSFR modal pattern, room for the search. Same search state as the other filters: the URL
-// and saved searches do not change. The list inside is DsaasfrSearchableCheckboxSet: plain
-// checkboxes for a small perimeter, search for the whole département.
-import { computed, ref, useTemplateRef } from 'vue'
+// The "Communes" filter, built on the library's DsaasfrFilterModal (button with count, DSFR
+// modal at page level, fixed height, focus back to the button) and
+// DsaasfrSearchableCheckboxSet (plain checkboxes for a small perimeter, search for the whole
+// département). This file only holds the data: the draft, the faceted counts, applying.
+// Same search state as the other filters: the URL and saved searches do not change.
+import { computed, ref, watch } from 'vue'
 import { applied, applyFilter, countResults, facetCount, valuesOf } from './filters'
 
 const plural = (n: number) => `${n} dossier${n > 1 ? 's' : ''}`
-
 const chosen = computed(() => applied.find(f => f.field === 'commune')?.values ?? [])
-/** The button shows how many communes are chosen, like the other groups: "Communes (3)".
- * Which ones is in the selected filters, under the buttons. */
-const buttonLabel = computed(() => (chosen.value.length ? `Communes (${chosen.value.length})` : 'Communes'))
-const buttonName = computed(() => {
-  const n = chosen.value.length
-  return n ? `Communes (${n}), ${n} commune${n > 1 ? 's' : ''} sélectionnée${n > 1 ? 's' : ''}` : undefined
-})
 
-const opened = ref(false)
+// Draft: set from the applied filter when the modal opens, discarded if it closes unapplied.
+const open = ref(false)
 const draft = ref<string[]>([])
-function open() {
-  draft.value = [...chosen.value]
-  opened.value = true
-}
+watch(open, (isOpen) => {
+  if (isOpen) draft.value = [...chosen.value]
+})
 
 // Counts combined with the other applied filters; communes that would return nothing are
 // disabled (and listed after the others), unless already chosen.
@@ -32,84 +24,27 @@ const options = computed(() => valuesOf('commune').map((v) => {
   const n = facetCount(others.value, 'commune', v)
   return { value: v, label: `${v} (${n})`, searchText: v, disabled: n === 0 && !draft.value.includes(v) }
 }))
+const countText = (n: number) => `${n} commune${n > 1 ? 's' : ''} sélectionnée${n > 1 ? 's' : ''}`
 const results = computed(() => countResults([...others.value, ...(draft.value.length ? [{ field: 'commune', values: draft.value }] : [])]))
-
-function apply() {
-  applyFilter('commune', draft.value)
-  opened.value = false
-}
-
-// DsfrModal gives focus back to `origin` when it closes.
-const trigger = useTemplateRef<HTMLElement>('trigger')
-const origin = { focus: () => trigger.value?.querySelector('button')?.focus() }
 </script>
 
 <template>
-  <span
-    ref="trigger"
-    data-filter-group="communes"
-  >
-    <DsfrButton
-      :label="buttonLabel"
-      :aria-label="buttonName"
+  <!-- data-filter-group: focus comes back here when its tag was the last one removed -->
+  <span data-filter-group="communes">
+    <DsaasfrFilterModal
+      v-model:open="open"
+      label="Communes"
       icon="fr-icon-map-pin-2-line"
-      secondary
-      size="sm"
-      aria-haspopup="dialog"
-      @click="open"
-    />
-  </span>
-  <!-- At page level (Teleport): inside the shell's pinned bars, the modal shares their
-       stacking context and the narrow-screen DSFR header covers its top (RGAA 10.4, 10.7). -->
-  <Teleport to="body">
-    <DsfrModal
-      :opened="opened"
-      class="communes-modal"
-      title="Communes"
-      :origin="origin"
-      :actions="[
-        { label: draft.length ? `Afficher ${plural(results)}` : 'Afficher tous les dossiers', onClick: apply },
-        { label: 'Annuler', secondary: true, onClick: () => (opened = false) },
-      ]"
-      @close="opened = false"
+      :count="chosen.length"
+      :count-text="countText"
+      :apply-label="draft.length ? `Afficher ${plural(results)}` : 'Afficher tous les dossiers'"
+      @apply="applyFilter('commune', draft)"
     >
-      <!-- Fixed height: the modal keeps its size while search results appear (the list
-         scrolls inside, the buttons stay in place). -->
-      <div class="communes-modal__list">
-        <DsaasfrSearchableCheckboxSet
-          v-model="draft"
-          label="Commune"
-          :options="options"
-        />
-      </div>
-    </DsfrModal>
-  </Teleport>
+      <DsaasfrSearchableCheckboxSet
+        v-model="draft"
+        label="Commune"
+        :options="options"
+      />
+    </DsaasfrFilterModal>
+  </span>
 </template>
-
-<style scoped>
-.communes-modal__list {
-  height: var(--dsaasfr-modal-list-height);
-  overflow-y: auto;
-
-  /* Room for the DSFR focus ring, which the scrolling box would otherwise clip; the
-     negative margin keeps the content aligned with the modal title. */
-  margin: calc(-1 * var(--dsaasfr-space-1v));
-  padding: var(--dsaasfr-space-1v);
-}
-</style>
-
-<style>
-/* Short window (high zoom on a laptop): no fixed height and no pinned footer, a single
-   scrolling area (the modal body). Otherwise two nested scrolling areas leave a thin band,
-   and the focused checkbox ends up under the pinned buttons (RGAA 10.7, 10.11). */
-@media (height < 40em) {
-  .communes-modal .communes-modal__list {
-    height: auto;
-    overflow: visible;
-  }
-
-  .communes-modal .fr-modal__footer {
-    position: static;
-  }
-}
-</style>

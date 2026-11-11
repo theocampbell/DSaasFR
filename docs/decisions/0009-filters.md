@@ -2,7 +2,7 @@
 
 - **Statut** : Proposé
 - **Date** : 2026-11-03
-- **Composants** : DsaasfrDropdown, DsaasfrSelectedFilters (DsaasfrUserMenu repose sur le menu déroulant ; DsaasfrFilterChip, retiré pour l’instant)
+- **Composants** : DsaasfrDropdown, DsaasfrFilterDropdown, DsaasfrSelectedFilters (DsaasfrUserMenu repose sur le menu déroulant ; DsaasfrFilterChip, retiré pour l’instant)
 
 ## Point de départ DSFR
 
@@ -143,6 +143,21 @@ Corrections et interprétations retenues après les revues `dsfr-guardian` et `a
   masqué avant le `h1` casserait la hiérarchie (9.1).
 - **Annonce** : le nombre de résultats (`role="status"`) dit aussi ce qu’un retrait a fait
   (« Filtre Statut retiré. 15 dossiers sur 250 »), le nombre seul pouvant ne pas changer.
+
+### Composants `DsaasfrFilterDropdown` et `DsaasfrFilterModal` (2026-11-11)
+
+Jusqu’ici, le bouton de groupe et le bouton « Communes » étaient assemblés dans le bac à
+sable (`DsaasfrDropdown` + `DsfrCheckboxSet` ; `DsfrButton` + `DsfrModal` +
+`DsaasfrSearchableCheckboxSet`). Chaque application aurait dû réécrire ce code, là où se
+trouvent les détails d’accessibilité (retour du focus, brouillon abandonné, nombre dans le
+nom du bouton, modale hors des barres fixées, hauteur fixe et fenêtre basse). Ils deviennent
+deux composants « cadres » : le comportement dans la bibliothèque, les données (brouillon,
+nombres, application) dans l’application, le contenu par l’emplacement par défaut.
+
+- `DsaasfrFilterDropdown` : bouton secondaire DSFR avec icône et nombre (« Instruction
+  (2) »), panneau `DsaasfrDropdown`, pied « Réinitialiser » / « Afficher… ».
+- `DsaasfrFilterModal` : même bouton, `DsfrModal` rendue au niveau de la page, « Afficher… »
+  / « Annuler » (fiche 0010).
 
 ### `DsaasfrFilterChip` retiré du paquet pour l’instant (2026-11-11)
 

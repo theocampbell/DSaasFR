@@ -24,6 +24,8 @@ Des composants plus petits, utilisés par le shell et par vos pages.
 | Composant | Rôle |
 |---|---|
 | [DsaasfrDropdown](/composants/dropdown) | Un bouton qui ouvre un panneau flottant (déclencheur « Filtrer », menus). |
+| [DsaasfrFilterDropdown](/composants/filter-dropdown) | Un groupe de filtres dans la barre d’outils : bouton avec le nombre de filtres actifs, panneau, « Afficher N dossiers ». |
+| [DsaasfrFilterModal](/composants/filter-modal) | Un filtre à beaucoup de valeurs (communes) : bouton avec le nombre de valeurs, fenêtre modale DSFR de taille fixe. |
 | [DsaasfrSelectedFilters](/composants/selected-filters) | Les filtres en cours au-dessus des résultats : un tag supprimable DSFR par filtre, « Tout effacer ». |
 | [DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set) | Cases à cocher avec recherche pour une liste longue (communes…), dans un panneau de filtre. |
 

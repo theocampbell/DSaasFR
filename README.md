@@ -72,7 +72,8 @@ import { DsaasfrAppShell } from '@dsaasfr/vue'
 | `DsaasfrBreadcrumbBar` | Brouillon — voir la [fiche de décision 0006](docs/decisions/0006-breadcrumb-bar.md) |
 | `DsaasfrToolbar` | Brouillon — voir la [fiche de décision 0007](docs/decisions/0007-toolbar.md) |
 | `DsaasfrPreviewPanel` | Brouillon — voir la [fiche de décision 0008](docs/decisions/0008-preview-panel.md) |
-| `DsaasfrDropdown`, `DsaasfrSelectedFilters` | Brouillon — voir la [fiche de décision 0009](docs/decisions/0009-filters.md) |
+| `DsaasfrDropdown`, `DsaasfrFilterDropdown`, `DsaasfrSelectedFilters` | Brouillon — voir la [fiche de décision 0009](docs/decisions/0009-filters.md) |
+| `DsaasfrFilterModal` | Brouillon — voir la [fiche de décision 0010](docs/decisions/0010-long-lists.md) |
 | `DsaasfrSearchableCheckboxSet` | Brouillon — voir la [fiche de décision 0010](docs/decisions/0010-long-lists.md) |
 | `DsaasfrContextSwitcher` | Brouillon — voir la [fiche de décision 0011](docs/decisions/0011-context-switcher.md) |
 

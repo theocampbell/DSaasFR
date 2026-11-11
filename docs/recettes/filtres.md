@@ -3,14 +3,16 @@
 Cette recette décrit le motif de recherche et de filtres du bac à sable (page « Dossiers ») :
 une recherche dans la page, un bouton par groupe de filtres dans la barre d’outils, et les
 filtres sélectionnés juste en dessous. Le code complet est dans `playground/src/`
-(`FilterControls.vue`, `FilterGroupButton.vue`, `CommunesModal.vue`, `filters.ts`).
+(`FilterControls.vue`, `FilterGroupButton.vue`, `CommunesModal.vue`, `filters.ts`) : ces
+fichiers ne contiennent que les données, le comportement est dans les composants.
 
 ## Ce que fournit la bibliothèque, ce que fait l’application
 
 | Bibliothèque DSaaSFR | Votre application |
 |---|---|
 | [DsaasfrToolbar](/composants/toolbar) : la ligne, `start` et `end` | Les champs, leurs groupes et leurs valeurs |
-| [DsaasfrDropdown](/composants/dropdown) : bouton, panneau, Échap, focus, position, pied fixé | Le brouillon de chaque panneau et le bouton « Afficher N dossiers » |
+| [DsaasfrFilterDropdown](/composants/filter-dropdown) : un groupe de filtres, bouton avec le nombre de filtres actifs, panneau, « Réinitialiser » / « Afficher… », focus | Le brouillon de chaque groupe et le nombre de résultats du bouton « Afficher N dossiers » |
+| [DsaasfrFilterModal](/composants/filter-modal) : un filtre à beaucoup de valeurs, bouton, modale DSFR de taille fixe, focus | Le brouillon et l’application du filtre |
 | [DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set) : recherche et cases à cocher pour une liste longue | Toutes les valeurs possibles (par exemple les communes du département) |
 | [DsaasfrSelectedFilters](/composants/selected-filters) : les filtres en cours, en tags supprimables | Les filtres appliqués, la requête au serveur, les nombres de résultats |
 | `DsfrSearchBar`, `DsfrModal`, `DsfrCheckboxSet`, `DsfrButton` (Vue DSFR) | Le focus quand le dernier filtre est retiré |
@@ -56,60 +58,57 @@ Le bouton annonce le résultat avant de l’appliquer (« Afficher 16 dossiers �
 requête de comptage, plus légère que la requête de la liste. Retirer un filtre (le × d’un
 tag) s’applique tout de suite : c’est une action explicite.
 
-## 1. Un bouton par groupe (application)
+## 1. Un bouton par groupe
 
-Un `DsaasfrDropdown` par groupe ; le panneau contient un `DsfrCheckboxSet` par champ du
-groupe, avec le nombre de résultats de chaque valeur. Le bouton porte le nombre de filtres
-actifs dans son texte et dans son nom accessible.
+Un [DsaasfrFilterDropdown](/composants/filter-dropdown) par groupe ; le panneau contient un
+`DsfrCheckboxSet` par champ du groupe, avec le nombre de résultats de chaque valeur.
 
 ```vue
-<DsaasfrDropdown
+<DsaasfrFilterDropdown
   v-model:open="ouvert"
-  autofocus
-  :trigger-class="`fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left ${groupe.icone}`"
-  :trigger-label="actifs ? `${groupe.libelle} (${actifs}), ${actifs} filtres actifs` : undefined"
+  :label="groupe.libelle"
+  :icon="groupe.icone"
+  :count="nombreDeFiltresActifs(groupe)"
+  :apply-label="`Afficher ${nombreDeResultats(brouillon)} dossiers`"
+  @apply="appliquer(groupe, brouillon)"
+  @reset="vider(brouillon)"
 >
-  <template #trigger>{{ groupe.libelle }}<template v-if="actifs"> ({{ actifs }})</template></template>
-  <div class="fr-px-2w fr-pt-1w">
-    <DsfrCheckboxSet v-for="champ in champs" :key="champ.cle" v-model="brouillon[champ.cle]" :legend="champ.libelle" small :options="options(champ)" />
-  </div>
-  <template #footer="{ close }">
-    <DsfrButton label="Réinitialiser" tertiary no-outline size="sm" @click="reinitialiser" />
-    <DsfrButton :label="`Afficher ${nombre} dossiers`" size="sm" @click="appliquer(); close(true)" />
-  </template>
-</DsaasfrDropdown>
+  <DsfrCheckboxSet v-for="champ in groupe.champs" :key="champ.cle" v-model="brouillon[champ.cle]" :legend="champ.libelle" small :options="options(champ)" />
+</DsaasfrFilterDropdown>
 ```
 
-Chaque valeur affiche son nombre de résultats (« En cours (12) ») ; une valeur qui ne
-donnerait rien est désactivée, sauf si elle est déjà choisie. Les identifiants des cases
-n’utilisent pas la valeur elle-même (elle contient des espaces) mais un index.
+- Quand `open` passe à `true`, repartez des filtres appliqués pour le brouillon ; fermer
+  sans appliquer l’abandonne.
+- Chaque valeur affiche son nombre de résultats (« En cours (12) ») ; une valeur qui ne
+  donnerait rien est désactivée, sauf si elle est déjà choisie. Les identifiants des cases
+  n’utilisent pas la valeur elle-même (elle contient des espaces) mais un index.
 
-## 2. Champs à beaucoup de valeurs : les communes (application)
+## 2. Champs à beaucoup de valeurs : les communes
 
-Un champ de centaines de valeurs (les communes d’un département) a son **propre bouton**,
-qui ouvre une **fenêtre modale DSFR** contenant un
-[DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set).
+Un champ de centaines de valeurs a son **propre bouton**, qui ouvre une **fenêtre modale
+DSFR** : [DsaasfrFilterModal](/composants/filter-modal), avec un
+[DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set) dedans.
 
 ```vue
-<DsfrButton :label="choisies.length ? `Communes (${choisies.length})` : 'Communes'" icon="fr-icon-map-pin-2-line" secondary size="sm" aria-haspopup="dialog" @click="ouvrir" />
-<Teleport to="body">
-  <DsfrModal :opened="ouvert" title="Communes" :origin="bouton" :actions="[…]" @close="ouvert = false">
-    <div class="liste-communes"> <!-- hauteur fixe : var(--dsaasfr-modal-list-height) -->
-      <DsaasfrSearchableCheckboxSet v-model="brouillon" label="Commune" :options="optionsCommune" />
-    </div>
-  </DsfrModal>
-</Teleport>
+<DsaasfrFilterModal
+  v-model:open="ouvert"
+  label="Communes"
+  icon="fr-icon-map-pin-2-line"
+  :count="communesAppliquees.length"
+  :count-text="n => `${n} communes sélectionnées`"
+  :apply-label="`Afficher ${nombreDeResultats(brouillon)} dossiers`"
+  @apply="appliquer('commune', brouillon)"
+>
+  <DsaasfrSearchableCheckboxSet v-model="brouillon" label="Commune" :options="optionsCommune" />
+</DsaasfrFilterModal>
 ```
 
-- `Teleport to="body"` : la modale ne doit pas rester dans les barres fixées du shell, sinon
-  l’en-tête DSFR des écrans étroits la recouvre.
-- La liste a une hauteur fixe, la modale ne change pas de taille pendant la recherche. Sur
-  une fenêtre basse (fort zoom), supprimez cette hauteur et le pied fixé de la modale : un
-  seul défilement, et le focus n’est jamais caché sous les boutons.
+- Le composant rend la modale au niveau de la page, garde sa taille pendant la recherche, et
+  sur une fenêtre basse n’a qu’un défilement : rien à faire de votre côté.
 - Un petit périmètre (10 communes) affiche de simples cases à cocher ; un département entier,
   la recherche. Passez le nom seul dans `searchText`.
 
-## 3. Les filtres sélectionnés (application)
+## 3. Les filtres sélectionnés
 
 ```vue
 <DsaasfrSelectedFilters
