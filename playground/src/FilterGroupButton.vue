@@ -44,6 +44,7 @@ function reset() {
 <template>
   <DsaasfrDropdown
     v-model:open="open"
+    :data-filter-group="group.key"
     placement="bottom-end"
     autofocus
     :trigger-class="`fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left ${group.icon}`"

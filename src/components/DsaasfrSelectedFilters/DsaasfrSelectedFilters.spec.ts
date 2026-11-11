@@ -35,7 +35,7 @@ describe('DsaasfrSelectedFilters', () => {
     const tags = within(list).getAllByRole('button')
     expect(tags).toHaveLength(3)
     expect(tags[0]!.className).toContain('fr-tag--dismiss')
-    expect(tags[0]!.textContent?.trim()).toBe('Commune : Pessac, Talence')
+    expect(tags[0]!.textContent?.trim()).toBe('Commune : Pessac et 1 autre')
     expect(screen.getByRole('status').compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
@@ -45,9 +45,10 @@ describe('DsaasfrSelectedFilters', () => {
     expect(tag.textContent?.trim()).toBe('Type : Certificat d’urbanisme et 2 autres')
   })
 
-  it('names at most 10 values in the accessible name', () => {
-    setup([{ key: 'commune', label: 'Commune', values: Array.from({ length: 30 }, (_, i) => `C${i + 1}`) }])
-    expect(screen.getByRole('button', { name: 'Retirer le filtre Commune : C1, C2, C3, C4, C5, C6, C7, C8, C9, C10 et 20 autres' })).toBeTruthy()
+  it('shows one value then a count for many values (50 communes), names at most 10', () => {
+    setup([{ key: 'commune', label: 'Commune', values: Array.from({ length: 50 }, (_, i) => `C${i + 1}`) }])
+    const tag = screen.getByRole('button', { name: 'Retirer le filtre Commune : C1, C2, C3, C4, C5, C6, C7, C8, C9, C10 et 40 autres' })
+    expect(tag.textContent?.trim()).toBe('Commune : C1 et 49 autres')
   })
 
   it('removes a filter and moves focus to the next tag, then the previous one', async () => {

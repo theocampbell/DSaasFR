@@ -27,6 +27,9 @@ const props = withDefaults(defineProps<DsaasfrSearchableCheckboxSetProps>(), {
   minQueryLength: 2,
   localFilter: true,
   clearText: 'Tout désélectionner',
+  maxVisibleSelected: 5,
+  showMoreSelectedText: (n: number) => `Afficher ${n > 1 ? `les ${n} autres` : 'l’autre'}`,
+  showLessSelectedText: 'Afficher moins',
   resultsCountText: (n: number, shown: number) => {
     if (!n) return 'Aucun résultat'
     const count = `${n} résultat${n > 1 ? 's' : ''}`
@@ -150,6 +153,14 @@ function groupModel(values: () => string[]) {
   })
 }
 const selectedModel = groupModel(() => shownSelected.value)
+
+// A long selection (50 communes) is folded after `maxVisibleSelected`, so that the search
+// field stays in view. The hidden values stay selected.
+const selectionOpen = ref(false)
+const visibleSelected = computed(() =>
+  selectionOpen.value ? shownSelected.value : shownSelected.value.slice(0, props.maxVisibleSelected))
+const hiddenSelected = computed(() => shownSelected.value.length - Math.min(shownSelected.value.length, props.maxVisibleSelected))
+const selectedListId = `${uid}-selected`
 const resultsModel = groupModel(() => shownResults.value)
 
 const selectedLegend = computed(() => `${props.selectedLegend ?? `${props.label} : sélection`} (${model.value.length})`)
@@ -209,19 +220,33 @@ async function clearSelection() {
       v-if="shownSelected.length"
       class="dsaasfr-searchable-checkbox-set__selected"
     >
-      <DsfrCheckboxSet
-        v-model="selectedModel"
-        :legend="selectedLegend"
-        small
-        :options="checkboxOptions(shownSelected, 's')"
-      />
-      <DsfrButton
-        :label="clearText"
-        tertiary
-        no-outline
-        size="sm"
-        @click="clearSelection"
-      />
+      <div :id="selectedListId">
+        <DsfrCheckboxSet
+          v-model="selectedModel"
+          :legend="selectedLegend"
+          small
+          :options="checkboxOptions(visibleSelected, 's')"
+        />
+      </div>
+      <div class="dsaasfr-searchable-checkbox-set__selected-actions">
+        <DsfrButton
+          v-if="hiddenSelected"
+          :label="selectionOpen ? showLessSelectedText : showMoreSelectedText(hiddenSelected)"
+          :aria-expanded="selectionOpen ? 'true' : 'false'"
+          :aria-controls="selectedListId"
+          tertiary
+          no-outline
+          size="sm"
+          @click="selectionOpen = !selectionOpen"
+        />
+        <DsfrButton
+          :label="clearText"
+          tertiary
+          no-outline
+          size="sm"
+          @click="clearSelection"
+        />
+      </div>
     </div>
 
     <DsfrInputGroup
@@ -272,6 +297,12 @@ async function clearSelection() {
   margin-bottom: var(--dsaasfr-space-2w);
   padding-bottom: var(--dsaasfr-space-1w);
   border-bottom: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
+}
+
+.dsaasfr-searchable-checkbox-set__selected-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dsaasfr-space-1w);
 }
 
 .dsaasfr-searchable-checkbox-set__note {

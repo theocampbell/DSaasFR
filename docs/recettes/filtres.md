@@ -11,18 +11,19 @@ valeur, et un nombre de résultats annoncé.
 Avec beaucoup de filtres et des utilisateurs non spécialistes, préférez le motif du bac à sable
 (fiche [0009](/decisions/0009-filters), 2026-11-11) :
 
-- dans la barre d’outils, un champ de recherche, puis **un bouton par groupe** de filtres
-  (« Communes », « Instruction », « Projet »…) qui ouvre un panneau court, puis « Enregistrer
-  la recherche » ;
-- au-dessus des résultats, le nombre de résultats et
-  [DsaasfrSelectedFilters](/composants/selected-filters) : un tag supprimable par filtre et
-  « Tout effacer » ;
+- le champ de recherche dans la page, sous le titre ;
+- dans la barre d’outils, le nombre de résultats à gauche ; à droite, **un bouton par groupe**
+  de filtres (« Communes », « Instruction », « Projet »…) qui ouvre un panneau court, puis
+  « Enregistrer la recherche » ;
+- juste sous ces boutons, [DsaasfrSelectedFilters](/composants/selected-filters) : un tag
+  supprimable par filtre (« Commune : Pessac et 49 autres ») et « Tout effacer » ;
 - pas de condition « est / n’est pas » : un filtre retient l’une des valeurs choisies.
 
 ```vue
-<DsaasfrToolbar label="Recherche et filtres">
+<!-- Emplacement #toolbar de DsaasfrAppShell -->
+<DsaasfrToolbar label="Filtres">
   <template #start>
-    <DsfrSearchBar v-model="texte" label="Rechercher un dossier" @search="rechercher" />
+    <p class="fr-text--sm fr-mb-0" role="status">{{ nombreDeResultats }}</p>
   </template>
   <template #end>
     <BoutonCommunes />                       <!-- DsfrModal + DsaasfrSearchableCheckboxSet -->
@@ -30,10 +31,10 @@ Avec beaucoup de filtres et des utilisateurs non spécialistes, préférez le mo
     <DsfrButton label="Enregistrer la recherche" icon="fr-icon-save-line" tertiary size="sm" />
   </template>
 </DsaasfrToolbar>
+<DsaasfrSelectedFilters :items="filtresEnCours" @remove="retirer" @clear="toutEffacer" @empty="focusGroupe" />
 
-<DsaasfrSelectedFilters :items="filtresEnCours" @remove="retirer" @clear="toutEffacer" @empty="focusRecherche">
-  <p class="fr-text--sm fr-mb-0" role="status">{{ nombreDeResultats }}</p>
-</DsaasfrSelectedFilters>
+<!-- Page, sous le titre -->
+<DsfrSearchBar v-model="texte" label="Rechercher un dossier" @search="rechercher" />
 ```
 
 La suite de cette recette décrit le motif « Filtrer » + étiquettes modifiables

@@ -18,7 +18,7 @@ import { DsfrButton } from '@gouvminint/vue-dsfr'
 import type { DsaasfrSelectedFilter, DsaasfrSelectedFiltersProps } from './DsaasfrSelectedFilters.types'
 
 const props = withDefaults(defineProps<DsaasfrSelectedFiltersProps>(), {
-  maxVisibleValues: 2,
+  maxVisibleValues: 1,
   maxValuesLength: 32,
   listLabel: 'Filtres sélectionnés',
   removeLabel: 'Retirer le filtre',
@@ -57,18 +57,22 @@ const tags = computed(() => props.items.map((item: DsaasfrSelectedFilter) => ({
 
 const list = useTemplateRef<HTMLElement>('list')
 
-// Removing the focused tag would drop focus on <body> (RGAA 12.8).
+// Removing the focused tag would drop focus on <body> (RGAA 12.8). When no tag will be
+// left, `empty` is emitted right away (not after the update: the app may unmount this
+// component once it has no filter), for the app to move focus after its next render.
 async function remove(key: string, index: number) {
+  const last = props.items.length === 1
   emit('remove', key)
+  if (last) {
+    emit('empty')
+    return
+  }
   await nextTick()
   const buttons = list.value?.querySelectorAll<HTMLButtonElement>('.fr-tag') ?? []
-  const target = buttons[Math.min(index, buttons.length - 1)]
-  if (target) target.focus()
-  else emit('empty')
+  buttons[Math.min(index, buttons.length - 1)]?.focus()
 }
-async function clear() {
+function clear() {
   emit('clear')
-  await nextTick()
   emit('empty')
 }
 </script>

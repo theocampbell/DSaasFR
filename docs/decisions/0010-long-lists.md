@@ -105,6 +105,10 @@ Ajustements liés :
 - **Taille fixe** : la liste a une hauteur fixe dans la modale
   (`--dsaasfr-modal-list-height`) et défile à l’intérieur ; la modale ne change pas de taille
   pendant la recherche, les boutons restent en place.
+- **Longue sélection** (50 communes) : la sélection montre les 5 premières puis « Afficher
+  les 45 autres » (bouton de divulgation, `aria-expanded`), pour que le champ de recherche
+  reste visible ; les valeurs masquées restent sélectionnées. Le tag des filtres sélectionnés
+  dit « Commune : Pessac et 49 autres ».
 - Le composant reste utilisable dans un panneau de filtre (étiquette, « Filtrer ») pour
   d’autres listes longues.
 

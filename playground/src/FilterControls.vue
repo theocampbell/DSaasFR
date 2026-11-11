@@ -1,20 +1,22 @@
 <script setup lang="ts">
 // App-side search UI for the Dossiers list:
-// - toolbar start: search bar (reference, applicant, commune), applied on submit;
+// - page, under the title ("search"): the search bar (reference, applicant, commune),
+//   applied on submit;
+// - toolbar start: the result count (announced);
 // - toolbar end: one button per group of filters — "Communes" (its own modal, up to a whole
 //   département), "Instruction", "Projet" (panels) — and "Enregistrer la recherche";
-// - above the table ("summary"): result count + the selected filters
-//   (DsaasfrSelectedFilters: one dismissible DSFR tag per filter) + "Tout effacer".
-// The controls live in the toolbar (one row, never wrapping with use); the current search
-// gets its own line, with room to wrap.
+// - right under the toolbar row ("summary"): the selected filters (DsaasfrSelectedFilters:
+//   one dismissible DSFR tag per filter, "Tout effacer").
+// The toolbar row holds a fixed set of controls, so it never overflows with use; the
+// selected filters get their own line just under the buttons, with room to wrap.
 import { computed, nextTick, ref, watch } from 'vue'
 import type { DsaasfrSelectedFilter } from '@dsaasfr/vue'
 import CommunesModal from './CommunesModal.vue'
 import FilterGroupButton from './FilterGroupButton.vue'
 import { dossiers } from './fakeData'
-import { applied, clearSearch, fieldLabel, filteredDossiers, groups, removeFilter, searchText } from './filters'
+import { applied, clearFilters, fieldLabel, fields, filteredDossiers, groups, removeFilter, searchText } from './filters'
 
-defineProps<{ area: 'start' | 'end' | 'summary' }>()
+defineProps<{ area: 'search' | 'start' | 'end' | 'summary' }>()
 
 const total = dossiers.length
 const plural = (n: number) => `${n} dossier${n > 1 ? 's' : ''}`
@@ -31,36 +33,50 @@ function search() {
   searchText.value = query.value.trim()
 }
 
-// Selected filters: the search text first, then each filter in use.
-const selected = computed<DsaasfrSelectedFilter[]>(() => [
-  ...(searchText.value ? [{ key: 'recherche', label: 'Recherche', values: [`« ${searchText.value} »`] }] : []),
-  ...applied.map(f => ({ key: f.field, label: fieldLabel(f.field), values: f.values })),
-])
+// Selected filters: one tag per filter in use (the search text stays in its field).
+const selected = computed<DsaasfrSelectedFilter[]>(() =>
+  applied.map(f => ({ key: f.field, label: fieldLabel(f.field), values: f.values })))
+
+// No tag left: focus goes back to the button of the group the last filter came from
+// ("Tout effacer": the first group), instead of falling on <body>.
+let lastGroup = groups[0]!.key
 function remove(key: string) {
-  if (key === 'recherche') searchText.value = ''
-  else removeFilter(key)
+  lastGroup = fields.find(f => f.key === key)!.group
+  removeFilter(key)
 }
-// No filter left: focus goes to the search field (the tags and "Tout effacer" are gone).
-async function focusSearch() {
+function clear() {
+  lastGroup = groups[0]!.key
+  clearFilters()
+}
+async function focusGroup() {
   await nextTick()
-  document.querySelector<HTMLInputElement>('#recherche-dossiers input, input#recherche-dossiers')?.focus()
+  document.querySelector<HTMLElement>(`[data-filter-group="${lastGroup}"] button`)?.focus()
 }
 
 const filterGroups = computed(() => groups.filter(g => g.key !== 'communes'))
 </script>
 
 <template>
-  <!-- Toolbar start: search bar -->
+  <!-- Page, under the title: search bar -->
   <DsfrSearchBar
-    v-if="area === 'start'"
+    v-if="area === 'search'"
     id="recherche-dossiers"
     v-model="query"
-    class="playground-search"
+    class="fr-mb-3w playground-search"
     label="Rechercher un dossier"
     placeholder="Référence, demandeur ou commune"
     button-text="Rechercher"
     @search="search"
   />
+
+  <!-- Toolbar start: result count (announced) -->
+  <p
+    v-else-if="area === 'start'"
+    class="fr-text--sm fr-mb-0"
+    role="status"
+  >
+    {{ count }}
+  </p>
 
   <!-- Toolbar end: one button per group of filters, then save -->
   <template v-else-if="area === 'end'">
@@ -80,28 +96,24 @@ const filterGroups = computed(() => groups.filter(g => g.key !== 'communes'))
     />
   </template>
 
-  <!-- Above the table: count (announced) + selected filters -->
+  <!-- Right under the toolbar row: the selected filters -->
   <DsaasfrSelectedFilters
-    v-else
-    class="fr-mb-2w"
+    v-else-if="selected.length"
+    class="playground-selected"
     :items="selected"
     @remove="remove"
-    @clear="clearSearch"
-    @empty="focusSearch"
-  >
-    <p
-      class="fr-text--sm fr-mb-0"
-      role="status"
-    >
-      {{ count }}
-    </p>
-  </DsaasfrSelectedFilters>
+    @clear="clear"
+    @empty="focusGroup"
+  />
 </template>
 
 <style scoped>
-/* The search bar takes the room left in the toolbar row. */
 .playground-search {
-  flex: 1 1 18rem;
-  min-width: 0;
+  max-width: 40rem;
+}
+
+/* A line of its own, under the toolbar row (the shell's toolbar row wraps). */
+.playground-selected {
+  flex: 1 1 100%;
 }
 </style>

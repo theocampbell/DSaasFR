@@ -10,7 +10,7 @@ export interface DsaasfrSelectedFilter {
 export interface DsaasfrSelectedFiltersProps {
   /** The filters in use, one tag each. */
   items: DsaasfrSelectedFilter[]
-  /** Values shown at most in a tag before summarising ("Pessac, Talence et 2 autres"). */
+  /** Values shown at most in a tag before summarising ("Pessac et 49 autres"). Default: 1. */
   maxVisibleValues?: number
   /** Characters the shown values may take before the rest is summarised. */
   maxValuesLength?: number

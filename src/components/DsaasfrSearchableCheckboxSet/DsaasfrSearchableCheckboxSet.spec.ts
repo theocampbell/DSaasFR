@@ -261,6 +261,21 @@ describe('DsaasfrSearchableCheckboxSet', () => {
     expect(within(screen.getByRole('group', { name: 'Commune' })).getByRole('checkbox', { name: 'Mérignac' })).toBe(box)
   })
 
+  it('folds a long selection (50 communes) so the search field stays in view', async () => {
+    const user = userEvent.setup()
+    const { selected } = setup(long, Array.from({ length: 50 }, (_, i) => `c${i}`))
+    const group = () => screen.getByRole('group', { name: 'Commune : sélection (50)' })
+    expect(within(group()).getAllByRole('checkbox')).toHaveLength(5)
+
+    const more = screen.getByRole('button', { name: 'Afficher les 45 autres' })
+    expect(more.getAttribute('aria-expanded')).toBe('false')
+    await user.click(more)
+    expect(within(group()).getAllByRole('checkbox')).toHaveLength(50)
+    expect(more.getAttribute('aria-expanded')).toBe('true')
+    expect(more.textContent?.trim()).toBe('Afficher moins')
+    expect(selected.value).toHaveLength(50) // folding never unselects
+  })
+
   it('has no detectable accessibility violations', async () => {
     const user = userEvent.setup()
     const { search } = setup(long, ['c1'])

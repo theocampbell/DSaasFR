@@ -44,7 +44,10 @@ const origin = { focus: () => trigger.value?.querySelector('button')?.focus() }
 </script>
 
 <template>
-  <span ref="trigger">
+  <span
+    ref="trigger"
+    data-filter-group="communes"
+  >
     <DsfrButton
       :label="buttonLabel"
       icon="fr-icon-map-pin-2-line"

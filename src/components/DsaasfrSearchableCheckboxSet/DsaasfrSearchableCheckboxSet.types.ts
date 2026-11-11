@@ -49,6 +49,15 @@ export interface DsaasfrSearchableCheckboxSetProps {
   localFilter?: boolean
   /** Button clearing the selection. */
   clearText?: string
+  /**
+   * Selected values shown before "Afficher les N autres": with 50 communes chosen, the
+   * search field stays in view.
+   */
+  maxVisibleSelected?: number
+  /** Button showing the rest of the selection. */
+  showMoreSelectedText?: (count: number) => string
+  /** Button folding the selection back. */
+  showLessSelectedText?: string
   /** Result count, announced to screen readers after typing; `shown` < `count` when capped. */
   resultsCountText?: (count: number, shown: number) => string
   /** Text when nothing matches. */

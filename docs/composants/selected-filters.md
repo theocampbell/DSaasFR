@@ -51,7 +51,7 @@ const filtresEnCours = computed<DsaasfrSelectedFilter[]>(() => [
 | Nom | Type | Défaut | Description |
 |---|---|---|---|
 | `items` | `{ key, label, values }[]` | — (obligatoire) | Les filtres en cours, un tag chacun. |
-| `maxVisibleValues` | `number` | `2` | Valeurs affichées au plus dans un tag avant le résumé (« Pessac, Talence et 2 autres »). |
+| `maxVisibleValues` | `number` | `1` | Valeurs affichées au plus dans un tag avant le résumé (« Pessac et 49 autres »). |
 | `maxValuesLength` | `number` | `32` | Caractères que peuvent occuper les valeurs affichées avant le résumé. |
 | `listLabel` | `string` | `'Filtres sélectionnés'` | Nom accessible de la liste des tags. |
 | `removeLabel` | `string` | `'Retirer le filtre'` | Début du nom accessible de chaque tag. |
@@ -69,7 +69,7 @@ const filtresEnCours = computed<DsaasfrSelectedFilter[]>(() => [
 |---|---|---|
 | `remove` | `key` | Retrait d’un filtre. À l’application de le retirer. |
 | `clear` | — | « Tout effacer ». |
-| `empty` | — | Plus aucun tag après un retrait : placez le focus (par exemple dans le champ de recherche). |
+| `empty` | — | Plus aucun tag après ce retrait (ou « Tout effacer ») : placez le focus après le prochain rendu (`nextTick`), par exemple sur le bouton du groupe du filtre retiré. Émis tout de suite, même si l’application retire ensuite le composant. |
 
 ## Accessibilité
 

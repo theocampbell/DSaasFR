@@ -191,6 +191,10 @@ const accountItems: DsaasfrUserMenuItem[] = [
           />
         </template>
       </DsaasfrToolbar>
+      <FilterControls
+        v-if="route.path === '/dossiers'"
+        area="summary"
+      />
     </template>
 
     <DsfrNotice
@@ -208,6 +212,10 @@ const accountItems: DsaasfrUserMenuItem[] = [
     <h1 class="fr-h3">
       {{ pageTitle }}
     </h1>
+    <FilterControls
+      v-if="route.path === '/dossiers'"
+      area="search"
+    />
     <div
       v-if="route.path === '/dossiers'"
       class="fr-p-2w fr-mb-3w playground-demo"
@@ -240,10 +248,6 @@ const accountItems: DsaasfrUserMenuItem[] = [
         @update:model-value="setDemo('departements', $event as Departements, 'un')"
       />
     </div>
-    <FilterControls
-      v-if="route.path === '/dossiers'"
-      area="summary"
-    />
     <PageBody
       :path="route.path"
       @preview="preview.open"

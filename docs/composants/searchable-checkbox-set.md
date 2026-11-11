@@ -118,6 +118,9 @@ Gardez dans `options` les valeurs déjà choisies, pour afficher leur libellé d
 | `minQueryLength` | `number` | `2` | Caractères à saisir avant d’afficher les résultats d’une liste longue. |
 | `localFilter` | `boolean` | `true` | Filtrer les options ici. `false` : l’application cherche elle-même. |
 | `clearText` | `string` | `'Tout désélectionner'` | Bouton qui vide la sélection. |
+| `maxVisibleSelected` | `number` | `5` | Valeurs choisies affichées avant « Afficher les N autres » : avec 50 communes choisies, le champ de recherche reste visible. |
+| `showMoreSelectedText` | `(n) => string` | « Afficher les 45 autres » | Bouton qui déplie la sélection. |
+| `showLessSelectedText` | `string` | `'Afficher moins'` | Bouton qui la replie. |
 | `resultsCountText` | `(n, affichés) => string` | « 811 résultats, 50 affichés : précisez la recherche » | Nombre de résultats annoncé aux lecteurs d’écran. |
 | `noResultsText` | `string` | « Aucun résultat : … » | Texte quand rien ne correspond. |
 | `alreadySelectedText` | `string` | « Aucun autre résultat : ce que vous cherchez est déjà dans la sélection. » | Texte quand seules des valeurs déjà choisies correspondent. |

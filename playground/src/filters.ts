@@ -90,9 +90,9 @@ export function removeFilter(fieldKey: string) {
   const index = applied.findIndex(f => f.field === fieldKey)
   if (index !== -1) applied.splice(index, 1)
 }
-export function clearSearch() {
+/** "Tout effacer": every filter (the search text has its own field). */
+export function clearFilters() {
   applied.splice(0)
-  searchText.value = ''
 }
 export const selectionOf = (filters: Filter[], groupKey: string) =>
   Object.fromEntries(fieldsOf(groupKey).map(f => [f.key, [...(filters.find(a => a.field === f.key)?.values ?? [])]]))
