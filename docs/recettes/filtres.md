@@ -15,7 +15,8 @@ Avec beaucoup de filtres et des utilisateurs non spécialistes, préférez le mo
 - dans la barre d’outils, le nombre de résultats à gauche ; à droite, **un bouton par groupe**
   de filtres (« Communes », « Instruction », « Projet »…) qui ouvre un panneau court, puis
   « Enregistrer la recherche » ;
-- juste sous ces boutons, [DsaasfrSelectedFilters](/composants/selected-filters) : un tag
+- en haut de la page, hors de la barre d’outils, alignés à droite sous ces boutons,
+  [DsaasfrSelectedFilters](/composants/selected-filters) (`align="end"`) : un tag
   supprimable par filtre (« Commune : Pessac et 49 autres ») et « Tout effacer » ;
 - pas de condition « est / n’est pas » : un filtre retient l’une des valeurs choisies.
 
@@ -31,9 +32,9 @@ Avec beaucoup de filtres et des utilisateurs non spécialistes, préférez le mo
     <DsfrButton label="Enregistrer la recherche" icon="fr-icon-save-line" tertiary size="sm" />
   </template>
 </DsaasfrToolbar>
-<DsaasfrSelectedFilters :items="filtresEnCours" @remove="retirer" @clear="toutEffacer" @empty="focusGroupe" />
 
-<!-- Page, sous le titre -->
+<!-- Page : en haut, sous les boutons, puis le titre et la recherche -->
+<DsaasfrSelectedFilters align="end" :items="filtresEnCours" @remove="retirer" @clear="toutEffacer" @empty="focusGroupe" />
 <DsfrSearchBar v-model="texte" label="Rechercher un dossier" @search="rechercher" />
 ```
 

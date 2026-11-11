@@ -20,4 +20,6 @@ export interface DsaasfrSelectedFiltersProps {
   removeLabel?: string
   /** Button removing every filter. Shown from two filters on. */
   clearText?: string
+  /** Alignment of the line: `end` to sit right-aligned under the filter buttons. */
+  align?: 'start' | 'end'
 }

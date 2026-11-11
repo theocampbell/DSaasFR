@@ -5,10 +5,11 @@
 // - toolbar start: the result count (announced);
 // - toolbar end: one button per group of filters — "Communes" (its own modal, up to a whole
 //   département), "Instruction", "Projet" (panels) — and "Enregistrer la recherche";
-// - right under the toolbar row ("summary"): the selected filters (DsaasfrSelectedFilters:
-//   one dismissible DSFR tag per filter, "Tout effacer").
+// - first thing in the page ("summary"), right-aligned under the filter buttons: the
+//   selected filters (DsaasfrSelectedFilters: one dismissible DSFR tag per filter, "Tout
+//   effacer").
 // The toolbar row holds a fixed set of controls, so it never overflows with use; the
-// selected filters get their own line just under the buttons, with room to wrap.
+// selected filters get their own line outside it, with room to wrap.
 import { computed, nextTick, ref, watch } from 'vue'
 import type { DsaasfrSelectedFilter } from '@dsaasfr/vue'
 import CommunesModal from './CommunesModal.vue'
@@ -96,10 +97,11 @@ const filterGroups = computed(() => groups.filter(g => g.key !== 'communes'))
     />
   </template>
 
-  <!-- Right under the toolbar row: the selected filters -->
+  <!-- First thing in the page, right-aligned under the filter buttons: selected filters -->
   <DsaasfrSelectedFilters
     v-else-if="selected.length"
-    class="playground-selected"
+    class="fr-mb-3w"
+    align="end"
     :items="selected"
     @remove="remove"
     @clear="clear"
@@ -110,10 +112,5 @@ const filterGroups = computed(() => groups.filter(g => g.key !== 'communes'))
 <style scoped>
 .playground-search {
   max-width: 40rem;
-}
-
-/* A line of its own, under the toolbar row (the shell's toolbar row wraps). */
-.playground-selected {
-  flex: 1 1 100%;
 }
 </style>

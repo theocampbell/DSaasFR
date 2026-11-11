@@ -191,12 +191,13 @@ const accountItems: DsaasfrUserMenuItem[] = [
           />
         </template>
       </DsaasfrToolbar>
-      <FilterControls
-        v-if="route.path === '/dossiers'"
-        area="summary"
-      />
     </template>
 
+    <!-- Selected filters: first thing in the page, right-aligned under the filter buttons -->
+    <FilterControls
+      v-if="route.path === '/dossiers'"
+      area="summary"
+    />
     <DsfrNotice
       class="fr-mb-3w"
       title="Démonstration"

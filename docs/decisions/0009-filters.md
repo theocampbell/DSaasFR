@@ -100,7 +100,8 @@ utilisateurs visés. Nouveau motif, montré dans le bac à sable :
   « Projet »…), puis « Enregistrer la recherche ». Chaque bouton ouvre un panneau court avec
   les champs de son groupe et indique combien sont actifs (« Instruction (2) »). Les groupes
   dépendent du métier. Ces commandes forment un ensemble fixe : la ligne ne déborde plus.
-- **Les filtres sélectionnés juste sous les boutons**, sur leur propre ligne : un **tag
+- **Les filtres sélectionnés hors de la barre d’outils**, en haut de la page, **alignés à
+  droite sous les boutons** (`align="end"`), sur leur propre ligne : un **tag
   supprimable DSFR** par filtre et « Tout effacer » (qui ne vide pas le champ de recherche).
   Le texte recherché n’a pas de tag : il reste visible dans son champ. Un tag montre une
   valeur puis le nombre des autres (« Commune : Pessac et 49 autres »). Nouveau composant

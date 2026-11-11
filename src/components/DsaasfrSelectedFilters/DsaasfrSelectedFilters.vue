@@ -23,6 +23,7 @@ const props = withDefaults(defineProps<DsaasfrSelectedFiltersProps>(), {
   listLabel: 'Filtres sélectionnés',
   removeLabel: 'Retirer le filtre',
   clearText: 'Tout effacer',
+  align: 'start',
 })
 
 const emit = defineEmits<{ remove: [key: string], clear: [], empty: [] }>()
@@ -78,7 +79,10 @@ function clear() {
 </script>
 
 <template>
-  <div class="dsaasfr-selected-filters">
+  <div
+    class="dsaasfr-selected-filters"
+    :class="{ 'dsaasfr-selected-filters--end': align === 'end' }"
+  >
     <slot />
     <ul
       v-if="tags.length"
@@ -135,5 +139,10 @@ function clear() {
 .dsaasfr-selected-filters__list .fr-tag {
   max-width: 100%;
   overflow-wrap: anywhere;
+}
+
+.dsaasfr-selected-filters--end,
+.dsaasfr-selected-filters--end .dsaasfr-selected-filters__list.fr-tags-group {
+  justify-content: flex-end;
 }
 </style>

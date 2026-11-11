@@ -56,6 +56,7 @@ const filtresEnCours = computed<DsaasfrSelectedFilter[]>(() => [
 | `listLabel` | `string` | `'Filtres sélectionnés'` | Nom accessible de la liste des tags. |
 | `removeLabel` | `string` | `'Retirer le filtre'` | Début du nom accessible de chaque tag. |
 | `clearText` | `string` | `'Tout effacer'` | Bouton qui retire tous les filtres, affiché à partir de deux. |
+| `align` | `'start' \| 'end'` | `'start'` | `end` : aligné à droite, sous les boutons de filtres. |
 
 ### Emplacement (slot)
 

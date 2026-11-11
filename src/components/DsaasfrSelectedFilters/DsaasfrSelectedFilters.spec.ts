@@ -76,6 +76,11 @@ describe('DsaasfrSelectedFilters', () => {
     expect(onEmpty).toHaveBeenCalledOnce()
   })
 
+  it('can be right-aligned under the filter buttons', () => {
+    render(DsaasfrSelectedFilters, { props: { items: initial, align: 'end' } })
+    expect(screen.getByRole('list', { name: 'Filtres sélectionnés' }).parentElement!.className).toContain('dsaasfr-selected-filters--end')
+  })
+
   it('has no detectable accessibility violations', async () => {
     setup()
     await expectNoA11yViolations(document.body)
