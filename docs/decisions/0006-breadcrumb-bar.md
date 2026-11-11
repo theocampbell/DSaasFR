@@ -78,4 +78,4 @@ câbler le fil d'Ariane à la main sur chaque page.
    plus un menu de débordement (à concevoir avec la ligne de la barre d'outils) ?
 2. `document.title` (onglet du navigateur, RGAA 8.6) et une annonce de changement de page
    pour les lecteurs d'écran devraient provenir des mêmes titres de route — signalé par la
-   revue d'accessibilité, prochain élément de TODO.md.
+   revue d'accessibilité, voir la feuille de route (ROADMAP.md).
