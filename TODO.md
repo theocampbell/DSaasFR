@@ -10,9 +10,14 @@ mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vou
       relancer.
 - [ ] 👤 Faire valider par la designer : filtres groupés (Communes / Instruction / Projet),
       tags sous les boutons, recherche dans la page (bac à sable, page Dossiers).
-- [ ] 🤖 « Mes recherches » : menu à droite de la barre d’outils (enregistrer, ouvrir,
-      recherche par défaut, recherches partagées par organisation). Le bouton « Enregistrer
-      la recherche » du bac à sable n’est encore qu’un emplacement.
+- [ ] 🤖👤 « Mes recherches » : pas un composant. Ce sont des liens enregistrés en base
+      (l’URL de la recherche), affichés dans la barre latérale (groupe « Mes recherches »
+      sous « Dossiers ») ; « Enregistrer la recherche » (barre d’outils) enregistre l’URL
+      courante. À faire côté application ; dans le bac à sable, un exemple et une recette.
+- [ ] 🤖 `DsaasfrSidebar` : le lien courant est déterminé par le chemin seul. Des liens
+      `/dossiers?…` (recherches enregistrées) seraient tous « page actuelle » en même temps
+      que « Dossiers ». Comparer aussi les paramètres et ne marquer que le lien le plus
+      précis (contournement en attendant : `active` sur chaque élément).
 - [ ] 🤖 Option : « Tout effacer » sur la dernière ligne de tags plutôt que seul en dessous.
 - [ ] 🤖 Option : revue `dsfr-guardian` + `a11y-auditor` de `DsaasfrFilterDropdown` et
       `DsaasfrFilterModal` (code déjà revu dans le bac à sable, puis déplacé).
