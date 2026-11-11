@@ -109,6 +109,7 @@ Les mêmes props pilotent les deux mises en page ; pour voir ce rendu, zoomez à
 | `homeTo` | `RouteLocationRaw` | `'/'` | Destination du lien d’accueil. |
 | `items` | `DsaasfrSidebarItem[]` | `[]` | Entrées de la navigation principale. Ignorées si l’emplacement par défaut est utilisé. |
 | `navLabel` | `string` | `'Navigation principale'` | Nom accessible de la région de navigation. |
+| `contextLabel` | `string` | `'Périmètre'` | Nom accessible de la région du contexte (emplacement `context`). |
 | `footerLabel` | `string` | `'Mon espace'` | Nom accessible de la région du pied. |
 | `menuLabel` | `string` | `'Menu'` | Libellé du bouton qui ouvre le menu sur écran étroit. |
 | `closeMenuLabel` | `string` | `'Fermer'` | Libellé du bouton qui ferme le menu sur écran étroit. |
@@ -129,6 +130,7 @@ Les mêmes props pilotent les deux mises en page ; pour voir ce rendu, zoomez à
 
 | Nom | Description |
 |---|---|
+| `context` | Contexte de travail, sous le nom du service : par exemple [DsaasfrContextSwitcher](/composants/context-switcher) (département). Exposé comme une région nommée par `contextLabel`. Sur écran étroit, en haut du menu. |
 | `footer` | Pied de la barre latérale : compte, réglages, paramètres d’affichage. Exposé comme une région nommée par `footerLabel`. |
 | _par défaut_ | Remplace la liste générée à partir de `items`, à l’intérieur du `<nav>`. Réservé aux cas que `items` ne couvre pas. |
 | `brand` | Remplace le bloc-marque et le nom du service, sur grand écran uniquement. Le contenu doit garder le bloc-marque officiel et contenir **exactement un lien** (le bloc entier est cliquable). |

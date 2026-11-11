@@ -7,6 +7,8 @@
  *   │ Service name          │
  *   │ baseline              │
  *   ├───────────────────────┤
+ *   │ context slot          │  <section> e.g. DsaasfrContextSwitcher (département)
+ *   ├───────────────────────┤
  *   │ primary nav           │  <nav>     DsfrSideMenuList, groups = secondary nav
  *   │   ▸ group             │
  *   │       sub-item        │
@@ -36,6 +38,7 @@ const props = withDefaults(defineProps<DsaasfrSidebarProps>(), {
   homeTo: '/',
   items: () => [],
   navLabel: 'Navigation principale',
+  contextLabel: 'Périmètre',
   footerLabel: 'Mon espace',
   menuLabel: 'Menu',
   closeMenuLabel: 'Fermer',
@@ -44,6 +47,8 @@ const props = withDefaults(defineProps<DsaasfrSidebarProps>(), {
 
 defineSlots<{
   brand?: () => unknown
+  /** The context the app works in (e.g. DsaasfrContextSwitcher), under the brand. */
+  context?: () => unknown
   default?: () => unknown
   footer?: () => unknown
 }>()
@@ -146,6 +151,14 @@ function hideModalOf(scope: unknown): () => void {
       </slot>
     </header>
 
+    <section
+      v-if="$slots.context"
+      class="dsaasfr-sidebar__context"
+      :aria-label="contextLabel"
+    >
+      <slot name="context" />
+    </section>
+
     <SidebarNav
       :id="`${id}-list`"
       class="dsaasfr-sidebar__nav"
@@ -181,6 +194,13 @@ function hideModalOf(scope: unknown): () => void {
     >
       <template #mainnav="mainnavScope">
         <div @click="closeOnLink($event, hideModalOf(mainnavScope))">
+          <section
+            v-if="$slots.context"
+            class="dsaasfr-sidebar__context dsaasfr-sidebar__context--modal"
+            :aria-label="contextLabel"
+          >
+            <slot name="context" />
+          </section>
           <SidebarNav
             :id="`${id}-list`"
             :label="navLabel"
@@ -231,6 +251,24 @@ function hideModalOf(scope: unknown): () => void {
 
 .dsaasfr-sidebar__service a {
   color: var(--text-title-grey);
+}
+
+.dsaasfr-sidebar__context {
+  padding: var(--dsaasfr-space-2w);
+  border-bottom: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
+
+  /* Hover pair for controls here (e.g. DsaasfrContextSwitcher), on the alt-grey sidebar. */
+  --idle: transparent;
+  --hover: var(--background-alt-grey-hover);
+  --active: var(--background-alt-grey-active);
+}
+
+.dsaasfr-sidebar__context--modal {
+  --hover: var(--background-default-grey-hover);
+  --active: var(--background-default-grey-active);
+
+  padding: 0 0 var(--dsaasfr-space-2w);
+  border-bottom: 0;
 }
 
 .dsaasfr-sidebar__nav {

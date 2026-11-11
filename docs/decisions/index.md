@@ -21,5 +21,6 @@ discussion.
 | [0008](./0008-preview-panel) | Panneau d’aperçu | DsaasfrPreviewPanel |
 | [0009](./0009-filters) | Filtres : menu déroulant et étiquettes, logique dans l’application | DsaasfrDropdown, DsaasfrFilterChip |
 | [0010](./0010-long-lists) | Listes longues dans les filtres : recherche et cases à cocher dans le même panneau | DsaasfrSearchableCheckboxSet |
+| [0011](./0011-context-switcher) | Sélecteur de contexte (département) sous le nom du service | DsaasfrContextSwitcher, DsaasfrSidebar |
 
 Pour proposer une nouvelle fiche, partez du [modèle](./0000-template).

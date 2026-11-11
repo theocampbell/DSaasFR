@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { useScheme } from '@gouvminint/vue-dsfr'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePreviewQuery, useRouteBreadcrumb } from '@dsaasfr/vue'
-import type { DsaasfrSidebarItem, DsaasfrUserMenuItem } from '@dsaasfr/vue'
+import type { DsaasfrContextSwitcherItem, DsaasfrSidebarItem, DsaasfrUserMenuItem } from '@dsaasfr/vue'
+import { currentDep, departementLabel, myDeps } from './context'
 import FilterControls from './FilterControls.vue'
 import PageBody from './PageBody.vue'
 import { describePreview, dossiers } from './fakeData'
-import { filteredDossiers } from './filters'
+import { applied, filteredDossiers, removeFilter } from './filters'
 
 const route = useRoute()
 // Preview in the URL (?apercu=…): shareable, Back closes it.
@@ -23,6 +24,20 @@ function step(delta: number) {
   const id = listIds.value[position.value + delta]
   if (id) preview.open(id, { replace: true })
 }
+
+// Département switcher (sidebar `context` slot). Each choice is a link to the same page
+// in the other département; switching drops the commune filter (communes belong to a
+// département) and the preview.
+watch(() => route.query.dep, (dep) => {
+  if (typeof dep !== 'string' || dep === currentDep.value) return
+  currentDep.value = dep
+  if (applied.some(f => f.field === 'commune')) removeFilter('commune')
+}, { immediate: true })
+const depChoices = computed<DsaasfrContextSwitcherItem[]>(() => myDeps.map(code => ({
+  text: departementLabel(code),
+  to: { path: route.path === '/departements' ? '/dossiers' : route.path, query: { dep: code } },
+  current: code === currentDep.value,
+})))
 
 const items: DsaasfrSidebarItem[] = [
   { text: 'Tableau de bord', to: '/' },
@@ -87,6 +102,14 @@ const accountItems: DsaasfrUserMenuItem[] = [
         service-description="Back-office instructeurs"
         :items="items"
       >
+        <template #context>
+          <DsaasfrContextSwitcher
+            label="Département"
+            :current="departementLabel(currentDep)"
+            :items="depChoices"
+            :more-link="{ text: 'Tous les départements', to: '/departements' }"
+          />
+        </template>
         <template #footer>
           <DsaasfrUserMenu
             name="Camille Martin"

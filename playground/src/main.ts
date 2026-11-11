@@ -34,6 +34,7 @@ const router = createRouter({
     { path: '/admin', redirect: '/admin/agents', meta: { breadcrumb: false } },
     { path: '/admin/agents', component: Page, meta: { title: 'Agents' } },
     { path: '/admin/parametres', component: Page, meta: { title: 'Paramètres' } },
+    { path: '/departements', component: Page, meta: { title: 'Tous les départements' } },
     { path: '/profil', component: Page, meta: { title: 'Mon profil' } },
     { path: '/preferences', component: Page, meta: { title: 'Préférences' } },
     { path: '/notifications', component: Page, meta: { title: 'Notifications' } },

@@ -12,6 +12,7 @@ Les composants de la mise en page, à utiliser ensemble.
 | [DsaasfrAppShell](/composants/app-shell) | Mise en page de l’application : régions, défilement, liens d’évitement, panneau d’aperçu. |
 | [DsaasfrSidebar](/composants/sidebar) | Barre latérale avec le bloc-marque, le nom du service et la navigation principale. Remplace l’en-tête DSFR. |
 | [DsaasfrUserMenu](/composants/user-menu) | La personne connectée et ses actions de compte, en bas de la barre latérale. |
+| [DsaasfrContextSwitcher](/composants/context-switcher) | Le contexte de travail (département…) sous le nom du service, et ses autres choix. |
 | [DsaasfrBreadcrumbBar](/composants/breadcrumb-bar) | Première ligne : fil d’Ariane construit à partir des routes et action principale de la page. |
 | [DsaasfrToolbar](/composants/toolbar) | Seconde ligne : nombre de résultats, filtres actifs et outils de la liste. |
 | [DsaasfrPreviewPanel](/composants/preview-panel) | Contenu du panneau d’aperçu : titre, bouton « Fermer », actions, corps qui défile. |

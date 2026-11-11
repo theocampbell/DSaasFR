@@ -127,6 +127,20 @@ describe('DsaasfrSidebar', () => {
     expect(within(region).getByRole('button', { name: 'Mon compte' })).toBeTruthy()
   })
 
+  it('renders the context slot between the brand and the navigation', async () => {
+    const router = await makeRouter('/')
+    render(DsaasfrSidebar, {
+      props: { serviceTitle: 'Démarches Pro', items },
+      slots: { context: '<button type="button">Gironde (33)</button>' },
+      global: { plugins: [router, VueDsfr] },
+    })
+
+    const region = screen.getByRole('region', { name: 'Périmètre' })
+    expect(within(region).getByRole('button', { name: 'Gironde (33)' })).toBeTruthy()
+    const nav = screen.getByRole('navigation', { name: 'Navigation principale' })
+    expect(region.compareDocumentPosition(nav) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
   it('has no detectable accessibility violations', async () => {
     const { container } = await renderSidebar('/admin/agents')
 
@@ -158,6 +172,19 @@ describe('DsaasfrSidebar on narrow screens (< 62em, high zoom)', () => {
     expect(menu.getAttribute('aria-haspopup')).toBe('dialog')
   })
 
+
+  it('puts the context slot at the top of the menu', async () => {
+    mockNarrowViewport(true)
+    const router = await makeRouter('/')
+    render(DsaasfrSidebar, {
+      props: { serviceTitle: 'Démarches Pro', items },
+      slots: { context: '<button type="button">Gironde (33)</button>' },
+      global: { plugins: [router, VueDsfr] },
+    })
+
+    const region = await screen.findByRole('region', { name: 'Périmètre', hidden: true })
+    expect(within(region).getByRole('button', { name: 'Gironde (33)', hidden: true })).toBeTruthy()
+  })
 
   it('has a single banner', async () => {
     mockNarrowViewport(true)

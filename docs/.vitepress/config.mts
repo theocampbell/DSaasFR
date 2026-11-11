@@ -59,6 +59,7 @@ export default defineConfig({
             { text: 'DsaasfrAppShell', link: '/composants/app-shell' },
             { text: 'DsaasfrSidebar', link: '/composants/sidebar' },
             { text: 'DsaasfrUserMenu', link: '/composants/user-menu' },
+            { text: 'DsaasfrContextSwitcher', link: '/composants/context-switcher' },
             { text: 'DsaasfrBreadcrumbBar', link: '/composants/breadcrumb-bar' },
             { text: 'DsaasfrToolbar', link: '/composants/toolbar' },
             { text: 'DsaasfrPreviewPanel', link: '/composants/preview-panel' },
