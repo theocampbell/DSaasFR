@@ -69,6 +69,7 @@ export default defineConfig({
           text: 'Briques',
           items: [
             { text: 'DsaasfrDropdown', link: '/composants/dropdown' },
+            { text: 'DsaasfrSelectedFilters', link: '/composants/selected-filters' },
             { text: 'DsaasfrFilterChip', link: '/composants/filter-chip' },
             { text: 'DsaasfrSearchableCheckboxSet', link: '/composants/searchable-checkbox-set' },
           ],

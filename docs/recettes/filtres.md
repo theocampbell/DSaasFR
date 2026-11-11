@@ -1,11 +1,44 @@
 # Filtres d’une liste
 
-Cette recette décrit le motif de filtres du bac à sable (page « Dossiers ») : un bouton
-« Filtrer » qui ouvre tous les champs, une étiquette par filtre appliqué, des nombres de
-résultats par valeur, et un nombre de résultats annoncé. Le code est une version simplifiée
-de `playground/src/filters.ts` et `playground/src/FilterControls.vue`.
+Cette recette décrit deux motifs de filtres : celui du bac à sable (page « Dossiers »),
+recommandé, ci-dessous en bref ; puis un motif plus avancé, avec un bouton « Filtrer » qui
+ouvre tous les champs, une étiquette modifiable par filtre, des nombres de résultats par
+valeur, et un nombre de résultats annoncé.
 
 <Example story="briques-dsaasfrfilterchip--editable" title="étiquette de filtre modifiable" :height="320" />
+
+::: tip Motif recommandé : filtres groupés et filtres sélectionnés
+Avec beaucoup de filtres et des utilisateurs non spécialistes, préférez le motif du bac à sable
+(fiche [0009](/decisions/0009-filters), 2026-11-11) :
+
+- dans la barre d’outils, un champ de recherche, puis **un bouton par groupe** de filtres
+  (« Communes », « Instruction », « Projet »…) qui ouvre un panneau court, puis « Enregistrer
+  la recherche » ;
+- au-dessus des résultats, le nombre de résultats et
+  [DsaasfrSelectedFilters](/composants/selected-filters) : un tag supprimable par filtre et
+  « Tout effacer » ;
+- pas de condition « est / n’est pas » : un filtre retient l’une des valeurs choisies.
+
+```vue
+<DsaasfrToolbar label="Recherche et filtres">
+  <template #start>
+    <DsfrSearchBar v-model="texte" label="Rechercher un dossier" @search="rechercher" />
+  </template>
+  <template #end>
+    <BoutonCommunes />                       <!-- DsfrModal + DsaasfrSearchableCheckboxSet -->
+    <BoutonGroupe v-for="g in groupes" :key="g.key" :groupe="g" />  <!-- DsaasfrDropdown -->
+    <DsfrButton label="Enregistrer la recherche" icon="fr-icon-save-line" tertiary size="sm" />
+  </template>
+</DsaasfrToolbar>
+
+<DsaasfrSelectedFilters :items="filtresEnCours" @remove="retirer" @clear="toutEffacer" @empty="focusRecherche">
+  <p class="fr-text--sm fr-mb-0" role="status">{{ nombreDeResultats }}</p>
+</DsaasfrSelectedFilters>
+```
+
+La suite de cette recette décrit le motif « Filtrer » + étiquettes modifiables
+(`DsaasfrFilterChip`, à la manière de Linear), pour des usages plus avancés.
+:::
 
 ## Ce que fournit la bibliothèque, ce que fait l’application
 

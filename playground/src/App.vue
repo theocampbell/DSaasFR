@@ -240,6 +240,10 @@ const accountItems: DsaasfrUserMenuItem[] = [
         @update:model-value="setDemo('departements', $event as Departements, 'un')"
       />
     </div>
+    <FilterControls
+      v-if="route.path === '/dossiers'"
+      area="summary"
+    />
     <PageBody
       :path="route.path"
       @preview="preview.open"

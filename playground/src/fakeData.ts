@@ -34,6 +34,18 @@ const mixed = combinations
   .sort((a, b) => a.key - b.key)
   .map(({ c }) => c)
 
+// Other attributes of each case file (filters of the Instruction and Projet groups), kept
+// apart from the table row. Spread so that every value has case files.
+const instructeurs = ['Camille Martin', 'Dominique Robert', 'Sacha Durand', 'Non assigné']
+const delais = ['Dans les délais', 'Échéance sous 15 jours', 'Délai dépassé']
+const consultations = ['Aucune', 'En attente de réponse', 'Avis reçus']
+const natures = ['Construction neuve', 'Extension', 'Démolition', 'Changement de destination', 'Aménagement']
+const protections = ['Aucune', 'Abords de monument historique', 'Site classé', 'Natura 2000']
+const surfaces = ['Moins de 20 m²', 'De 20 à 150 m²', 'Plus de 150 m²']
+const spread = <T>(list: T[], i: number, step: number) => list[(i * step + Math.floor(i / list.length)) % list.length]!
+const attributes = new Map<string, Record<string, string>>()
+export const attributesOf = (id: string) => attributes.get(id)!
+
 export const dossiers = mixed.map(({ statut, type, commune }, i) => [
   `D-2026-${String(2250 - i).padStart(4, '0')}`,
   `${pick(firstNames, i, 1)} ${pick(lastNames, i, 2)}`,
@@ -42,6 +54,14 @@ export const dossiers = mixed.map(({ statut, type, commune }, i) => [
   statut,
   date(i),
 ])
+dossiers.forEach((row, i) => attributes.set(row[0]!, {
+  instructeur: spread(instructeurs, i, 1),
+  delai: spread(delais, i, 2),
+  consultations: spread(consultations, i, 5),
+  nature: spread(natures, i, 3),
+  protection: spread(protections, i, 7),
+  surface: spread(surfaces, i, 11),
+}))
 
 export const usagers = Array.from({ length: 30 }, (_, i) => [
   `${pick(firstNames, i, 6)} ${pick(lastNames, i, 7)}`,

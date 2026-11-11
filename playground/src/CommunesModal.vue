@@ -31,10 +31,10 @@ const options = computed(() => valuesOf('commune').map((v) => {
   const n = facetCount(others.value, 'commune', v)
   return { value: v, label: `${v} (${n})`, searchText: v, disabled: n === 0 && !draft.value.includes(v) }
 }))
-const results = computed(() => countResults([...others.value, ...(draft.value.length ? [{ field: 'commune', operator: 'is' as const, values: draft.value }] : [])]))
+const results = computed(() => countResults([...others.value, ...(draft.value.length ? [{ field: 'commune', values: draft.value }] : [])]))
 
 function apply() {
-  applyFilter('commune', 'is', draft.value)
+  applyFilter('commune', draft.value)
   opened.value = false
 }
 

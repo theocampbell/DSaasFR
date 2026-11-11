@@ -86,6 +86,29 @@ info-bulle, et la liste complète reste dans le nom accessible du groupe. Sous 6
 zoom), le texte n'est jamais coupé : l'étiquette passe sur deux rangées (champ, condition et ×
 en haut, valeurs en dessous), conformément au RGAA 10.11.
 
+### Filtres groupés, recherche et filtres sélectionnés (2026-11-11)
+
+Retours du responsable produit : avec une douzaine de filtres, un seul panneau « Filtrer »
+mélange tout ; les étiquettes dans la barre d’outils la font déborder dès quelques filtres ;
+la condition « est / n’est pas » et la modification sur place sont trop avancées pour les
+utilisateurs visés. Nouveau motif, montré dans le bac à sable :
+
+- **Barre d’outils = les commandes seulement**, sur une ligne : un **champ de recherche**
+  (`DsfrSearchBar` : référence, demandeur, commune ; appliquée à la validation), puis **un
+  bouton par groupe de filtres** (« Communes » avec sa modale, fiche 0010 ; « Instruction » ;
+  « Projet »…), puis « Enregistrer la recherche ». Chaque bouton ouvre un panneau court avec
+  les champs de son groupe et indique combien sont actifs (« Instruction (2) »). Les groupes
+  dépendent du métier.
+- **La recherche en cours a sa propre ligne**, au-dessus des résultats : le nombre de
+  résultats (`role="status"`), un **tag supprimable DSFR** par filtre (« Commune : Pessac et
+  1 autre × »), le texte recherché compris, et « Tout effacer ». Nouveau composant
+  `DsaasfrSelectedFilters` : le balisage officiel `fr-tag--dismiss` (Vue DSFR n’a pas de
+  variante supprimable de `DsfrTag`), chaque tag nommé « Retirer le filtre … ».
+- **Pas de condition** : un filtre retient les dossiers qui ont l’une des valeurs choisies.
+  Pour modifier un filtre, on revient à son bouton ; le tag sert seulement à le retirer.
+  `DsaasfrFilterChip` (condition et valeurs modifiables sur place, à la manière de Linear)
+  reste disponible pour des usages plus avancés.
+
 ## Conséquences pour l'accessibilité
 
 - Étiquette = groupe nommé : « Filtre : Statut est Accepté, Incomplet ».
@@ -103,6 +126,13 @@ en haut, valeurs en dessous), conformément au RGAA 10.11.
 - Un clic sur un libellé non focalisable dans un panneau situé dans un conteneur
   focalisable (le `<main>` du shell) ne doit pas le fermer : un focus qui passe à un
   ancêtre ne signifie pas « sortir ».
+
+Pour `DsaasfrSelectedFilters` : chaque tag est un bouton nommé « Retirer le filtre Commune :
+Pessac, Talence » (au plus 10 valeurs dans le nom) ; après un retrait, le focus passe au tag
+suivant (ou précédent) ; quand il n’en reste aucun, l’événement `empty` permet à
+l’application de placer le focus (le champ de recherche dans le bac à sable). Le nombre de
+résultats reste une zone `role="status"`, fournie par l’application dans l’emplacement du
+composant.
 
 ## Questions ouvertes
 
