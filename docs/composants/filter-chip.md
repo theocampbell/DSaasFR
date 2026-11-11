@@ -99,8 +99,8 @@ ouverte (`part`) et fournit `close`.
 
 Pour que l’étiquette tienne sur une ligne, les valeurs sont résumées : autant que possible
 dans `maxValuesLength` caractères (32 par défaut), au plus `maxVisibleValues` (2 par défaut),
-puis « et N autres ». Le nom accessible cite jusqu’à 10 valeurs (puis « et N autres »), et
-l’infobulle la liste complète.
+puis « et N autres ». Le nom accessible et l’infobulle citent jusqu’à 10 valeurs (puis
+« et N autres »).
 
 Pour choisir parmi des centaines de valeurs (communes…), placez un
 [DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set) dans l’emplacement `values`.

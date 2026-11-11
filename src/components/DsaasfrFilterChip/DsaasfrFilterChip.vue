@@ -56,7 +56,6 @@ const valuesText = computed(() => {
   const rest = values.length - shown.length
   return rest ? `${shown.join(', ')} et ${rest} autre${rest > 1 ? 's' : ''}` : shown.join(', ')
 })
-const fullValues = computed(() => props.values.join(', '))
 
 /** Values in the chip's accessible name: all of them up to 10, then "et N autres" (a long
  * list, e.g. 200 communes, would otherwise be read out in full). */
@@ -108,7 +107,7 @@ function setOpen(part: DsaasfrFilterChipPart, open: boolean) {
         autofocus
         :trigger-class="['dsaasfr-filter-chip__button', 'fr-text--sm', 'fr-m-0', p.part === 'field' ? 'fr-text--bold' : '']"
         :trigger-label="`${p.label} ${p.text}`"
-        :trigger-title="p.part === 'values' && fullValues !== p.text ? fullValues : undefined"
+        :trigger-title="p.part === 'values' && namedValues !== p.text ? namedValues : undefined"
         :open="openPart === p.part"
         @update:open="setOpen(p.part, $event)"
       >

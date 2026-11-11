@@ -1,8 +1,10 @@
 export interface DsaasfrSearchableCheckboxOption {
   /** Value stored in the model (e.g. the INSEE code of a commune). */
   value: string
-  /** Visible label, also used for the search (e.g. "Saint-Médard-en-Jalles (12)"). */
+  /** Visible label (e.g. "Saint-Médard-en-Jalles (12)"). */
   label: string
+  /** Text searched, when it differs from the label (e.g. the name without its count). Default: `label`. */
+  searchText?: string
   /** Not selectable (e.g. would return no result); stays selectable while selected. */
   disabled?: boolean
   /** Hint under the label. */
@@ -22,6 +24,11 @@ export interface DsaasfrSearchableCheckboxSetProps {
   selectedLegend?: string
   /** Legend of the search results. Default: "{label} : résultats". */
   resultsLegend?: string
+  /**
+   * Focus the search field when the panel around opens (DsaasfrDropdown reads
+   * `data-autofocus`). Use it when this list is the panel's only content (a filter chip).
+   */
+  autofocus?: boolean
   /** Results shown at most; the rest is counted ("précisez la recherche"). */
   maxResults?: number
   /**
@@ -36,10 +43,12 @@ export interface DsaasfrSearchableCheckboxSetProps {
   localFilter?: boolean
   /** Button clearing the selection. */
   clearText?: string
-  /** Result count, announced to screen readers after typing. */
-  resultsCountText?: (count: number) => string
+  /** Result count, announced to screen readers after typing; `shown` < `count` when capped. */
+  resultsCountText?: (count: number, shown: number) => string
   /** Text when nothing matches. */
   noResultsText?: string
+  /** Text when nothing else matches: the values searched are already selected. */
+  alreadySelectedText?: string
   /** Text under capped results. */
   moreResultsText?: (count: number) => string
 }

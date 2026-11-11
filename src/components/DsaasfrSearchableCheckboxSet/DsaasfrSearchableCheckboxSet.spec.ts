@@ -121,11 +121,129 @@ describe('DsaasfrSearchableCheckboxSet', () => {
       expect(screen.getByRole('status').textContent?.trim()).toBe('')
       vi.advanceTimersByTime(500)
       await nextTick()
+      await nextTick()
       expect(screen.getByRole('status').textContent?.trim()).toBe('10 résultats')
+
+      // Capped results: says how many are shown.
+      await user.clear(search)
+      await user.type(search, 'commune')
+      vi.advanceTimersByTime(500)
+      await nextTick()
+      await nextTick()
+      expect(screen.getByRole('status').textContent?.trim()).toBe('120 résultats, 50 affichés : précisez la recherche')
     }
     finally {
       vi.useRealTimers()
     }
+  })
+
+  it('announces the same count again after a new search', async () => {
+    vi.useFakeTimers()
+    try {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+      const { search } = setup(long)
+      const status = screen.getByRole('status')
+      await user.type(search, 'commune 01')
+      vi.advanceTimersByTime(500)
+      await nextTick()
+      await nextTick()
+      const seen: string[] = []
+      new MutationObserver(() => seen.push(status.textContent?.trim() ?? '')).observe(status, { childList: true, characterData: true, subtree: true })
+      await user.type(search, ' ')
+      vi.advanceTimersByTime(500)
+      await nextTick()
+      await nextTick()
+      await Promise.resolve()
+      expect(seen).toContain('')
+      expect(status.textContent?.trim()).toBe('10 résultats')
+    }
+    finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('does not move a box ticked with a pointer that gives no focus (Safari, Firefox on macOS)', async () => {
+    const { selected } = setup(short)
+    const box = within(results()).getByRole('checkbox', { name: 'Mérignac' })
+    ;(document.activeElement as HTMLElement | null)?.blur()
+
+    box.click() // no focus, as a click on a checkbox in Safari
+    await nextTick()
+    await nextTick()
+    expect(selected.value).toEqual(['33281'])
+    expect(within(results()).getByRole('checkbox', { name: 'Mérignac' })).toBe(box)
+  })
+
+  it('keeps a selected value that returns nothing enabled and focused when unticked', async () => {
+    const user = userEvent.setup()
+    const options = [...short, { value: '33000', label: 'Ville sans dossier (0)', disabled: true }]
+    setup(options, ['33000'])
+    const chosen = screen.getByRole('group', { name: 'Commune : sélection (1)' })
+    const box = within(chosen).getByRole('checkbox', { name: 'Ville sans dossier (0)' })
+
+    await user.click(box)
+    expect(box).toHaveProperty('checked', false)
+    expect(box).toHaveProperty('disabled', false)
+    expect(document.activeElement).toBe(box)
+  })
+
+  it('puts the selection before the search field, so results follow the field', () => {
+    setup(short, ['33063'])
+    const order = [
+      screen.getByRole('group', { name: 'Commune : sélection (1)' }),
+      screen.getByRole('searchbox', { name: /^Rechercher : Commune/ }),
+      results(),
+    ]
+    expect(order[0]!.compareDocumentPosition(order[1]!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(order[1]!.compareDocumentPosition(order[2]!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('empties the search on Escape instead of letting it close the panel', async () => {
+    const user = userEvent.setup()
+    const onParentKeydown = vi.fn()
+    const { search, query } = setup(short)
+    search.closest('div')!.parentElement!.parentElement!.addEventListener('keydown', onParentKeydown)
+
+    await user.type(search, 'bor')
+    await user.keyboard('{Escape}')
+    expect(query.value).toBe('')
+    expect(onParentKeydown).not.toHaveBeenCalledWith(expect.objectContaining({ key: 'Escape' }))
+
+    await user.keyboard('{Escape}') // empty field: Escape goes on (the panel closes)
+    expect(onParentKeydown).toHaveBeenCalledWith(expect.objectContaining({ key: 'Escape' }))
+  })
+
+  it('lists available values first, then names starting with the text', async () => {
+    const user = userEvent.setup()
+    const { search } = setup([
+      { value: 'a', label: 'Saint-Lacanau' },
+      { value: 'b', label: 'Lacanau-de-Guyenne (0)', disabled: true },
+      { value: 'c', label: 'Lacanau' },
+    ])
+    await user.type(search, 'lacanau')
+    expect(within(results()).getAllByRole('checkbox').map(c => c.getAttribute('value'))).toEqual(['c', 'a', 'b'])
+  })
+
+  it('searches searchText when given (not the counts in the label)', async () => {
+    const user = userEvent.setup()
+    const { search } = setup([
+      { value: 'a', label: 'Bordeaux (12)', searchText: 'Bordeaux' },
+      { value: 'b', label: 'Cenon (3)', searchText: 'Cenon' },
+    ])
+    await user.type(search, '12')
+    expect(screen.getByText(/^Aucun résultat/)).toBeTruthy()
+  })
+
+  it('explains an empty result when the value searched is already selected', async () => {
+    const user = userEvent.setup()
+    const { search } = setup(short, ['33063'])
+    await user.type(search, 'borde')
+    expect(screen.getByText('Aucun autre résultat : ce que vous cherchez est déjà dans la sélection.')).toBeTruthy()
+  })
+
+  it('marks the search field for the panel to focus it on opening (autofocus)', () => {
+    const { search } = setup(short, [], { autofocus: true })
+    expect(search.hasAttribute('data-autofocus')).toBe(true)
   })
 
   it('has no detectable accessibility violations', async () => {

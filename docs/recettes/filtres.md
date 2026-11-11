@@ -14,7 +14,7 @@ de `playground/src/filters.ts` et `playground/src/FilterControls.vue`.
 | [DsaasfrToolbar](/composants/toolbar) : la ligne, `start` et `end` | La liste des champs, des conditions et des valeurs |
 | [DsaasfrDropdown](/composants/dropdown) : bouton, panneau, Échap, focus, position, pied fixé | Le brouillon de chaque panneau et le bouton « Appliquer » |
 | [DsaasfrFilterChip](/composants/filter-chip) : affichage d’un filtre, noms accessibles, événement `remove` | Les filtres appliqués et la requête au serveur |
-| [DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set) : recherche et cases à cocher pour une liste longue | Toutes les valeurs possibles (par exemple les communes du département) et leur ordre |
+| [DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set) : recherche et cases à cocher pour une liste longue | Toutes les valeurs possibles (par exemple les communes du département) |
 | `DsfrCheckboxSet`, `DsfrRadioButtonSet`, `DsfrButton` (Vue DSFR) | Les nombres de résultats, l’annonce `role="status"`, le focus après un retrait |
 
 La bibliothèque ne sait rien de vos données. Tout ce qui suit sous « application » est du code
@@ -431,8 +431,10 @@ les autres filtres ensemble. Remplacez seulement sa liste de cases à cocher, da
 <DsfrCheckboxSet v-else v-model="draft[field.key]" :legend="field.label" small :options="…" />
 ```
 
-Dans le bac à sable, les communes qui ont des dossiers passent devant celles qui n’en ont pas
-(désactivées, « (0) »). Voir la [fiche de décision 0010](/decisions/0010-long-lists).
+Les communes qui ont des dossiers passent devant celles qui n’en ont pas (désactivées,
+« (0) »). Passez le nom seul dans `searchText`, pour qu’on ne trouve pas une commune par son
+nombre de dossiers, et ajoutez `autofocus` dans le panneau de l’étiquette. Voir la
+[fiche de décision 0010](/decisions/0010-long-lists).
 
 ## 6. L’assemblage dans la barre d’outils
 

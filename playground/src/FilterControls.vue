@@ -11,7 +11,7 @@
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { dossiers } from './fakeData'
 import {
-  applied, applyFilter, applySelection, availableFirst, clearFilters, countResults, facetCount,
+  applied, applyFilter, applySelection, clearFilters, countResults, facetCount,
   fieldLabel, fields, filteredDossiers, filtersOf, isLong, operatorLabel, operators, removeFilter,
   selectionOf, valuesOf,
 } from './filters'
@@ -33,7 +33,7 @@ const draftResults = computed(() => countResults(draftFilters.value))
 /** Value options with their faceted count; values that would return nothing are disabled. */
 const draftOptions = (fieldKey: string, name: string) => valuesOf(fieldKey).map((v) => {
   const n = facetCount(draftFilters.value, fieldKey, v)
-  return { label: `${v} (${n})`, value: v, name, id: `${name}-${v}`, disabled: n === 0 && !draft[fieldKey]!.includes(v) }
+  return { label: `${v} (${n})`, ...(isLong(fieldKey) && { searchText: v }), value: v, name, id: `${name}-${v}`, disabled: n === 0 && !draft[fieldKey]!.includes(v) }
 })
 watch(panelOpen, (open) => {
   if (open) Object.assign(draft, selectionOf(applied))
@@ -71,6 +71,8 @@ const chipOptions = (field: string) => valuesOf(field).map((v) => {
   const n = chipDraft.operator === 'is' ? facetCount(others, field, v) : undefined
   return {
     label: n === undefined ? v : `${v} (${n})`,
+    // Long lists search the name, not the count (DsaasfrSearchableCheckboxSet only).
+    ...(isLong(field) && { searchText: v }),
     value: v,
     name: `chip-${field}`,
     id: `chip-${field}-${v}`,
@@ -140,7 +142,8 @@ function clearAll() {
             v-if="isLong(filter.field)"
             v-model="chipDraft.values"
             :label="fieldLabel(filter.field)"
-            :options="availableFirst(chipOptions(filter.field))"
+            :options="chipOptions(filter.field)"
+            autofocus
           />
           <DsfrCheckboxSet
             v-else
@@ -194,7 +197,7 @@ function clearAll() {
             v-if="field.long"
             v-model="draft[field.key]"
             :label="field.label"
-            :options="availableFirst(draftOptions(field.key, `filtre-${field.key}`))"
+            :options="draftOptions(field.key, `filtre-${field.key}`)"
           />
           <DsfrCheckboxSet
             v-else

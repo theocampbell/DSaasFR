@@ -123,6 +123,40 @@ describe('DsaasfrDropdown', () => {
     expect(document.activeElement).toBe(trigger)
   })
 
+  it('autofocus goes first to an element marked data-autofocus (e.g. a search field)', async () => {
+    const user = userEvent.setup()
+    render({
+      components: { DsaasfrDropdown },
+      template: `
+        <DsaasfrDropdown autofocus>
+          <template #trigger>Commune</template>
+          <input id="c" type="checkbox" checked><label for="c">Lacanau</label>
+          <label for="q">Rechercher</label><input id="q" type="search" data-autofocus>
+        </DsaasfrDropdown>`,
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Commune' }))
+
+    await vi.waitFor(() => expect(document.activeElement).toBe(screen.getByRole('searchbox', { name: 'Rechercher' })))
+  })
+
+  it('keeps the footer out of the scrolling content, so it never covers the focused control', async () => {
+    const user = userEvent.setup()
+    render({
+      components: { DsaasfrDropdown },
+      template: `
+        <DsaasfrDropdown>
+          <template #trigger>Filtrer</template>
+          <p>Options</p>
+          <template #footer><button type="button">Appliquer</button></template>
+        </DsaasfrDropdown>`,
+    })
+    await user.click(screen.getByRole('button', { name: 'Filtrer' }))
+
+    const content = screen.getByText('Options').parentElement!
+    expect(content.contains(screen.getByRole('button', { name: 'Appliquer' }))).toBe(false)
+  })
+
   it('renders a footer slot that can close the panel', async () => {
     const user = userEvent.setup()
     render({

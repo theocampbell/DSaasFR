@@ -1,8 +1,8 @@
 # DsaasfrSearchableCheckboxSet
 
 Des **cases à cocher pour une liste longue** : des centaines ou des milliers de valeurs, par
-exemple les communes d’un département. Un champ de recherche d’abord, la sélection toujours
-visible, puis des résultats limités.
+exemple les communes d’un département. La sélection toujours visible, un champ de recherche,
+puis des résultats limités juste en dessous.
 
 Il se place **dans un panneau**, à la place d’une liste de cases à cocher ordinaire :
 typiquement le panneau des valeurs d’une [étiquette de filtre](/composants/filter-chip) ou le
@@ -32,6 +32,7 @@ import { ref } from 'vue'
 const options = communes.map(c => ({
   value: c.code,
   label: `${c.nom} (${c.dossiers})`,
+  searchText: c.nom, // on cherche le nom, pas le nombre de dossiers
   disabled: c.dossiers === 0,
 }))
 const brouillon = ref<string[]>([])
@@ -41,7 +42,7 @@ const brouillon = ref<string[]>([])
   <DsaasfrFilterChip field="Commune" operator="est" :values="nomsChoisis">
     <template #values>
       <div class="fr-px-2w fr-pt-1w">
-        <DsaasfrSearchableCheckboxSet v-model="brouillon" label="Commune" :options="options" />
+        <DsaasfrSearchableCheckboxSet v-model="brouillon" label="Commune" :options="options" autofocus />
       </div>
     </template>
     <template #footer="{ close }">
@@ -57,15 +58,25 @@ const brouillon = ref<string[]>([])
   apparaissent après `minQueryLength` caractères (2 par défaut). Les accents, la casse, les
   traits d’union et les apostrophes sont ignorés : « saint medard » trouve
   « Saint-Médard-en-Jalles ». Les noms qui commencent par le texte saisi passent devant.
-- **Sélection** : les valeurs choisies sont listées au-dessus des résultats, toujours
-  visibles, avec « Tout désélectionner ». Une valeur choisie que les options ne connaissent
-  plus (par exemple dans une ancienne recherche enregistrée) y apparaît aussi.
+- **Sélection** : les valeurs choisies sont listées en premier, au-dessus du champ, toujours
+  visibles, avec « Tout désélectionner ». Les résultats suivent ainsi directement le champ.
+  Une valeur choisie que les options ne connaissent plus (par exemple dans une ancienne
+  recherche enregistrée) y apparaît aussi.
 - **Résultats limités** à `maxResults` (50 par défaut), puis « Et N autres résultats :
   précisez la recherche ».
 - **Rien ne bouge pendant qu’on coche** : une case cochée reste à sa place jusqu’à la
-  prochaine recherche. Le focus ne saute jamais.
-- **Ordre** : celui de vos options. Par exemple, mettez d’abord les valeurs qui ont des
-  résultats.
+  prochaine recherche, au clavier comme à la souris (y compris dans Safari, où un clic ne
+  donne pas le focus). Une case décochée ou qui a le focus n’est jamais désactivée sous
+  l’utilisateur. Le focus ne saute jamais.
+- **Ordre des résultats** : les valeurs disponibles d’abord, puis les noms qui commencent par
+  le texte saisi, puis l’ordre de vos options.
+- **Échap** dans le champ vide d’abord la recherche ; un second Échap ferme le panneau.
+- **Dans une étiquette de filtre**, ajoutez `autofocus` : le panneau place le focus sur le
+  champ de recherche à l’ouverture (`data-autofocus`, lu par
+  [DsaasfrDropdown](/composants/dropdown)). Pas dans le menu « Filtrer », où d’autres champs
+  précèdent.
+- Si une étiquette contient un nombre (« Bordeaux (12) »), passez le nom seul dans
+  `searchText` : sinon, taper « 12 » trouverait la commune par son compteur.
 
 ### Recherche côté serveur
 
@@ -91,18 +102,20 @@ Gardez dans `options` les valeurs déjà choisies, pour afficher leur libellé d
 
 | Nom | Type | Défaut | Description |
 |---|---|---|---|
-| `options` | `{ value, label, disabled?, hint? }[]` | — (obligatoire) | Toutes les options (peut en compter des milliers). Avec `localFilter: false`, seulement celles qui correspondent à la recherche. |
+| `options` | `{ value, label, searchText?, disabled?, hint? }[]` | — (obligatoire) | Toutes les options (peut en compter des milliers). Avec `localFilter: false`, seulement celles qui correspondent à la recherche. |
 | `label` | `string` | — (obligatoire) | Nom de la liste, par exemple « Commune ». Utilisé dans les textes par défaut. |
 | `searchLabel` | `string` | `'Rechercher : {label}'` | Étiquette du champ de recherche. |
 | `searchHint` | `string` | selon la taille | Aide sous l’étiquette du champ. |
 | `selectedLegend` | `string` | `'{label} : sélection'` | Légende de la sélection (le nombre est ajouté). |
 | `resultsLegend` | `string` | `'{label} : résultats'` | Légende des résultats. |
+| `autofocus` | `boolean` | `false` | Le panneau englobant place le focus sur le champ de recherche à l’ouverture. |
 | `maxResults` | `number` | `50` | Résultats affichés au plus. |
 | `minQueryLength` | `number` | `2` | Caractères à saisir avant d’afficher les résultats d’une liste longue. |
 | `localFilter` | `boolean` | `true` | Filtrer les options ici. `false` : l’application cherche elle-même. |
 | `clearText` | `string` | `'Tout désélectionner'` | Bouton qui vide la sélection. |
-| `resultsCountText` | `(n) => string` | « 12 résultats » | Nombre de résultats annoncé aux lecteurs d’écran. |
+| `resultsCountText` | `(n, affichés) => string` | « 811 résultats, 50 affichés : précisez la recherche » | Nombre de résultats annoncé aux lecteurs d’écran. |
 | `noResultsText` | `string` | « Aucun résultat : … » | Texte quand rien ne correspond. |
+| `alreadySelectedText` | `string` | « Aucun autre résultat : ce que vous cherchez est déjà dans la sélection. » | Texte quand seules des valeurs déjà choisies correspondent. |
 | `moreResultsText` | `(n) => string` | « Et 70 autres résultats : précisez la recherche. » | Texte sous des résultats limités. |
 
 Une option `disabled` ne peut pas être cochée, sauf si elle est déjà choisie : on peut
@@ -121,11 +134,13 @@ toujours la décocher.
 - Le champ de recherche a une étiquette visible ; l’aide est dans l’étiquette (balisage
   DSFR). Entrée ne soumet pas le formulaire.
 - Le nombre de résultats est annoncé (`role="status"`) quand la saisie s’interrompt, pas à
-  chaque touche.
+  chaque touche, avec le nombre affiché quand la liste est limitée. Le même nombre après une
+  nouvelle recherche est annoncé à nouveau.
 - La sélection et les résultats sont des groupes nommés : « Commune : sélection (2) »,
   « Commune : résultats ».
 - Le focus ne saute jamais : une case cochée reste en place ; « Tout désélectionner » renvoie
   le focus au champ de recherche.
+- La sélection précède le champ : après une recherche, Tab mène directement aux résultats.
 
 ## Voir aussi
 

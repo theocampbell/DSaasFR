@@ -35,10 +35,6 @@ export const valuesOf = (fieldKey: string) => {
   return field.values ?? [...new Set(dossiers.map(row => row[field.column]!))].sort((a, b) => a.localeCompare(b, 'fr'))
 }
 export const isLong = (fieldKey: string) => !!fields.find(f => f.key === fieldKey)?.long
-
-/** Long lists: values that return results first (alphabetical within each group). */
-export const availableFirst = <T extends { disabled?: boolean }>(options: T[]) =>
-  [...options.filter(o => !o.disabled), ...options.filter(o => o.disabled)]
 /** Values in list order, whatever order they were ticked in. */
 const ordered = (fieldKey: string, values: string[]) => valuesOf(fieldKey).filter(v => values.includes(v))
 export const fieldLabel = (key: string) => fields.find(f => f.key === key)!.label
