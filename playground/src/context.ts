@@ -33,6 +33,6 @@ export const departementLabel = (code: string) => {
   return d ? `${d.name} (${d.code})` : code
 }
 
-/** The département in use, and those the signed-in person works in. */
+/** The département in use, and those the signed-in person works in (most people: one). */
 export const currentDep = ref('33')
-export const myDeps = ['33', '40', '64']
+export const severalDeps = ['33', '40', '64']

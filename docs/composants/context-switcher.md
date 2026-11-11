@@ -16,6 +16,9 @@ courante et ouvre une liste de liens, le lien courant marqué.
 
 ## Quand l’utiliser
 
+- **Seulement si la personne a plusieurs contextes.** Avec un seul (le cas le plus courant :
+  un département), n’affichez pas le sélecteur : il n’y a rien à changer, et le contexte peut
+  figurer dans la ligne de la personne (« Instructrice · DDT 33 »).
 - Quand le même agent travaille dans plusieurs contextes (plusieurs départements,
   l’administration nationale dans tous) et que ce contexte change tout ce que montre
   l’application.

@@ -4,9 +4,9 @@ import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePreviewQuery, useRouteBreadcrumb } from '@dsaasfr/vue'
 import type { DsaasfrContextSwitcherItem, DsaasfrSidebarItem, DsaasfrUserMenuItem } from '@dsaasfr/vue'
-import { currentDep, departementLabel, myDeps } from './context'
-import { communeUi, perimetre } from './demo'
-import type { CommuneUi, Perimetre } from './demo'
+import { currentDep, departementLabel, severalDeps } from './context'
+import { communeUi, departements, perimetre } from './demo'
+import type { CommuneUi, Departements, Perimetre } from './demo'
 import FilterControls from './FilterControls.vue'
 import PageBody from './PageBody.vue'
 import { describePreview, dossiers } from './fakeData'
@@ -38,7 +38,10 @@ watch(() => route.query.dep, (dep) => {
   if (hadCommunes) removeFilter('commune')
   contextMessage.value = `Département : ${departementLabel(dep)}.${hadCommunes ? ' Filtre Commune retiré.' : ''}`
 }, { immediate: true })
-const depChoices = computed<DsaasfrContextSwitcherItem[]>(() => myDeps.map(code => ({
+// Most people work in one département: no switcher (their département is already in the
+// user line). Only people with several départements get it (demo switch).
+const myDeps = computed(() => (departements.value === 'plusieurs' ? severalDeps : [currentDep.value]))
+const depChoices = computed<DsaasfrContextSwitcherItem[]>(() => myDeps.value.map(code => ({
   text: departementLabel(code),
   to: { path: route.path === '/departements' ? '/dossiers' : route.path, query: { dep: code } },
   current: code === currentDep.value,
@@ -47,14 +50,15 @@ const depChoices = computed<DsaasfrContextSwitcherItem[]>(() => myDeps.map(code 
 // Demo switches (Dossiers page), kept in the URL to share a variant: where communes are
 // chosen (?communes=modale) and the person's perimeter (?perimetre=communes).
 const router = useRouter()
-watch(() => [route.query.communes, route.query.perimetre], ([ui, scope]) => {
+watch(() => [route.query.communes, route.query.perimetre, route.query.departements], ([ui, scope, deps]) => {
   communeUi.value = ui === 'modale' ? 'modale' : 'filtrer'
+  departements.value = deps === 'plusieurs' ? 'plusieurs' : 'un'
   const next: Perimetre = scope === 'communes' ? 'communes' : 'departement'
   // A smaller perimeter: communes chosen outside it no longer apply.
   if (next !== perimetre.value && applied.some(f => f.field === 'commune')) removeFilter('commune')
   perimetre.value = next
 }, { immediate: true })
-function setDemo(key: 'communes' | 'perimetre', value: CommuneUi | Perimetre, fallback: string) {
+function setDemo(key: 'communes' | 'perimetre' | 'departements', value: CommuneUi | Perimetre | Departements, fallback: string) {
   void router.replace({ query: { ...route.query, [key]: value === fallback ? undefined : value } })
 }
 
@@ -125,6 +129,7 @@ const accountItems: DsaasfrUserMenuItem[] = [
              the user menu; it could also go under the service name (#context slot). -->
         <template #footer>
           <DsaasfrContextSwitcher
+            v-if="myDeps.length > 1"
             class="fr-mb-1w"
             label="Département"
             :current="departementLabel(currentDep)"
@@ -233,6 +238,18 @@ const accountItems: DsaasfrUserMenuItem[] = [
           { label: '10 communes', value: 'communes' },
         ]"
         @update:model-value="setDemo('perimetre', $event as Perimetre, 'departement')"
+      />
+      <DsfrSegmentedSet
+        :model-value="departements"
+        name="demo-departements"
+        legend="Départements de la personne connectée"
+        small
+        inline
+        :options="[
+          { label: '1 département (le cas courant)', value: 'un' },
+          { label: '3 départements', value: 'plusieurs' },
+        ]"
+        @update:model-value="setDemo('departements', $event as Departements, 'un')"
       />
     </div>
     <PageBody

@@ -75,6 +75,14 @@ entrée du menu utilisateur, que l’on a écartée (un clic de plus pour ceux q
 souvent). L’emplacement `context` reste disponible pour un placement en haut. Sur écran
 étroit, le sélecteur suit le pied dans le menu, après la navigation.
 
+### Qui le voit (2026-11-11)
+
+En pratique, la plupart des personnes travaillent dans **un seul département** : elles ne
+voient pas de sélecteur (le département figure déjà dans la ligne de la personne). Seules
+quelques-unes en ont plusieurs ; l’administration nationale est l’équipe interne, pour qui la
+page « Tous les départements » suffit. Le périmètre le plus large d’un agent est donc un
+département entier (plus de 1 000 communes), le cas prévu par la fiche 0010.
+
 ## Conséquences pour l'accessibilité
 
 - Bouton de divulgation (`aria-expanded`, `aria-controls`) ; nom accessible « Département :
