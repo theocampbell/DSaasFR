@@ -12,6 +12,8 @@ const roots = ['Arsac', 'Avensan', 'Bassens', 'Blanquefort', 'Cadaujac', 'Cambla
   'Margaux', 'Martignas', 'Pauillac', 'Podensac', 'Quinsac', 'Saucats', 'Soulac', 'Targon', 'Vayres', 'Villenave']
 const suffixes = ['', '-sur-Dordogne', '-sur-Garonne', '-en-Médoc', '-de-Guyenne', '-et-Bastide', '-les-Vignes',
   '-le-Haut', '-le-Bas', '-du-Bois', '-de-l’Isle', '-en-Gironde']
+/** A small perimeter (e.g. a gendarmerie): the communes that have case files. */
+export const perimetreCommunes = [...communes].sort((a, b) => a.localeCompare(b, 'fr'))
 export const allCommunes = [...new Set([
   ...communes,
   ...roots.flatMap(root => suffixes.map(suffix => root + suffix)),

@@ -90,6 +90,21 @@ Ajustements liés :
     montrer que le pied (RGAA 10.11) ;
   - `autofocus` va d’abord à un élément marqué `data-autofocus`.
 
+### Petits périmètres et variante à comparer (2026-11-11)
+
+- Selon son organisation, une personne voit tout le département (plus de 1 000 communes) ou
+  quelques communes (une gendarmerie, une association). Jusqu’à `searchThreshold` options
+  (12), le composant n’affiche pas de recherche : une simple liste de cases à cocher. Le même
+  écran convient aux deux cas.
+- **Variante en comparaison dans le bac à sable** : un bouton « Communes » à côté de
+  « Filtrer », qui ouvre une **fenêtre modale DSFR** (`DsfrModal`) contenant ce composant. Un
+  seul niveau, le motif standard du DSFR (un bouton qui ouvre une modale), plus de place, et
+  le critère le plus utilisé bien visible. Le bouton résume la sélection (« Communes :
+  Lacanau et 2 autres ») ; les communes quittent alors le panneau « Filtrer » et les
+  étiquettes. Même état de recherche : l’URL et les recherches enregistrées ne changent pas.
+  Choix à faire avec la designer ; les deux variantes sont accessibles depuis la page
+  Dossiers du bac à sable (« Comparer »).
+
 ## Conséquences pour l'accessibilité
 
 - Un seul niveau de panneau : même modèle clavier que les autres filtres (Tab, Échap ferme et

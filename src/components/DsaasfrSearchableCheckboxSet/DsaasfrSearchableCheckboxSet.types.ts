@@ -29,6 +29,12 @@ export interface DsaasfrSearchableCheckboxSetProps {
    * `data-autofocus`). Use it when this list is the panel's only content (a filter chip).
    */
   autofocus?: boolean
+  /**
+   * Up to this many options, no search field: a plain checkbox list (legend: `label`).
+   * A user whose perimeter has 10 communes gets 10 checkboxes; the whole département gets
+   * the search. Ignored with `localFilter: false`.
+   */
+  searchThreshold?: number
   /** Results shown at most; the rest is counted ("précisez la recherche"). */
   maxResults?: number
   /**

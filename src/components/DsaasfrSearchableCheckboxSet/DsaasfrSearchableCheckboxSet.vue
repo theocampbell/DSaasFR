@@ -22,6 +22,7 @@ const props = withDefaults(defineProps<DsaasfrSearchableCheckboxSetProps>(), {
   selectedLegend: undefined,
   resultsLegend: undefined,
   autofocus: false,
+  searchThreshold: 12,
   maxResults: 50,
   minQueryLength: 2,
   localFilter: true,
@@ -49,6 +50,8 @@ const normalize = (text: string) => text
   .toLowerCase().replace(/[-'’\s]+/g, ' ').trim()
 const searchable = (o: DsaasfrSearchableCheckboxOption) => normalize(o.searchText ?? o.label)
 
+/** Short list (e.g. a perimeter of 10 communes): plain checkboxes, no search. */
+const withSearch = computed(() => !props.localFilter || props.options.length > props.searchThreshold)
 const longList = computed(() => props.options.length > props.maxResults)
 const searching = computed(() => normalize(query.value).length >= props.minQueryLength)
 
@@ -60,6 +63,13 @@ const matchCount = ref(0)
 const selectedMatches = ref(0)
 
 function refresh() {
+  if (!withSearch.value) {
+    shownSelected.value = []
+    shownResults.value = props.options.map(o => o.value)
+    matchCount.value = props.options.length
+    selectedMatches.value = 0
+    return
+  }
   const selected = new Set(model.value)
   shownSelected.value = [
     ...props.options.filter(o => selected.has(o.value)).map(o => o.value),
@@ -143,7 +153,7 @@ const selectedModel = groupModel(() => shownSelected.value)
 const resultsModel = groupModel(() => shownResults.value)
 
 const selectedLegend = computed(() => `${props.selectedLegend ?? `${props.label} : sélection`} (${model.value.length})`)
-const resultsLegend = computed(() => props.resultsLegend ?? `${props.label} : résultats`)
+const resultsLegend = computed(() => (withSearch.value ? props.resultsLegend ?? `${props.label} : résultats` : props.label))
 const searchLabel = computed(() => props.searchLabel ?? `Rechercher : ${props.label}`)
 const searchHint = computed(() => props.searchHint
   ?? (longList.value
@@ -215,6 +225,7 @@ async function clearSelection() {
     </div>
 
     <DsfrInputGroup
+      v-if="withSearch"
       :id="searchId"
       v-model="query"
       type="search"
@@ -227,6 +238,7 @@ async function clearSelection() {
     />
 
     <p
+      v-if="withSearch"
       class="fr-sr-only"
       role="status"
     >

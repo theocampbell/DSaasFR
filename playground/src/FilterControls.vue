@@ -16,8 +16,16 @@ import {
   selectionOf, valuesOf,
 } from './filters'
 import type { Operator } from './filters'
+import CommunesModal from './CommunesModal.vue'
+import { communeUi } from './demo'
 
 defineProps<{ area: 'start' | 'end' }>()
+
+// Variant "Communes" button + modal: communes leave the "Filtrer" panel and the chips.
+const inPanel = (fieldKey: string) => communeUi.value === 'filtrer' || fieldKey !== 'commune'
+const panelFields = computed(() => fields.filter(f => inPanel(f.key)))
+const chips = computed(() => applied.filter(f => inPanel(f.field)))
+const panelCount = computed(() => chips.value.length)
 
 const total = dossiers.length
 const plural = (n: number) => `${n} dossier${n > 1 ? 's' : ''}`
@@ -27,7 +35,7 @@ const count = computed(() =>
 // ── "Filtrer": draft selection of all fields ─────────────────────────────────
 const panelOpen = ref(false)
 const draft = reactive<Record<string, string[]>>(selectionOf([]))
-const draftCount = computed(() => Object.values(draft).reduce((n, v) => n + v.length, 0))
+const draftCount = computed(() => panelFields.value.reduce((n, f) => n + draft[f.key]!.length, 0))
 const draftFilters = computed(() => filtersOf(draft))
 const draftResults = computed(() => countResults(draftFilters.value))
 /** Value options with their faceted count; values that would return nothing are disabled. */
@@ -43,7 +51,8 @@ function applyAll(close: (returnFocus?: boolean) => void) {
   close(true)
 }
 function resetDraft() {
-  Object.assign(draft, selectionOf([]))
+  // Only the fields of this panel (communes keep their own button in the modal variant).
+  for (const field of panelFields.value) draft[field.key] = []
 }
 
 // ── Chips: draft of the open part ────────────────────────────────────────────
@@ -116,7 +125,7 @@ function clearAll() {
       {{ count }}
     </p>
     <DsaasfrFilterChip
-      v-for="filter in applied"
+      v-for="filter in chips"
       :key="filter.field"
       :field="fieldLabel(filter.field)"
       :operator="operatorLabel(filter.operator)"
@@ -172,25 +181,27 @@ function clearAll() {
     />
   </template>
 
-  <!-- Toolbar end: "Filtrer" = every field with its values, applied on demand -->
+  <!-- Toolbar end: ["Communes" (modal variant)] "Filtrer" = every field with its values,
+       applied on demand -->
+  <CommunesModal v-if="area === 'end' && communeUi === 'modale'" />
   <DsaasfrDropdown
-    v-else
+    v-if="area === 'end'"
     v-model:open="panelOpen"
     data-filter-trigger
     placement="bottom-end"
     autofocus
     trigger-class="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left fr-icon-filter-line"
-    :trigger-label="applied.length ? `Filtrer (${applied.length}), ${applied.length} filtre${applied.length > 1 ? 's' : ''} actif${applied.length > 1 ? 's' : ''}` : undefined"
+    :trigger-label="panelCount ? `Filtrer (${panelCount}), ${panelCount} filtre${panelCount > 1 ? 's' : ''} actif${panelCount > 1 ? 's' : ''}` : undefined"
   >
     <template #trigger>
-      Filtrer<template v-if="applied.length">
-        ({{ applied.length }})
+      Filtrer<template v-if="panelCount">
+        ({{ panelCount }})
       </template>
     </template>
     <template #default>
       <div class="fr-px-2w fr-pt-1w">
         <template
-          v-for="field in fields"
+          v-for="field in panelFields"
           :key="field.key"
         >
           <DsaasfrSearchableCheckboxSet

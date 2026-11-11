@@ -27,9 +27,11 @@ function setup(options: DsaasfrSearchableCheckboxOption[], initial: string[] = [
     'onUpdate:modelValue': (v: string[]) => (selected.value = v),
     query: query.value,
     'onUpdate:query': (v: string) => (query.value = v),
+    // The short lists below test the search: no threshold unless a test sets one.
+    searchThreshold: 0,
     ...extra,
   }))
-  return { selected, query, search: screen.getByRole('searchbox', { name: /^Rechercher : Commune/ }) }
+  return { selected, query, search: screen.queryByRole('searchbox', { name: /^Rechercher : Commune/ })! }
 }
 const results = () => screen.getByRole('group', { name: 'Commune : résultats' })
 
@@ -244,6 +246,19 @@ describe('DsaasfrSearchableCheckboxSet', () => {
   it('marks the search field for the panel to focus it on opening (autofocus)', () => {
     const { search } = setup(short, [], { autofocus: true })
     expect(search.hasAttribute('data-autofocus')).toBe(true)
+  })
+
+  it('shows a short list (perimeter of a few values) as plain checkboxes, without search', async () => {
+    const user = userEvent.setup()
+    const { selected } = setup(short, ['33063'], { searchThreshold: 12 })
+    expect(screen.queryByRole('searchbox')).toBeNull()
+    const list = screen.getByRole('group', { name: 'Commune' })
+    expect(within(list).getAllByRole('checkbox')).toHaveLength(3)
+
+    const box = within(list).getByRole('checkbox', { name: 'Mérignac' })
+    await user.click(box)
+    expect(selected.value).toEqual(['33063', '33281'])
+    expect(within(screen.getByRole('group', { name: 'Commune' })).getByRole('checkbox', { name: 'Mérignac' })).toBe(box)
   })
 
   it('has no detectable accessibility violations', async () => {

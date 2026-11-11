@@ -5,7 +5,8 @@
 // on the server, and one request per applied change is predictable (no request per click,
 // no results moving while the user is still choosing).
 import { computed, reactive } from 'vue'
-import { allCommunes, dossiers } from './fakeData'
+import { perimetre } from './demo'
+import { allCommunes, dossiers, perimetreCommunes } from './fakeData'
 
 export interface FieldDef {
   key: string
@@ -19,7 +20,14 @@ export interface FieldDef {
 export const fields: FieldDef[] = [
   { key: 'statut', label: 'Statut', column: 4 },
   { key: 'type', label: 'Type', column: 2 },
-  { key: 'commune', label: 'Commune', column: 3, values: allCommunes, long: true },
+  {
+    key: 'commune',
+    label: 'Commune',
+    column: 3,
+    // The person's perimeter: the whole département, or a few communes (demo switch).
+    get values() { return perimetre.value === 'communes' ? perimetreCommunes : allCommunes },
+    long: true,
+  },
 ]
 export const operators = [
   { value: 'is', label: 'est' },

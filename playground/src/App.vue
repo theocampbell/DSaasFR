@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useScheme } from '@gouvminint/vue-dsfr'
 import { computed, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { usePreviewQuery, useRouteBreadcrumb } from '@dsaasfr/vue'
 import type { DsaasfrContextSwitcherItem, DsaasfrSidebarItem, DsaasfrUserMenuItem } from '@dsaasfr/vue'
 import { currentDep, departementLabel, myDeps } from './context'
+import { communeUi, perimetre } from './demo'
+import type { CommuneUi, Perimetre } from './demo'
 import FilterControls from './FilterControls.vue'
 import PageBody from './PageBody.vue'
 import { describePreview, dossiers } from './fakeData'
@@ -41,6 +43,20 @@ const depChoices = computed<DsaasfrContextSwitcherItem[]>(() => myDeps.map(code 
   to: { path: route.path === '/departements' ? '/dossiers' : route.path, query: { dep: code } },
   current: code === currentDep.value,
 })))
+
+// Demo switches (Dossiers page), kept in the URL to share a variant: where communes are
+// chosen (?communes=modale) and the person's perimeter (?perimetre=communes).
+const router = useRouter()
+watch(() => [route.query.communes, route.query.perimetre], ([ui, scope]) => {
+  communeUi.value = ui === 'modale' ? 'modale' : 'filtrer'
+  const next: Perimetre = scope === 'communes' ? 'communes' : 'departement'
+  // A smaller perimeter: communes chosen outside it no longer apply.
+  if (next !== perimetre.value && applied.some(f => f.field === 'commune')) removeFilter('commune')
+  perimetre.value = next
+}, { immediate: true })
+function setDemo(key: 'communes' | 'perimetre', value: CommuneUi | Perimetre, fallback: string) {
+  void router.replace({ query: { ...route.query, [key]: value === fallback ? undefined : value } })
+}
 
 const items: DsaasfrSidebarItem[] = [
   { text: 'Tableau de bord', to: '/' },
@@ -185,6 +201,38 @@ const accountItems: DsaasfrUserMenuItem[] = [
     <h1 class="fr-h3">
       {{ pageTitle }}
     </h1>
+    <div
+      v-if="route.path === '/dossiers'"
+      class="fr-p-2w fr-mb-3w playground-demo"
+    >
+      <p class="fr-text--sm fr-text--bold fr-mb-1w">
+        Comparer (démonstration)
+      </p>
+      <DsfrSegmentedSet
+        :model-value="communeUi"
+        name="demo-communes"
+        legend="Choix des communes"
+        small
+        inline
+        :options="[
+          { label: 'Dans « Filtrer »', value: 'filtrer' },
+          { label: 'Bouton « Communes »', value: 'modale' },
+        ]"
+        @update:model-value="setDemo('communes', $event as CommuneUi, 'filtrer')"
+      />
+      <DsfrSegmentedSet
+        :model-value="perimetre"
+        name="demo-perimetre"
+        legend="Périmètre de la personne connectée"
+        small
+        inline
+        :options="[
+          { label: 'Département entier (1 178 communes)', value: 'departement' },
+          { label: '10 communes', value: 'communes' },
+        ]"
+        @update:model-value="setDemo('perimetre', $event as Perimetre, 'departement')"
+      />
+    </div>
     <PageBody
       :path="route.path"
       @preview="preview.open"
@@ -286,6 +334,10 @@ const accountItems: DsaasfrUserMenuItem[] = [
 
 <style scoped>
 /* Simulated document page (demo only). */
+.playground-demo {
+  border: var(--dsaasfr-shell-border-width) dashed var(--border-default-grey);
+}
+
 .playground-mention {
   color: var(--text-mention-grey);
 }

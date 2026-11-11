@@ -54,6 +54,10 @@ const brouillon = ref<string[]>([])
 
 ### Comportement
 
+- **Petite liste, pas de recherche** : jusqu’à `searchThreshold` options (12 par défaut), le
+  composant affiche simplement les cases à cocher. Une personne dont le périmètre compte 10
+  communes voit 10 cases ; celle qui voit tout le département a la recherche. Le même écran
+  sert aux deux.
 - **Recherche** : sur une liste longue (plus de `maxResults` options), les résultats
   apparaissent après `minQueryLength` caractères (2 par défaut). Les accents, la casse, les
   traits d’union et les apostrophes sont ignorés : « saint medard » trouve
@@ -108,6 +112,7 @@ Gardez dans `options` les valeurs déjà choisies, pour afficher leur libellé d
 | `searchHint` | `string` | selon la taille | Aide sous l’étiquette du champ. |
 | `selectedLegend` | `string` | `'{label} : sélection'` | Légende de la sélection (le nombre est ajouté). |
 | `resultsLegend` | `string` | `'{label} : résultats'` | Légende des résultats. |
+| `searchThreshold` | `number` | `12` | Jusqu’à ce nombre d’options, pas de champ de recherche : une simple liste de cases à cocher (légende : `label`). Ignoré avec `localFilter: false`. |
 | `autofocus` | `boolean` | `false` | Le panneau englobant place le focus sur le champ de recherche à l’ouverture. |
 | `maxResults` | `number` | `50` | Résultats affichés au plus. |
 | `minQueryLength` | `number` | `2` | Caractères à saisir avant d’afficher les résultats d’une liste longue. |
