@@ -14,6 +14,11 @@ mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vou
       (l’URL de la recherche), affichés dans la barre latérale (groupe « Mes recherches »
       sous « Dossiers ») ; « Enregistrer la recherche » (barre d’outils) enregistre l’URL
       courante. À faire côté application ; dans le bac à sable, un exemple et une recette.
+      Chaque recherche a un **nom** (texte du lien). À montrer : « Enregistrer la recherche »
+      ouvre une petite modale DSFR (champ « Nom de la recherche ») ; sur une recherche
+      enregistrée, son nom dans le `<h1>` et l’onglet ; recherche modifiée (l’URL ne
+      correspond plus, le lien n’est plus « page actuelle ») → « Enregistrer les
+      modifications » ou « Enregistrer comme nouvelle recherche ».
 - [ ] 🤖 Option : « Tout effacer » sur la dernière ligne de tags plutôt que seul en dessous.
 - [ ] 🤖 Option : revue `dsfr-guardian` + `a11y-auditor` de `DsaasfrFilterDropdown` et
       `DsaasfrFilterModal` (code déjà revu dans le bac à sable, puis déplacé).
