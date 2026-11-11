@@ -46,6 +46,10 @@
   --dsaasfr-shell-row-height: 3rem;
   --dsaasfr-shell-border-width: 1px;
 
+  /* Height of a long list in a modal (e.g. the communes): fixed, so the modal keeps its
+     size while results appear; the list scrolls inside. */
+  --dsaasfr-modal-list-height: min(28rem, 55vh);
+
   /* Bar marking the current item, as fr-sidemenu__link[aria-current] (DSFR: 2px). */
   --dsaasfr-active-marker-width: 2px;
 

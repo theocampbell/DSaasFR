@@ -96,14 +96,17 @@ Ajustements liés :
   quelques communes (une gendarmerie, une association). Jusqu’à `searchThreshold` options
   (12), le composant n’affiche pas de recherche : une simple liste de cases à cocher. Le même
   écran convient aux deux cas.
-- **Variante en comparaison dans le bac à sable** : un bouton « Communes » à côté de
-  « Filtrer », qui ouvre une **fenêtre modale DSFR** (`DsfrModal`) contenant ce composant. Un
-  seul niveau, le motif standard du DSFR (un bouton qui ouvre une modale), plus de place, et
-  le critère le plus utilisé bien visible. Le bouton résume la sélection (« Communes :
-  Lacanau et 2 autres ») ; les communes quittent alors le panneau « Filtrer » et les
-  étiquettes. Même état de recherche : l’URL et les recherches enregistrées ne changent pas.
-  Choix à faire avec la designer ; les deux variantes sont accessibles depuis la page
-  Dossiers du bac à sable (« Comparer »).
+- **Choix du responsable produit : un bouton « Communes » à part**, à côté de « Filtrer »,
+  qui ouvre une **fenêtre modale DSFR** (`DsfrModal`) contenant ce composant. Un seul niveau,
+  le motif standard du DSFR (un bouton qui ouvre une modale), plus de place, et le critère le
+  plus utilisé bien visible. Le bouton résume la sélection (« Communes : Lacanau et 2
+  autres ») ; les communes ne sont plus dans le panneau « Filtrer » ni dans les étiquettes.
+  Même état de recherche : l’URL et les recherches enregistrées ne changent pas.
+- **Taille fixe** : la liste a une hauteur fixe dans la modale
+  (`--dsaasfr-modal-list-height`) et défile à l’intérieur ; la modale ne change pas de taille
+  pendant la recherche, les boutons restent en place.
+- Le composant reste utilisable dans un panneau de filtre (étiquette, « Filtrer ») pour
+  d’autres listes longues.
 
 ## Conséquences pour l'accessibilité
 

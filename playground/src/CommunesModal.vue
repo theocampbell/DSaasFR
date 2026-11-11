@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Variant "Communes" button + modal (demo switch): communes are chosen in a DsfrModal
+// "Communes" button + modal: communes are chosen in a DsfrModal
 // opened directly from a toolbar button, next to "Filtrer". One layer, the standard DSFR
 // modal pattern, room for the search. Same search state as the other filters: the URL
 // and saved searches do not change. The list inside is DsaasfrSearchableCheckboxSet: plain
@@ -64,10 +64,26 @@ const origin = { focus: () => trigger.value?.querySelector('button')?.focus() }
     ]"
     @close="opened = false"
   >
-    <DsaasfrSearchableCheckboxSet
-      v-model="draft"
-      label="Commune"
-      :options="options"
-    />
+    <!-- Fixed height: the modal keeps its size while search results appear (the list
+         scrolls inside, the buttons stay in place). -->
+    <div class="communes-modal__list">
+      <DsaasfrSearchableCheckboxSet
+        v-model="draft"
+        label="Commune"
+        :options="options"
+      />
+    </div>
   </DsfrModal>
 </template>
+
+<style scoped>
+.communes-modal__list {
+  height: var(--dsaasfr-modal-list-height);
+  overflow-y: auto;
+
+  /* Room for the DSFR focus ring, which the scrolling box would otherwise clip; the
+     negative margin keeps the content aligned with the modal title. */
+  margin: calc(-1 * var(--dsaasfr-space-1v));
+  padding: var(--dsaasfr-space-1v);
+}
+</style>

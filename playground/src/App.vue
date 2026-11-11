@@ -5,8 +5,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { usePreviewQuery, useRouteBreadcrumb } from '@dsaasfr/vue'
 import type { DsaasfrContextSwitcherItem, DsaasfrSidebarItem, DsaasfrUserMenuItem } from '@dsaasfr/vue'
 import { currentDep, departementLabel, severalDeps } from './context'
-import { communeUi, departements, perimetre } from './demo'
-import type { CommuneUi, Departements, Perimetre } from './demo'
+import { departements, perimetre } from './demo'
+import type { Departements, Perimetre } from './demo'
 import FilterControls from './FilterControls.vue'
 import PageBody from './PageBody.vue'
 import { describePreview, dossiers } from './fakeData'
@@ -47,18 +47,17 @@ const depChoices = computed<DsaasfrContextSwitcherItem[]>(() => myDeps.value.map
   current: code === currentDep.value,
 })))
 
-// Demo switches (Dossiers page), kept in the URL to share a variant: where communes are
-// chosen (?communes=modale) and the person's perimeter (?perimetre=communes).
+// Demo switches (Dossiers page), kept in the URL to share a variant: the person's
+// perimeter (?perimetre=communes) and number of départements (?departements=plusieurs).
 const router = useRouter()
-watch(() => [route.query.communes, route.query.perimetre, route.query.departements], ([ui, scope, deps]) => {
-  communeUi.value = ui === 'modale' ? 'modale' : 'filtrer'
+watch(() => [route.query.perimetre, route.query.departements], ([scope, deps]) => {
   departements.value = deps === 'plusieurs' ? 'plusieurs' : 'un'
   const next: Perimetre = scope === 'communes' ? 'communes' : 'departement'
   // A smaller perimeter: communes chosen outside it no longer apply.
   if (next !== perimetre.value && applied.some(f => f.field === 'commune')) removeFilter('commune')
   perimetre.value = next
 }, { immediate: true })
-function setDemo(key: 'communes' | 'perimetre' | 'departements', value: CommuneUi | Perimetre | Departements, fallback: string) {
+function setDemo(key: 'perimetre' | 'departements', value: Perimetre | Departements, fallback: string) {
   void router.replace({ query: { ...route.query, [key]: value === fallback ? undefined : value } })
 }
 
@@ -184,6 +183,7 @@ const accountItems: DsaasfrUserMenuItem[] = [
             area="end"
           />
           <DsfrButton
+            v-if="route.path !== '/dossiers'"
             label="Exporter"
             icon="fr-icon-download-line"
             tertiary
@@ -215,18 +215,6 @@ const accountItems: DsaasfrUserMenuItem[] = [
       <p class="fr-text--sm fr-text--bold fr-mb-1w">
         Comparer (démonstration)
       </p>
-      <DsfrSegmentedSet
-        :model-value="communeUi"
-        name="demo-communes"
-        legend="Choix des communes"
-        small
-        inline
-        :options="[
-          { label: 'Dans « Filtrer »', value: 'filtrer' },
-          { label: 'Bouton « Communes »', value: 'modale' },
-        ]"
-        @update:model-value="setDemo('communes', $event as CommuneUi, 'filtrer')"
-      />
       <DsfrSegmentedSet
         :model-value="perimetre"
         name="demo-perimetre"

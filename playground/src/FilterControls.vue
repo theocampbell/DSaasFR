@@ -6,23 +6,22 @@
 // - toolbar start: one chip per applied field. The field is fixed (one chip per field);
 //   condition and values open a panel with its own "Appliquer"; × removes the filter.
 // Every panel works on a draft: closing it without applying discards the changes.
-// Long lists (communes: over a thousand) use DsaasfrSearchableCheckboxSet in the same
-// panels: search, selection, capped results.
+// Communes (up to a whole département) have their own button and modal: CommunesModal.
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { dossiers } from './fakeData'
 import {
   applied, applyFilter, applySelection, clearFilters, countResults, facetCount,
-  fieldLabel, fields, filteredDossiers, filtersOf, isLong, operatorLabel, operators, removeFilter,
+  fieldLabel, fields, filteredDossiers, filtersOf, operatorLabel, operators, removeFilter,
   selectionOf, valuesOf,
 } from './filters'
 import type { Operator } from './filters'
 import CommunesModal from './CommunesModal.vue'
-import { communeUi } from './demo'
 
 defineProps<{ area: 'start' | 'end' }>()
 
-// Variant "Communes" button + modal: communes leave the "Filtrer" panel and the chips.
-const inPanel = (fieldKey: string) => communeUi.value === 'filtrer' || fieldKey !== 'commune'
+// Communes have their own button and modal (CommunesModal): they are not in the "Filtrer"
+// panel nor in the chips. Same search state, URL and saved searches.
+const inPanel = (fieldKey: string) => fieldKey !== 'commune'
 const panelFields = computed(() => fields.filter(f => inPanel(f.key)))
 const chips = computed(() => applied.filter(f => inPanel(f.field)))
 const panelCount = computed(() => chips.value.length)
@@ -41,7 +40,7 @@ const draftResults = computed(() => countResults(draftFilters.value))
 /** Value options with their faceted count; values that would return nothing are disabled. */
 const draftOptions = (fieldKey: string, name: string) => valuesOf(fieldKey).map((v) => {
   const n = facetCount(draftFilters.value, fieldKey, v)
-  return { label: `${v} (${n})`, ...(isLong(fieldKey) && { searchText: v }), value: v, name, id: `${name}-${v}`, disabled: n === 0 && !draft[fieldKey]!.includes(v) }
+  return { label: `${v} (${n})`, value: v, name, id: `${name}-${v}`, disabled: n === 0 && !draft[fieldKey]!.includes(v) }
 })
 watch(panelOpen, (open) => {
   if (open) Object.assign(draft, selectionOf(applied))
@@ -80,8 +79,6 @@ const chipOptions = (field: string) => valuesOf(field).map((v) => {
   const n = chipDraft.operator === 'is' ? facetCount(others, field, v) : undefined
   return {
     label: n === undefined ? v : `${v} (${n})`,
-    // Long lists search the name, not the count (DsaasfrSearchableCheckboxSet only).
-    ...(isLong(field) && { searchText: v }),
     value: v,
     name: `chip-${field}`,
     id: `chip-${field}-${v}`,
@@ -147,15 +144,7 @@ function clearAll() {
       </template>
       <template #values>
         <div class="fr-px-2w fr-pt-1w">
-          <DsaasfrSearchableCheckboxSet
-            v-if="isLong(filter.field)"
-            v-model="chipDraft.values"
-            :label="fieldLabel(filter.field)"
-            :options="chipOptions(filter.field)"
-            autofocus
-          />
           <DsfrCheckboxSet
-            v-else
             v-model="chipDraft.values"
             :legend="`Valeurs : ${fieldLabel(filter.field)}`"
             small
@@ -181,9 +170,9 @@ function clearAll() {
     />
   </template>
 
-  <!-- Toolbar end: ["Communes" (modal variant)] "Filtrer" = every field with its values,
-       applied on demand -->
-  <CommunesModal v-if="area === 'end' && communeUi === 'modale'" />
+  <!-- Toolbar end: "Communes" (its own modal), "Filtrer" (every other field, applied on
+       demand), "Enregistrer la recherche" -->
+  <CommunesModal v-if="area === 'end'" />
   <DsaasfrDropdown
     v-if="area === 'end'"
     v-model:open="panelOpen"
@@ -200,24 +189,14 @@ function clearAll() {
     </template>
     <template #default>
       <div class="fr-px-2w fr-pt-1w">
-        <template
+        <DsfrCheckboxSet
           v-for="field in panelFields"
           :key="field.key"
-        >
-          <DsaasfrSearchableCheckboxSet
-            v-if="field.long"
-            v-model="draft[field.key]"
-            :label="field.label"
-            :options="draftOptions(field.key, `filtre-${field.key}`)"
-          />
-          <DsfrCheckboxSet
-            v-else
-            v-model="draft[field.key]"
-            :legend="field.label"
-            small
-            :options="draftOptions(field.key, `filtre-${field.key}`)"
-          />
-        </template>
+          v-model="draft[field.key]"
+          :legend="field.label"
+          small
+          :options="draftOptions(field.key, `filtre-${field.key}`)"
+        />
       </div>
     </template>
     <template #footer="{ close }">
@@ -237,4 +216,13 @@ function clearAll() {
       />
     </template>
   </DsaasfrDropdown>
+  <!-- Saves the current search (text, communes, filters) — demo: does nothing. In a real
+       app, it stores the search URL in the database, listed in "Mes recherches". -->
+  <DsfrButton
+    v-if="area === 'end'"
+    label="Enregistrer la recherche"
+    icon="fr-icon-save-line"
+    tertiary
+    size="sm"
+  />
 </template>

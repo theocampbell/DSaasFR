@@ -415,26 +415,27 @@ arrive sur l’élément racine du composant, qui contient le bouton.
 
 ## Champs à beaucoup de valeurs
 
-Quand un champ a des centaines de valeurs (les communes d’un département), gardez-le dans les
-filtres, au même endroit que les autres : une recherche enregistrée contient les communes et
-les autres filtres ensemble. Remplacez seulement sa liste de cases à cocher, dans le panneau
-« Filtrer » et dans celui de son étiquette, par un
+Quand un champ a des centaines de valeurs (les communes d’un département), gardez-le dans la
+recherche, avec les autres filtres : une recherche enregistrée contient les communes et les
+autres filtres ensemble. Donnez-lui son **propre bouton** à côté de « Filtrer », qui ouvre une
+**fenêtre modale DSFR** contenant un
 [DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set) :
 
 ```vue
-<DsaasfrSearchableCheckboxSet
-  v-if="field.key === 'commune'"
-  v-model="draft.commune"
-  label="Commune"
-  :options="optionsCommune"
-/>
-<DsfrCheckboxSet v-else v-model="draft[field.key]" :legend="field.label" small :options="…" />
+<DsfrButton :label="libelleCommunes" icon="fr-icon-map-pin-2-line" secondary size="sm" aria-haspopup="dialog" @click="ouvrir" />
+<DsfrModal :opened="ouvert" title="Communes" :origin="bouton" :actions="[…]" @close="ouvert = false">
+  <div class="liste-communes"> <!-- hauteur fixe : var(--dsaasfr-modal-list-height), défile -->
+    <DsaasfrSearchableCheckboxSet v-model="brouillon" label="Commune" :options="optionsCommune" />
+  </div>
+</DsfrModal>
 ```
 
-Les communes qui ont des dossiers passent devant celles qui n’en ont pas (désactivées,
-« (0) »). Passez le nom seul dans `searchText`, pour qu’on ne trouve pas une commune par son
-nombre de dossiers, et ajoutez `autofocus` dans le panneau de l’étiquette. Voir la
-[fiche de décision 0010](/decisions/0010-long-lists).
+- Le bouton résume la sélection : « Communes », « Communes : Lacanau et 2 autres ».
+- La liste a une hauteur fixe : la modale ne change pas de taille pendant la recherche.
+- Un petit périmètre (10 communes) affiche de simples cases à cocher ; un département entier,
+  la recherche. Passez le nom seul dans `searchText`.
+- Même état de recherche que les autres filtres : l’URL et les recherches enregistrées ne
+  changent pas. Voir la [fiche de décision 0010](/decisions/0010-long-lists).
 
 ## 6. L’assemblage dans la barre d’outils
 

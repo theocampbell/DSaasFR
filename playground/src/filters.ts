@@ -14,8 +14,6 @@ export interface FieldDef {
   column: number
   /** Every possible value, when there are more than the data shows (communes of the département). */
   values?: string[]
-  /** Long list: searchable checkboxes (DsaasfrSearchableCheckboxSet) instead of plain ones. */
-  long?: boolean
 }
 export const fields: FieldDef[] = [
   { key: 'statut', label: 'Statut', column: 4 },
@@ -26,7 +24,6 @@ export const fields: FieldDef[] = [
     column: 3,
     // The person's perimeter: the whole département, or a few communes (demo switch).
     get values() { return perimetre.value === 'communes' ? perimetreCommunes : allCommunes },
-    long: true,
   },
 ]
 export const operators = [
@@ -42,7 +39,6 @@ export const valuesOf = (fieldKey: string) => {
   const field = fields.find(f => f.key === fieldKey)!
   return field.values ?? [...new Set(dossiers.map(row => row[field.column]!))].sort((a, b) => a.localeCompare(b, 'fr'))
 }
-export const isLong = (fieldKey: string) => !!fields.find(f => f.key === fieldKey)?.long
 /** Values in list order, whatever order they were ticked in. */
 const ordered = (fieldKey: string, values: string[]) => valuesOf(fieldKey).filter(v => values.includes(v))
 export const fieldLabel = (key: string) => fields.find(f => f.key === key)!.label
