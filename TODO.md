@@ -14,10 +14,6 @@ mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vou
       (l’URL de la recherche), affichés dans la barre latérale (groupe « Mes recherches »
       sous « Dossiers ») ; « Enregistrer la recherche » (barre d’outils) enregistre l’URL
       courante. À faire côté application ; dans le bac à sable, un exemple et une recette.
-- [ ] 🤖 `DsaasfrSidebar` : le lien courant est déterminé par le chemin seul. Des liens
-      `/dossiers?…` (recherches enregistrées) seraient tous « page actuelle » en même temps
-      que « Dossiers ». Comparer aussi les paramètres et ne marquer que le lien le plus
-      précis (contournement en attendant : `active` sur chaque élément).
 - [ ] 🤖 Option : « Tout effacer » sur la dernière ligne de tags plutôt que seul en dessous.
 - [ ] 🤖 Option : revue `dsfr-guardian` + `a11y-auditor` de `DsaasfrFilterDropdown` et
       `DsaasfrFilterModal` (code déjà revu dans le bac à sable, puis déplacé).
@@ -77,6 +73,8 @@ mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vou
 
 ## Fait
 
+- [x] `DsaasfrSidebar` : le lien courant compare aussi les paramètres et seul le lien le plus
+      précis est « page actuelle » (recherches enregistrées `/dossiers?…` en liens).
 - [x] 0.3.0 (PR #4) : aperçu flottant contenu dans la liste ; filtres groupés
       (`DsaasfrFilterDropdown`, `DsaasfrFilterModal`, `DsaasfrSearchableCheckboxSet`,
       `DsaasfrSelectedFilters`), recherche dans la page ; sélecteur de département

@@ -93,6 +93,31 @@ describe('DsaasfrSidebar', () => {
     expect(screen.getByRole('button', { name: 'Administration' }).getAttribute('aria-current')).toBeNull()
   })
 
+  it('marks only the most precise link as current, query parameters included (saved searches)', async () => {
+    const withSearches: DsaasfrSidebarItem[] = [
+      { text: 'Dossiers', to: '/dossiers' },
+      {
+        text: 'Mes recherches',
+        menuItems: [
+          { text: 'Urgents', to: '/dossiers?statut=urgent' },
+          { text: 'En retard', to: '/dossiers?delai=depasse' },
+        ],
+      },
+    ]
+    const current = () => screen.queryAllByRole('link', { current: 'page' }).map(l => l.textContent?.trim())
+
+    const first = await renderSidebar('/dossiers?statut=urgent', { items: withSearches })
+    expect(current()).toEqual(['Urgents'])
+    first.unmount()
+
+    const second = await renderSidebar('/dossiers', { items: withSearches })
+    expect(current()).toEqual(['Dossiers'])
+    second.unmount()
+
+    await renderSidebar('/dossiers/D-2026-2041', { items: withSearches })
+    expect(current()).toEqual(['Dossiers'])
+  })
+
   it('toggles a group with the keyboard', async () => {
     const user = userEvent.setup()
     await renderSidebar('/')

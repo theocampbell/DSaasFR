@@ -51,6 +51,12 @@ La page active est déduite de la route courante, par préfixe : sur `/dossiers/
 l’entrée « Dossiers » est active. L’entrée `/` n’est active que sur `/`. Pour forcer un état,
 utilisez `active` sur l’entrée.
 
+Les paramètres comptent aussi, pour des **recherches enregistrées** affichées comme liens
+(`/dossiers?statut=urgent`) : un lien dont un paramètre diffère de l’URL n’est pas actif, et
+seul le lien le plus précis de toute la navigation l’est. Sur `/dossiers?statut=urgent`, la
+recherche « Urgents » est la page courante, pas « Dossiers » en plus ; sur `/dossiers`,
+« Dossiers » seul.
+
 ### Page active dans un groupe
 
 <Example story="shell-dsaasfrsidebar--active-in-group" title="groupe Administration ouvert, page Démarches active" :height="560" />
