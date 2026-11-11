@@ -4,16 +4,18 @@
  * dismissible tag per filter ("Commune : Pessac et 1 autre ×"), and "Tout effacer".
  *
  * The DSFR presents dismissible tags (fr-tag--dismiss) for selected filters; Vue DSFR's
- * DsfrTag has no dismissible variant, so the official markup is used: a list of buttons,
- * each named "Retirer le filtre …". Simpler than DsaasfrFilterChip (no condition, no
- * editing in place): to change a filter, the user goes back to its button in the toolbar.
+ * DsfrTag has no dismissible variant, so the official markup is used (a small tag group:
+ * fr-tags-group--sm). Each tag is named "Retirer le filtre" + its visible text (RGAA 7.1.3,
+ * DSFR tag accessibility); when the values are summarised ("et 2 autres"), the full list is
+ * its description. No condition, no editing in place: to change a filter, the user goes
+ * back to its button in the toolbar.
  *
  * Presentational: the app removes the filter on `remove` / `clear`. Focus is kept: after a
  * removal it moves to the next tag (or the previous one); when none is left, `empty` is
  * emitted for the app to move focus (e.g. to the search field).
  * See docs/decisions/0009-filters.md.
  */
-import { computed, nextTick, useTemplateRef } from 'vue'
+import { computed, nextTick, useId, useTemplateRef } from 'vue'
 import { DsfrButton } from '@gouvminint/vue-dsfr'
 import type { DsaasfrSelectedFilter, DsaasfrSelectedFiltersProps } from './DsaasfrSelectedFilters.types'
 
@@ -50,11 +52,20 @@ function namedValues(values: string[]) {
   return rest > 0 ? `${values.slice(0, 10).join(', ')} et ${rest} autre${rest > 1 ? 's' : ''}` : values.join(', ')
 }
 
-const tags = computed(() => props.items.map((item: DsaasfrSelectedFilter) => ({
-  key: item.key,
-  text: `${item.label} : ${shortValues(item.values)}`,
-  name: `${props.removeLabel} ${item.label} : ${namedValues(item.values)}`,
-})))
+const uid = useId()
+const tags = computed(() => props.items.map((item: DsaasfrSelectedFilter, i) => {
+  const text = `${item.label} : ${shortValues(item.values)}`
+  const summarised = shortValues(item.values) !== item.values.join(', ')
+  return {
+    key: item.key,
+    text,
+    // The name contains the visible text (voice control: "cliquer Commune Bordeaux et 2 autres").
+    name: `${props.removeLabel} ${text}`,
+    // The values hidden by "et N autres", as a description (up to 10).
+    descriptionId: summarised ? `${uid}-values-${i}` : undefined,
+    description: namedValues(item.values),
+  }
+}))
 
 const list = useTemplateRef<HTMLElement>('list')
 
@@ -79,16 +90,19 @@ function clear() {
 </script>
 
 <template>
+  <!-- A named group (tags + "Tout effacer"): announced when focus enters it, which a list
+       name often is not. -->
   <div
     class="dsaasfr-selected-filters"
     :class="{ 'dsaasfr-selected-filters--end': align === 'end' }"
+    :role="tags.length ? 'group' : undefined"
+    :aria-label="tags.length ? listLabel : undefined"
   >
     <slot />
     <ul
       v-if="tags.length"
       ref="list"
-      class="fr-tags-group dsaasfr-selected-filters__list"
-      :aria-label="listLabel"
+      class="fr-tags-group fr-tags-group--sm dsaasfr-selected-filters__list"
     >
       <li
         v-for="(tag, index) in tags"
@@ -96,12 +110,18 @@ function clear() {
       >
         <button
           type="button"
-          class="fr-tag fr-tag--sm fr-tag--dismiss"
+          class="fr-tag fr-tag--dismiss"
           :aria-label="tag.name"
+          :aria-describedby="tag.descriptionId"
           @click="remove(tag.key, index)"
         >
           {{ tag.text }}
         </button>
+        <span
+          v-if="tag.descriptionId"
+          :id="tag.descriptionId"
+          hidden
+        >{{ tag.description }}</span>
       </li>
     </ul>
     <DsfrButton

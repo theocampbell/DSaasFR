@@ -2,7 +2,7 @@
 
 - **Statut** : Proposé
 - **Date** : 2026-11-11
-- **Composants** : DsaasfrSearchableCheckboxSet (DsaasfrFilterChip, DsaasfrDropdown ajustés)
+- **Composants** : DsaasfrSearchableCheckboxSet (DsaasfrDropdown ajusté ; DsaasfrFilterChip, depuis retiré, voir 0009)
 
 ## Point de départ DSFR
 
@@ -96,20 +96,31 @@ Ajustements liés :
   quelques communes (une gendarmerie, une association). Jusqu’à `searchThreshold` options
   (12), le composant n’affiche pas de recherche : une simple liste de cases à cocher. Le même
   écran convient aux deux cas.
-- **Choix du responsable produit : un bouton « Communes » à part**, à côté de « Filtrer »,
+- **Choix du responsable produit : un bouton « Communes » à part**, à côté des autres boutons
+  de groupe (« Instruction », « Projet »),
   qui ouvre une **fenêtre modale DSFR** (`DsfrModal`) contenant ce composant. Un seul niveau,
   le motif standard du DSFR (un bouton qui ouvre une modale), plus de place, et le critère le
   plus utilisé bien visible. Le bouton indique le nombre de communes choisies
-  (« Communes (3) »), le détail étant dans les filtres sélectionnés ; les communes ne sont plus dans le panneau « Filtrer » ni dans les étiquettes.
+  (« Communes (3) »), le détail étant dans les filtres sélectionnés ; les communes ne sont dans aucun autre panneau.
   Même état de recherche : l’URL et les recherches enregistrées ne changent pas.
 - **Taille fixe** : la liste a une hauteur fixe dans la modale
   (`--dsaasfr-modal-list-height`) et défile à l’intérieur ; la modale ne change pas de taille
-  pendant la recherche, les boutons restent en place.
+  pendant la recherche, les boutons restent en place. Une marge négative de 1v et un padding
+  de 1v laissent la place à l’anneau de focus, que la zone qui défile rognerait sinon.
+- **Fenêtre basse** (fort zoom, moins de 40em de haut) : plus de hauteur fixe ni de pied fixé
+  dans la modale. Un seul défilement, celui du corps de la modale ; sinon deux défilements
+  imbriqués laissaient une bande étroite et le focus passait sous les boutons fixés
+  (revue RGAA, 10.7 / 10.11).
+- **Modale hors des barres fixées** (`Teleport` vers `body`) : rendue dans la barre
+  d’outils, elle partageait son contexte d’empilement et l’en-tête DSFR des écrans étroits
+  recouvrait son titre et « Fermer » (revue RGAA, 10.4 / 10.7).
 - **Longue sélection** (50 communes) : la sélection montre les 5 premières puis « Afficher
-  les 45 autres » (bouton de divulgation, `aria-expanded`), pour que le champ de recherche
-  reste visible ; les valeurs masquées restent sélectionnées. Le tag des filtres sélectionnés
+  toute la sélection (50) » (bouton de divulgation, libellé stable, état dans
+  `aria-expanded`), pour que le champ de recherche reste visible ; les valeurs masquées
+  restent sélectionnées. À l’ouverture, le focus va à la première valeur révélée (elles sont
+  avant le bouton). Le tag des filtres sélectionnés
   dit « Commune : Pessac et 49 autres ».
-- Le composant reste utilisable dans un panneau de filtre (étiquette, « Filtrer ») pour
+- Le composant reste utilisable dans un panneau de filtre (bouton de groupe, `DsaasfrDropdown`) pour
   d’autres listes longues.
 
 ## Conséquences pour l'accessibilité

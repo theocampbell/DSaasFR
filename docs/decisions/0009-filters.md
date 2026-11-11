@@ -2,7 +2,7 @@
 
 - **Statut** : Proposé
 - **Date** : 2026-11-03
-- **Composants** : DsaasfrDropdown, DsaasfrFilterChip (DsaasfrUserMenu repose désormais sur le menu déroulant)
+- **Composants** : DsaasfrDropdown, DsaasfrSelectedFilters (DsaasfrUserMenu repose sur le menu déroulant ; DsaasfrFilterChip, retiré pour l’instant)
 
 ## Point de départ DSFR
 
@@ -113,7 +113,46 @@ utilisateurs visés. Nouveau motif, montré dans le bac à sable :
 - **Pas de condition** : un filtre retient les dossiers qui ont l’une des valeurs choisies.
   Pour modifier un filtre, on revient à son bouton ; le tag sert seulement à le retirer.
   `DsaasfrFilterChip` (condition et valeurs modifiables sur place, à la manière de Linear)
-  reste disponible pour des usages plus avancés.
+  a depuis été retiré du paquet pour l’instant (voir ci-dessous).
+
+### Revues DSFR et RGAA des filtres groupés (2026-11-11)
+
+Corrections et interprétations retenues après les revues `dsfr-guardian` et `a11y-auditor` :
+
+- **Nom des tags** : « Retirer le filtre » suivi du **texte visible** du tag (« Retirer le
+  filtre Commune : Bordeaux et 2 autres »), comme l’exige la documentation d’accessibilité
+  du tag DSFR et le test 7.1.3 (commande vocale). La liste complète des valeurs résumées (au
+  plus 10) devient la **description** du bouton (`aria-describedby` vers un élément caché).
+- **Balisage** : groupe de petits tags officiel (`fr-tags-group--sm`, tags sans
+  `fr-tag--sm`). Le groupe et « Tout effacer » forment un `role="group"` nommé « Filtres
+  sélectionnés », annoncé à l’entrée du focus (un nom de liste l’est rarement).
+- **Marges** : `fr-tags-group` donne à chaque tag des marges latérales et basse (prévues
+  pour des tags empilés) ; elles sont remises à 0 et l’espacement passe par un `gap` de 1w,
+  équivalent. Sans cela, les tags étaient décalés de 4 px par rapport à « Tout effacer ».
+- **`DsfrTag` détourné, écarté** : `DsfrTag tag-name="button" class="fr-tag--dismiss"`
+  fonctionnerait (attributs transmis), mais ce n’est pas un usage documenté par Vue DSFR ;
+  le balisage officiel direct est plus sûr (règle 1 : « réutiliser le balisage fr-* »).
+- **Boutons** : les boutons de groupe sont secondaires avec icône ; « Enregistrer la
+  recherche » et « Tout effacer », qui agissent sur la page, sont tertiaires avec contour ;
+  les actions internes aux panneaux (« Réinitialiser », « Tout désélectionner », « Afficher
+  toute la sélection ») sont tertiaires sans contour. Le primaire est réservé à « Afficher N
+  dossiers ».
+- **Ordre** : les filtres sélectionnés viennent juste après les boutons de groupe, avant la
+  notice et le titre de la page, dans l’ordre de lecture comme à l’écran (12.8.1 conforme).
+  Pas de région ni de titre propres : 12.6 ne vise que les zones principales, et un titre
+  masqué avant le `h1` casserait la hiérarchie (9.1).
+- **Annonce** : le nombre de résultats (`role="status"`) dit aussi ce qu’un retrait a fait
+  (« Filtre Statut retiré. 15 dossiers sur 250 »), le nombre seul pouvant ne pas changer.
+
+### `DsaasfrFilterChip` retiré du paquet pour l’instant (2026-11-11)
+
+L’étiquette de filtre modifiable sur place (champ · condition · valeurs · ×, à la manière de
+Linear) plaît au responsable produit mais demande encore du travail avant d’être publiée :
+elle est retirée du paquet, de la documentation et de Storybook. Le motif retenu pour
+l’instant est celui ci-dessus (groupes de filtres et filtres sélectionnés). Son code reste
+dans l’historique git (dernière version : commit `c0f120e`, dossier
+`src/components/DsaasfrFilterChip/`), pour une reprise ultérieure. Les paragraphes
+précédents qui la décrivent sont conservés comme historique de la décision.
 
 ## Conséquences pour l'accessibilité
 

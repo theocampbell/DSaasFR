@@ -1,6 +1,6 @@
 // App-side filter logic (NOT in the library): which fields exist, how they are grouped,
 // their values, how a filter applies to the data. The library only provides the pieces
-// (DsaasfrToolbar, DsaasfrDropdown, DsaasfrFilterChip, DsaasfrSearchableCheckboxSet).
+// (DsaasfrToolbar, DsaasfrDropdown, DsaasfrSearchableCheckboxSet, DsaasfrSelectedFilters).
 //
 // Filters are applied explicitly ("Afficher…"): with millions of records, filtering runs
 // on the server, and one request per applied change is predictable (no request per click,
@@ -74,8 +74,14 @@ export const fieldLabel = (key: string) => field(key).label
 export const searchText = ref('')
 /** Applied filters, in field order. */
 export const applied = reactive<Filter[]>([])
+/**
+ * What the last removal did ("Filtre Statut retiré. "), said with the result count: the
+ * count alone may not change (RGAA 7.5). Cleared by the next applied change.
+ */
+export const removalNote = ref('')
 
 export function applyFilter(fieldKey: string, values: string[]) {
+  removalNote.value = ''
   const index = applied.findIndex(f => f.field === fieldKey)
   const next = values.length ? [{ field: fieldKey, values: ordered(fieldKey, values) }] : []
   if (index === -1) applied.push(...next)
@@ -88,11 +94,14 @@ export function applyGroup(groupKey: string, selection: Record<string, string[]>
 }
 export function removeFilter(fieldKey: string) {
   const index = applied.findIndex(f => f.field === fieldKey)
-  if (index !== -1) applied.splice(index, 1)
+  if (index === -1) return
+  applied.splice(index, 1)
+  removalNote.value = `Filtre ${fieldLabel(fieldKey)} retiré. `
 }
 /** "Tout effacer": every filter (the search text has its own field). */
 export function clearFilters() {
   applied.splice(0)
+  removalNote.value = 'Tous les filtres retirés. '
 }
 export const selectionOf = (filters: Filter[], groupKey: string) =>
   Object.fromEntries(fieldsOf(groupKey).map(f => [f.key, [...(filters.find(a => a.field === f.key)?.values ?? [])]]))

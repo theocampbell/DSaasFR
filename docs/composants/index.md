@@ -25,7 +25,6 @@ Des composants plus petits, utilisés par le shell et par vos pages.
 |---|---|
 | [DsaasfrDropdown](/composants/dropdown) | Un bouton qui ouvre un panneau flottant (déclencheur « Filtrer », menus). |
 | [DsaasfrSelectedFilters](/composants/selected-filters) | Les filtres en cours au-dessus des résultats : un tag supprimable DSFR par filtre, « Tout effacer ». |
-| [DsaasfrFilterChip](/composants/filter-chip) | Un filtre actif, sous la forme « champ · condition · valeurs · × ». |
 | [DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set) | Cases à cocher avec recherche pour une liste longue (communes…), dans un panneau de filtre. |
 
 ## Composables

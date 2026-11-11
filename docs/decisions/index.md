@@ -19,7 +19,7 @@ discussion.
 | [0006](./0006-breadcrumb-bar) | Fil d’Ariane piloté par le routeur et action principale | DsaasfrBreadcrumbBar |
 | [0007](./0007-toolbar) | Barre d’outils générique | DsaasfrToolbar |
 | [0008](./0008-preview-panel) | Panneau d’aperçu | DsaasfrPreviewPanel |
-| [0009](./0009-filters) | Filtres : menu déroulant et étiquettes, logique dans l’application | DsaasfrDropdown, DsaasfrFilterChip |
+| [0009](./0009-filters) | Filtres : groupes de filtres, filtres sélectionnés, logique dans l’application | DsaasfrDropdown, DsaasfrSelectedFilters |
 | [0010](./0010-long-lists) | Listes longues dans les filtres : recherche et cases à cocher dans le même panneau | DsaasfrSearchableCheckboxSet |
 | [0011](./0011-context-switcher) | Sélecteur de contexte (département) sous le nom du service | DsaasfrContextSwitcher, DsaasfrSidebar |
 

@@ -26,9 +26,9 @@ const preview = computed(() => [
 ])
 const results = computed(() => countResults(preview.value))
 /** Values with their faceted count; values that would return nothing are disabled. */
-const options = (fieldKey: string) => valuesOf(fieldKey).map((v) => {
+const options = (fieldKey: string) => valuesOf(fieldKey).map((v, i) => {
   const n = facetCount(preview.value, fieldKey, v)
-  const id = `filtre-${fieldKey}-${v}`
+  const id = `filtre-${fieldKey}-${i}` // an index: values contain spaces, ids cannot (RGAA 8.2)
   return { label: `${v} (${n})`, value: v, name: `filtre-${fieldKey}`, id, disabled: n === 0 && !draft[fieldKey]!.includes(v) }
 })
 

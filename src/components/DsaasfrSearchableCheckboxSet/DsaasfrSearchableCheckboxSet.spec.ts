@@ -267,12 +267,14 @@ describe('DsaasfrSearchableCheckboxSet', () => {
     const group = () => screen.getByRole('group', { name: 'Commune : sélection (50)' })
     expect(within(group()).getAllByRole('checkbox')).toHaveLength(5)
 
-    const more = screen.getByRole('button', { name: 'Afficher les 45 autres' })
-    expect(more.getAttribute('aria-expanded')).toBe('false')
-    await user.click(more)
+    const toggle = screen.getByRole('button', { name: 'Afficher toute la sélection (50)' })
+    expect(toggle.getAttribute('aria-expanded')).toBe('false')
+    await user.click(toggle)
     expect(within(group()).getAllByRole('checkbox')).toHaveLength(50)
-    expect(more.getAttribute('aria-expanded')).toBe('true')
-    expect(more.textContent?.trim()).toBe('Afficher moins')
+    expect(toggle.getAttribute('aria-expanded')).toBe('true')
+    expect(toggle.textContent?.trim()).toBe('Afficher toute la sélection (50)') // stable label
+    // The revealed values come before the button: focus goes to the first of them.
+    expect(document.activeElement).toBe(within(group()).getAllByRole('checkbox')[5])
     expect(selected.value).toHaveLength(50) // folding never unselects
   })
 

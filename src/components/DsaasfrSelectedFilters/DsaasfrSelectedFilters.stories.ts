@@ -18,7 +18,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Les filtres en cours, au-dessus d’une liste de résultats : un **tag supprimable** DSFR par filtre (« Commune : Pessac et 1 autre × ») et « Tout effacer ». Plus simple que DsaasfrFilterChip : pas de condition, pas de modification sur place ; pour changer un filtre, on revient à son bouton dans la barre d’outils. Le focus passe au tag suivant après un retrait. Voir la fiche de décision docs/decisions/0009.',
+          'Les filtres en cours, au-dessus d’une liste de résultats : un **tag supprimable** DSFR par filtre (« Commune : Pessac et 1 autre × ») et « Tout effacer ». Pas de condition, pas de modification sur place : pour changer un filtre, on revient à son bouton dans la barre d’outils. Le focus passe au tag suivant après un retrait. Voir la fiche de décision docs/decisions/0009.',
       },
     },
   },

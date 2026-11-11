@@ -229,9 +229,8 @@ const accountItems: DsaasfrUserMenuItem[] = [
         name="demo-perimetre"
         legend="Périmètre de la personne connectée"
         small
-        inline
         :options="[
-          { label: 'Département entier (1 178 communes)', value: 'departement' },
+          { label: 'Département (1 178)', value: 'departement' },
           { label: '10 communes', value: 'communes' },
         ]"
         @update:model-value="setDemo('perimetre', $event as Perimetre, 'departement')"
@@ -241,10 +240,9 @@ const accountItems: DsaasfrUserMenuItem[] = [
         name="demo-departements"
         legend="Départements de la personne connectée"
         small
-        inline
         :options="[
-          { label: '1 département (le cas courant)', value: 'un' },
-          { label: '3 départements', value: 'plusieurs' },
+          { label: '1 (le cas courant)', value: 'un' },
+          { label: '3', value: 'plusieurs' },
         ]"
         @update:model-value="setDemo('departements', $event as Departements, 'un')"
       />

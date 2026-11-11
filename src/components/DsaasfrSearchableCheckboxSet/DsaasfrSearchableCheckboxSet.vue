@@ -28,8 +28,7 @@ const props = withDefaults(defineProps<DsaasfrSearchableCheckboxSetProps>(), {
   localFilter: true,
   clearText: 'Tout désélectionner',
   maxVisibleSelected: 5,
-  showMoreSelectedText: (n: number) => `Afficher ${n > 1 ? `les ${n} autres` : 'l’autre'}`,
-  showLessSelectedText: 'Afficher moins',
+  showAllSelectedText: (n: number) => `Afficher toute la sélection (${n})`,
   resultsCountText: (n: number, shown: number) => {
     if (!n) return 'Aucun résultat'
     const count = `${n} résultat${n > 1 ? 's' : ''}`
@@ -161,6 +160,13 @@ const visibleSelected = computed(() =>
   selectionOpen.value ? shownSelected.value : shownSelected.value.slice(0, props.maxVisibleSelected))
 const hiddenSelected = computed(() => shownSelected.value.length - Math.min(shownSelected.value.length, props.maxVisibleSelected))
 const selectedListId = `${uid}-selected`
+// Opening reveals values BEFORE the button: focus goes to the first of them (RGAA 12.8).
+async function toggleSelection() {
+  selectionOpen.value = !selectionOpen.value
+  if (!selectionOpen.value) return
+  await nextTick()
+  document.querySelectorAll<HTMLInputElement>(`#${CSS.escape(selectedListId)} input`)[props.maxVisibleSelected]?.focus()
+}
 const resultsModel = groupModel(() => shownResults.value)
 
 const selectedLegend = computed(() => `${props.selectedLegend ?? `${props.label} : sélection`} (${model.value.length})`)
@@ -231,13 +237,15 @@ async function clearSelection() {
       <div class="dsaasfr-searchable-checkbox-set__selected-actions">
         <DsfrButton
           v-if="hiddenSelected"
-          :label="selectionOpen ? showLessSelectedText : showMoreSelectedText(hiddenSelected)"
+          :label="showAllSelectedText(shownSelected.length)"
+          :icon="{ name: selectionOpen ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line' }"
+          icon-right
           :aria-expanded="selectionOpen ? 'true' : 'false'"
           :aria-controls="selectedListId"
           tertiary
           no-outline
           size="sm"
-          @click="selectionOpen = !selectionOpen"
+          @click="toggleSelection"
         />
         <DsfrButton
           :label="clearText"

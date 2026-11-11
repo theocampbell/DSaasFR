@@ -80,4 +80,4 @@ Dans la mise en page, placez-la dans l’emplacement `toolbar` de
 
 - [Fiche de décision 0007](/decisions/0007-toolbar)
 - [Recette : filtres d’une liste](/recettes/filtres)
-- [DsaasfrFilterChip](./filter-chip), [DsaasfrDropdown](./dropdown)
+- [DsaasfrSelectedFilters](./selected-filters), [DsaasfrDropdown](./dropdown)

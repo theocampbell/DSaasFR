@@ -22,7 +22,7 @@ courante et ouvre une liste de liens, le lien courant marqué.
 - Quand le même agent travaille dans plusieurs contextes (plusieurs départements,
   l’administration nationale dans tous) et que ce contexte change tout ce que montre
   l’application.
-- Pas pour un critère d’une liste : c’est un filtre ([DsaasfrFilterChip](/composants/filter-chip)).
+- Pas pour un critère d’une liste : c’est un filtre (voir la [recette des filtres](/recettes/filtres)).
 - Pas pour un réglage du compte : c’est le [menu utilisateur](/composants/user-menu).
 
 ## Exemple

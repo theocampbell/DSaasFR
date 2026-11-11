@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
-import DsaasfrFilterChip from '../DsaasfrFilterChip/DsaasfrFilterChip.vue'
+import DsaasfrDropdown from '../DsaasfrDropdown/DsaasfrDropdown.vue'
 import DsaasfrSearchableCheckboxSet from './DsaasfrSearchableCheckboxSet.vue'
 
 // Invented communes: over a thousand, as in a real département.
@@ -63,30 +63,28 @@ export const ShortList: Story = {
   }),
 }
 
-export const InFilterChip: Story = {
-  name: 'Dans une étiquette de filtre',
+export const InPanel: Story = {
+  name: 'Dans un panneau de filtre',
   parameters: { layout: 'fullscreen' },
   render: args => ({
-    components: { DsaasfrFilterChip, DsaasfrSearchableCheckboxSet },
-    setup: () => ({ args, applied: ref(['Lacanau']), draft: ref(['Lacanau']), openPart: ref<'values' | undefined>('values') }),
+    components: { DsaasfrDropdown, DsaasfrSearchableCheckboxSet },
+    setup: () => ({ args, applied: ref(['Lacanau']), draft: ref(['Lacanau']), open: ref(true) }),
     template: `
       <div class="fr-p-3w" style="min-height: 34rem">
-        <DsaasfrFilterChip
-          v-model:open-part="openPart"
-          field="Commune"
-          operator="est"
-          :values="applied"
-          @update:open-part="part => { if (part) draft = [...applied] }"
+        <DsaasfrDropdown
+          v-model:open="open"
+          autofocus
+          trigger-class="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left fr-icon-map-pin-2-line"
+          @update:open="o => { if (o) draft = [...applied] }"
         >
-          <template #values>
-            <div class="fr-px-2w fr-pt-1w">
-              <DsaasfrSearchableCheckboxSet v-bind="args" v-model="draft" />
-            </div>
-          </template>
+          <template #trigger>Communes ({{ applied.length }})</template>
+          <div class="fr-px-2w fr-pt-1w">
+            <DsaasfrSearchableCheckboxSet v-bind="args" v-model="draft" autofocus />
+          </div>
           <template #footer="{ close }">
             <DsfrButton label="Appliquer" size="sm" @click="applied = [...draft]; close(true)" />
           </template>
-        </DsaasfrFilterChip>
+        </DsaasfrDropdown>
       </div>`,
   }),
 }

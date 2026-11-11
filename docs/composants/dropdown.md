@@ -5,7 +5,7 @@ fermeture, le focus et la position du panneau. Vous fournissez le texte du bouto
 contenu du panneau : une liste de boutons, des cases à cocher, un petit formulaire.
 
 C’est la brique commune du [menu utilisateur](/composants/user-menu), des
-[étiquettes de filtre](/composants/filter-chip) et du déclencheur « Filtrer ».
+boutons de groupes de filtres (« Instruction », « Projet »).
 
 ## Quand l’utiliser
 
@@ -152,5 +152,5 @@ Par une référence de template (`ref`) :
 ## Voir aussi
 
 - [Fiche de décision 0009](/decisions/0009-filters)
-- [DsaasfrFilterChip](/composants/filter-chip), [DsaasfrUserMenu](/composants/user-menu)
+- [Recette : filtres d’une liste](/recettes/filtres), [DsaasfrUserMenu](/composants/user-menu)
 - [Recette : filtres d’une liste](/recettes/filtres)

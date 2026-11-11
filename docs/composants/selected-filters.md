@@ -5,17 +5,14 @@ résultats : un **tag supprimable** DSFR par filtre (« Commune : Pessac et 1 au
 texte recherché compris, et « Tout effacer ». Un emplacement accueille le nombre de
 résultats.
 
-C’est la version simple de [DsaasfrFilterChip](/composants/filter-chip) : pas de condition,
-pas de modification sur place. Pour changer un filtre, on revient à son bouton dans la
-[barre d’outils](/composants/toolbar) ; le tag sert seulement à le retirer.
+Pas de condition, pas de modification sur place : pour changer un filtre, on revient à son
+bouton dans la [barre d’outils](/composants/toolbar) ; le tag sert seulement à le retirer.
 
 ## Quand l’utiliser
 
 - Au-dessus des résultats d’une liste filtrée, quand les commandes de recherche sont dans la
   barre d’outils (un bouton par groupe de filtres).
 - Pas dans la barre d’outils elle-même : la ligne déborderait dès quelques filtres.
-- Pour des filtres modifiables sur place, avec condition (« est / n’est pas ») : préférez
-  `DsaasfrFilterChip`.
 
 ## Exemple
 
@@ -53,8 +50,8 @@ const filtresEnCours = computed<DsaasfrSelectedFilter[]>(() => [
 | `items` | `{ key, label, values }[]` | — (obligatoire) | Les filtres en cours, un tag chacun. |
 | `maxVisibleValues` | `number` | `1` | Valeurs affichées au plus dans un tag avant le résumé (« Pessac et 49 autres »). |
 | `maxValuesLength` | `number` | `32` | Caractères que peuvent occuper les valeurs affichées avant le résumé. |
-| `listLabel` | `string` | `'Filtres sélectionnés'` | Nom accessible de la liste des tags. |
-| `removeLabel` | `string` | `'Retirer le filtre'` | Début du nom accessible de chaque tag. |
+| `listLabel` | `string` | `'Filtres sélectionnés'` | Nom accessible du groupe des tags. |
+| `removeLabel` | `string` | `'Retirer le filtre'` | Début du nom accessible de chaque tag, avant son texte visible. |
 | `clearText` | `string` | `'Tout effacer'` | Bouton qui retire tous les filtres, affiché à partir de deux. |
 | `align` | `'start' \| 'end'` | `'start'` | `end` : aligné à droite, sous les boutons de filtres. |
 
@@ -74,10 +71,14 @@ const filtresEnCours = computed<DsaasfrSelectedFilter[]>(() => [
 
 ## Accessibilité
 
-- Balisage officiel des tags supprimables DSFR (`fr-tag--dismiss`) dans une liste nommée
-  (« Filtres sélectionnés ») ; Vue DSFR n’a pas de variante supprimable de `DsfrTag`.
-- Chaque tag est un bouton nommé « Retirer le filtre Commune : Pessac, Talence » : au plus
-  10 valeurs dans le nom, puis « et N autres ».
+- Balisage officiel d’un groupe de petits tags supprimables DSFR (`fr-tags-group--sm`,
+  `fr-tag--dismiss`) ; Vue DSFR n’a pas de variante supprimable de `DsfrTag`. Les tags et
+  « Tout effacer » forment un groupe nommé (« Filtres sélectionnés »), annoncé à l’entrée du
+  focus.
+- Chaque tag est un bouton nommé « Retirer le filtre » + son texte visible (« Retirer le
+  filtre Commune : Pessac et 1 autre ») : la commande vocale fonctionne avec ce qu’on voit
+  (RGAA 7.1.3, accessibilité du tag DSFR). Quand des valeurs sont résumées, leur liste (au
+  plus 10) est la description du bouton.
 - Après un retrait, le focus passe au tag suivant, ou au précédent. Quand il n’en reste
   aucun, `empty` permet à l’application de placer le focus.
 - Le nombre de résultats est annoncé par la zone `role="status"` fournie dans l’emplacement.

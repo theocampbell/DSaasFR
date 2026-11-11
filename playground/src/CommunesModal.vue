@@ -1,7 +1,7 @@
 <script setup lang="ts">
-// "Communes" button + modal: communes are chosen in a DsfrModal
-// opened directly from a toolbar button, next to "Filtrer". One layer, the standard DSFR
-// modal pattern, room for the search. Same search state as the other filters: the URL
+// "Communes" button + modal: communes are chosen in a DsfrModal opened directly from a
+// toolbar button, next to the other group buttons (Instruction, Projet). One layer, the
+// standard DSFR modal pattern, room for the search. Same search state as the other filters: the URL
 // and saved searches do not change. The list inside is DsaasfrSearchableCheckboxSet: plain
 // checkboxes for a small perimeter, search for the whole département.
 import { computed, ref, useTemplateRef } from 'vue'
@@ -59,26 +59,31 @@ const origin = { focus: () => trigger.value?.querySelector('button')?.focus() }
       @click="open"
     />
   </span>
-  <DsfrModal
-    :opened="opened"
-    title="Communes"
-    :origin="origin"
-    :actions="[
-      { label: draft.length ? `Afficher ${plural(results)}` : 'Afficher tous les dossiers', onClick: apply },
-      { label: 'Annuler', secondary: true, onClick: () => (opened = false) },
-    ]"
-    @close="opened = false"
-  >
-    <!-- Fixed height: the modal keeps its size while search results appear (the list
+  <!-- At page level (Teleport): inside the shell's pinned bars, the modal shares their
+       stacking context and the narrow-screen DSFR header covers its top (RGAA 10.4, 10.7). -->
+  <Teleport to="body">
+    <DsfrModal
+      :opened="opened"
+      class="communes-modal"
+      title="Communes"
+      :origin="origin"
+      :actions="[
+        { label: draft.length ? `Afficher ${plural(results)}` : 'Afficher tous les dossiers', onClick: apply },
+        { label: 'Annuler', secondary: true, onClick: () => (opened = false) },
+      ]"
+      @close="opened = false"
+    >
+      <!-- Fixed height: the modal keeps its size while search results appear (the list
          scrolls inside, the buttons stay in place). -->
-    <div class="communes-modal__list">
-      <DsaasfrSearchableCheckboxSet
-        v-model="draft"
-        label="Commune"
-        :options="options"
-      />
-    </div>
-  </DsfrModal>
+      <div class="communes-modal__list">
+        <DsaasfrSearchableCheckboxSet
+          v-model="draft"
+          label="Commune"
+          :options="options"
+        />
+      </div>
+    </DsfrModal>
+  </Teleport>
 </template>
 
 <style scoped>
@@ -90,5 +95,21 @@ const origin = { focus: () => trigger.value?.querySelector('button')?.focus() }
      negative margin keeps the content aligned with the modal title. */
   margin: calc(-1 * var(--dsaasfr-space-1v));
   padding: var(--dsaasfr-space-1v);
+}
+</style>
+
+<style>
+/* Short window (high zoom on a laptop): no fixed height and no pinned footer, a single
+   scrolling area (the modal body). Otherwise two nested scrolling areas leave a thin band,
+   and the focused checkbox ends up under the pinned buttons (RGAA 10.7, 10.11). */
+@media (height < 40em) {
+  .communes-modal .communes-modal__list {
+    height: auto;
+    overflow: visible;
+  }
+
+  .communes-modal .fr-modal__footer {
+    position: static;
+  }
 }
 </style>

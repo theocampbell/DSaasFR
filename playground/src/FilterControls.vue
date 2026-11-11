@@ -15,7 +15,7 @@ import type { DsaasfrSelectedFilter } from '@dsaasfr/vue'
 import CommunesModal from './CommunesModal.vue'
 import FilterGroupButton from './FilterGroupButton.vue'
 import { dossiers } from './fakeData'
-import { applied, clearFilters, fieldLabel, fields, filteredDossiers, groups, removeFilter, searchText } from './filters'
+import { applied, clearFilters, fieldLabel, fields, filteredDossiers, groups, removalNote, removeFilter, searchText } from './filters'
 
 defineProps<{ area: 'search' | 'start' | 'end' | 'summary' }>()
 
@@ -24,6 +24,7 @@ const plural = (n: number) => `${n} dossier${n > 1 ? 's' : ''}`
 const filtering = computed(() => !!applied.length || !!searchText.value)
 const count = computed(() =>
   filtering.value ? `${plural(filteredDossiers.value.length)} sur ${total}` : plural(total))
+
 
 // Search bar: a draft, applied on submit (Enter or the button), like the filters.
 const query = ref(searchText.value)
@@ -59,16 +60,20 @@ const filterGroups = computed(() => groups.filter(g => g.key !== 'communes'))
 
 <template>
   <!-- Page, under the title: search bar -->
-  <DsfrSearchBar
+  <div
     v-if="area === 'search'"
-    id="recherche-dossiers"
-    v-model="query"
-    class="fr-mb-3w playground-search"
-    label="Rechercher un dossier"
-    placeholder="Référence, demandeur ou commune"
-    button-text="Rechercher"
-    @search="search"
-  />
+    class="fr-grid-row fr-mb-3w"
+  >
+    <DsfrSearchBar
+      id="recherche-dossiers"
+      v-model="query"
+      class="fr-col-12 fr-col-md-8"
+      label="Rechercher un dossier"
+      placeholder="Référence, demandeur ou commune"
+      button-text="Rechercher"
+      @search="search"
+    />
+  </div>
 
   <!-- Toolbar start: result count (announced) -->
   <p
@@ -76,7 +81,7 @@ const filterGroups = computed(() => groups.filter(g => g.key !== 'communes'))
     class="fr-text--sm fr-mb-0"
     role="status"
   >
-    {{ count }}
+    <span class="fr-sr-only">{{ removalNote }}</span>{{ count }}
   </p>
 
   <!-- Toolbar end: one button per group of filters, then save -->
@@ -110,10 +115,6 @@ const filterGroups = computed(() => groups.filter(g => g.key !== 'communes'))
 </template>
 
 <style scoped>
-.playground-search {
-  max-width: 40rem;
-}
-
 /* Close under the filter buttons: 1w from the toolbar instead of the page's 3w padding. */
 .playground-selected {
   margin-top: calc(-1 * var(--dsaasfr-space-2w));

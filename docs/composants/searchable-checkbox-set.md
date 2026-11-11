@@ -5,8 +5,8 @@ exemple les communes d’un département. La sélection toujours visible, un cha
 puis des résultats limités juste en dessous.
 
 Il se place **dans un panneau**, à la place d’une liste de cases à cocher ordinaire :
-typiquement le panneau des valeurs d’une [étiquette de filtre](/composants/filter-chip) ou le
-menu « Filtrer ». Les listes longues se choisissent ainsi au même endroit et de la même façon
+typiquement une fenêtre modale ouverte par un bouton de filtre (« Communes », dans le bac à
+sable) ou le panneau d’un bouton de groupe de filtres ([DsaasfrDropdown](/composants/dropdown)). Les listes longues se choisissent ainsi au même endroit et de la même façon
 que les autres filtres.
 
 ## Quand l’utiliser
@@ -22,7 +22,7 @@ que les autres filtres.
 
 ## Exemple
 
-<Example story="briques-dsaasfrsearchablecheckboxset--in-filter-chip" title="filtre Commune parmi plus de 1 000 communes" :height="560" />
+<Example story="briques-dsaasfrsearchablecheckboxset--in-panel" title="filtre Commune parmi plus de 1 000 communes" :height="560" />
 
 ```vue
 <script setup lang="ts">
@@ -35,20 +35,17 @@ const options = communes.map(c => ({
   searchText: c.nom, // on cherche le nom, pas le nombre de dossiers
   disabled: c.dossiers === 0,
 }))
+const ouvert = ref(false)
 const brouillon = ref<string[]>([])
 </script>
 
 <template>
-  <DsaasfrFilterChip field="Commune" operator="est" :values="nomsChoisis">
-    <template #values>
-      <div class="fr-px-2w fr-pt-1w">
-        <DsaasfrSearchableCheckboxSet v-model="brouillon" label="Commune" :options="options" autofocus />
-      </div>
-    </template>
-    <template #footer="{ close }">
-      <DsfrButton label="Appliquer" size="sm" @click="appliquer(brouillon); close(true)" />
-    </template>
-  </DsaasfrFilterChip>
+  <DsfrButton :label="`Communes (${choisies.length})`" icon="fr-icon-map-pin-2-line" secondary size="sm" @click="ouvert = true" />
+  <Teleport to="body">
+    <DsfrModal :opened="ouvert" title="Communes" :actions="[{ label: 'Appliquer', onClick: appliquer }]" @close="ouvert = false">
+      <DsaasfrSearchableCheckboxSet v-model="brouillon" label="Commune" :options="options" />
+    </DsfrModal>
+  </Teleport>
 </template>
 ```
 
@@ -75,10 +72,9 @@ const brouillon = ref<string[]>([])
 - **Ordre des résultats** : les valeurs disponibles d’abord, puis les noms qui commencent par
   le texte saisi, puis l’ordre de vos options.
 - **Échap** dans le champ vide d’abord la recherche ; un second Échap ferme le panneau.
-- **Dans une étiquette de filtre**, ajoutez `autofocus` : le panneau place le focus sur le
-  champ de recherche à l’ouverture (`data-autofocus`, lu par
-  [DsaasfrDropdown](/composants/dropdown)). Pas dans le menu « Filtrer », où d’autres champs
-  précèdent.
+- **Seul dans un panneau** ([DsaasfrDropdown](/composants/dropdown)), ajoutez `autofocus` :
+  le panneau place le focus sur le champ de recherche à l’ouverture (`data-autofocus`). Pas
+  quand d’autres champs le précèdent dans le même panneau.
 - Si une étiquette contient un nombre (« Bordeaux (12) »), passez le nom seul dans
   `searchText` : sinon, taper « 12 » trouverait la commune par son compteur.
 
@@ -118,9 +114,8 @@ Gardez dans `options` les valeurs déjà choisies, pour afficher leur libellé d
 | `minQueryLength` | `number` | `2` | Caractères à saisir avant d’afficher les résultats d’une liste longue. |
 | `localFilter` | `boolean` | `true` | Filtrer les options ici. `false` : l’application cherche elle-même. |
 | `clearText` | `string` | `'Tout désélectionner'` | Bouton qui vide la sélection. |
-| `maxVisibleSelected` | `number` | `5` | Valeurs choisies affichées avant « Afficher les N autres » : avec 50 communes choisies, le champ de recherche reste visible. |
-| `showMoreSelectedText` | `(n) => string` | « Afficher les 45 autres » | Bouton qui déplie la sélection. |
-| `showLessSelectedText` | `string` | `'Afficher moins'` | Bouton qui la replie. |
+| `maxVisibleSelected` | `number` | `5` | Valeurs choisies affichées avant « Afficher toute la sélection » : avec 50 communes choisies, le champ de recherche reste visible. À l’ouverture, le focus va à la première valeur révélée. |
+| `showAllSelectedText` | `(n) => string` | « Afficher toute la sélection (50) » | Bouton de divulgation qui déplie la sélection (libellé stable, état dans `aria-expanded`). |
 | `resultsCountText` | `(n, affichés) => string` | « 811 résultats, 50 affichés : précisez la recherche » | Nombre de résultats annoncé aux lecteurs d’écran. |
 | `noResultsText` | `string` | « Aucun résultat : … » | Texte quand rien ne correspond. |
 | `alreadySelectedText` | `string` | « Aucun autre résultat : ce que vous cherchez est déjà dans la sélection. » | Texte quand seules des valeurs déjà choisies correspondent. |
@@ -153,4 +148,4 @@ toujours la décocher.
 ## Voir aussi
 
 - [Fiche de décision 0010](/decisions/0010-long-lists)
-- [DsaasfrFilterChip](/composants/filter-chip), [recette : filtres d’une liste](/recettes/filtres)
+- [DsaasfrSelectedFilters](/composants/selected-filters), [recette : filtres d’une liste](/recettes/filtres)

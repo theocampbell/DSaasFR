@@ -54,10 +54,8 @@ export interface DsaasfrSearchableCheckboxSetProps {
    * search field stays in view.
    */
   maxVisibleSelected?: number
-  /** Button showing the rest of the selection. */
-  showMoreSelectedText?: (count: number) => string
-  /** Button folding the selection back. */
-  showLessSelectedText?: string
+  /** Disclosure button showing the whole selection (stable label, state in aria-expanded). */
+  showAllSelectedText?: (count: number) => string
   /** Result count, announced to screen readers after typing; `shown` < `count` when capped. */
   resultsCountText?: (count: number, shown: number) => string
   /** Text when nothing matches. */

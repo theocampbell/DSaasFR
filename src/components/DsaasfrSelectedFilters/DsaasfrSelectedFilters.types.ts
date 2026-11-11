@@ -14,9 +14,9 @@ export interface DsaasfrSelectedFiltersProps {
   maxVisibleValues?: number
   /** Characters the shown values may take before the rest is summarised. */
   maxValuesLength?: number
-  /** Accessible name of the list of tags. */
+  /** Accessible name of the group of tags. */
   listLabel?: string
-  /** Start of each tag's accessible name ("Retirer le filtre Commune : Pessac, Talence"). */
+  /** Start of each tag's accessible name, before its visible text ("Retirer le filtre Commune : Pessac et 1 autre"). */
   removeLabel?: string
   /** Button removing every filter. Shown from two filters on. */
   clearText?: string
