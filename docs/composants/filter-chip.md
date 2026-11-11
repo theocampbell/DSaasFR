@@ -99,7 +99,11 @@ ouverte (`part`) et fournit `close`.
 
 Pour que l’étiquette tienne sur une ligne, les valeurs sont résumées : autant que possible
 dans `maxValuesLength` caractères (32 par défaut), au plus `maxVisibleValues` (2 par défaut),
-puis « et N autres ». La liste complète reste dans le nom accessible et dans l’infobulle.
+puis « et N autres ». Le nom accessible cite jusqu’à 10 valeurs (puis « et N autres »), et
+l’infobulle la liste complète.
+
+Pour choisir parmi des centaines de valeurs (communes…), placez un
+[DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set) dans l’emplacement `values`.
 
 ```vue
 <DsaasfrFilterChip
@@ -177,7 +181,8 @@ qui l’a ouvert. Chaque panneau place le focus sur le choix courant à l’ouve
 ## Accessibilité
 
 - L’étiquette est un groupe nommé : « Filtre : Statut est À instruire, Incomplet ». Le nom
-  contient toujours la liste complète des valeurs, même résumée à l’écran.
+  cite les valeurs même résumées à l’écran, jusqu’à 10 (puis « et N autres », pour qu’une
+  longue liste de communes ne soit pas lue en entier).
 - Chaque partie modifiable est un bouton de [DsaasfrDropdown](/composants/dropdown) :
   « Modifier la condition : est », « Modifier les valeurs : … ». Chaque nom contient le texte
   visible.

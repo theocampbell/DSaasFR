@@ -5,13 +5,21 @@
 // on the server, and one request per applied change is predictable (no request per click,
 // no results moving while the user is still choosing).
 import { computed, reactive } from 'vue'
-import { dossiers } from './fakeData'
+import { allCommunes, dossiers } from './fakeData'
 
-export interface FieldDef { key: string, label: string, column: number }
+export interface FieldDef {
+  key: string
+  label: string
+  column: number
+  /** Every possible value, when there are more than the data shows (communes of the département). */
+  values?: string[]
+  /** Long list: searchable checkboxes (DsaasfrSearchableCheckboxSet) instead of plain ones. */
+  long?: boolean
+}
 export const fields: FieldDef[] = [
   { key: 'statut', label: 'Statut', column: 4 },
   { key: 'type', label: 'Type', column: 2 },
-  { key: 'commune', label: 'Commune', column: 3 },
+  { key: 'commune', label: 'Commune', column: 3, values: allCommunes, long: true },
 ]
 export const operators = [
   { value: 'is', label: 'est' },
@@ -24,8 +32,13 @@ export interface Filter { field: string, operator: Operator, values: string[] }
 
 export const valuesOf = (fieldKey: string) => {
   const field = fields.find(f => f.key === fieldKey)!
-  return [...new Set(dossiers.map(row => row[field.column]!))].sort((a, b) => a.localeCompare(b, 'fr'))
+  return field.values ?? [...new Set(dossiers.map(row => row[field.column]!))].sort((a, b) => a.localeCompare(b, 'fr'))
 }
+export const isLong = (fieldKey: string) => !!fields.find(f => f.key === fieldKey)?.long
+
+/** Long lists: values that return results first (alphabetical within each group). */
+export const availableFirst = <T extends { disabled?: boolean }>(options: T[]) =>
+  [...options.filter(o => !o.disabled), ...options.filter(o => o.disabled)]
 /** Values in list order, whatever order they were ticked in. */
 const ordered = (fieldKey: string, values: string[]) => valuesOf(fieldKey).filter(v => values.includes(v))
 export const fieldLabel = (key: string) => fields.find(f => f.key === key)!.label

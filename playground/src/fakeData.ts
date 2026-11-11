@@ -1,7 +1,23 @@
 // Invented, deterministic demo data (no real people, no real files).
 const firstNames = ['Camille', 'Dominique', 'Claude', 'Alix', 'Sacha', 'Morgan', 'Lou', 'Noa', 'Eden', 'Charlie']
 const lastNames = ['Martin', 'Bernard', 'Dubois', 'Thomas', 'Robert', 'Richard', 'Petit', 'Durand', 'Leroy', 'Moreau']
-const communes = ['Bordeaux', 'Mérignac', 'Pessac', 'Talence', 'Libourne', 'Arcachon', 'Bègles', 'Blaye', 'Langon', 'Cenon']
+const communes = ['Bordeaux', 'Mérignac', 'Pessac', 'Talence', 'Libourne', 'Arcachon', 'Saint-Médard-en-Jalles', 'Lacanau', 'Saint-Émilion', 'Cenon']
+// Every commune of the (invented) département: over a thousand, as in a real one. Only
+// the ten above have case files; the others exist so the commune filter has a long list.
+const saints = ['Médard', 'Aubin', 'Jean', 'Pierre', 'Germain', 'Martin', 'Laurent', 'André', 'Loubès', 'Seurin',
+  'Sulpice', 'Vincent', 'Christoly', 'Ciers', 'Denis', 'Émilion', 'Estèphe', 'Julien', 'Macaire', 'Michel',
+  'Paul', 'Romain', 'Sauveur', 'Selve', 'Yzan', 'Genès', 'Hilaire', 'Magne', 'Quentin', 'Avit']
+const roots = ['Arsac', 'Avensan', 'Bassens', 'Blanquefort', 'Cadaujac', 'Camblanes', 'Carcans', 'Castelnau', 'Cestas', 'Créon',
+  'Eysines', 'Floirac', 'Gradignan', 'Hourtin', 'Izon', 'Lacanau', 'Léognan', 'Lormont', 'Ludon', 'Macau',
+  'Margaux', 'Martignas', 'Pauillac', 'Podensac', 'Quinsac', 'Saucats', 'Soulac', 'Targon', 'Vayres', 'Villenave']
+const suffixes = ['', '-sur-Dordogne', '-sur-Garonne', '-en-Médoc', '-de-Guyenne', '-et-Bastide', '-les-Vignes',
+  '-le-Haut', '-le-Bas', '-du-Bois', '-de-l’Isle', '-en-Gironde']
+export const allCommunes = [...new Set([
+  ...communes,
+  ...roots.flatMap(root => suffixes.map(suffix => root + suffix)),
+  ...saints.flatMap(saint => suffixes.map(suffix => `Saint-${saint}${suffix}`)),
+  ...saints.flatMap((saint, i) => roots.filter((_, j) => (i + j) % 2 === 0).map(root => `Saint-${saint}-de-${root}`)),
+])].sort((a, b) => a.localeCompare(b, 'fr'))
 const types = ['Permis de construire', 'Déclaration préalable', 'Autorisation de défrichement', 'Dossier loi sur l’eau', 'Certificat d’urbanisme']
 const statuses = ['À instruire', 'En cours', 'Incomplet', 'Accepté', 'Refusé']
 

@@ -58,6 +58,14 @@ describe('DsaasfrFilterChip', () => {
     expect(screen.getByRole('group', { name: 'Filtre : Assigné à est A, B, C, D' })).toBeTruthy()
   })
 
+  it('names at most 10 values in the chip group name (long lists such as communes)', () => {
+    setup({ values: Array.from({ length: 200 }, (_, i) => `C${i + 1}`) })
+
+    expect(screen.getByRole('group', {
+      name: 'Filtre : Assigné à est C1, C2, C3, C4, C5, C6, C7, C8, C9, C10 et 190 autres',
+    })).toBeTruthy()
+  })
+
   it('summarises long values by length so the chip stays on one line', () => {
     setup({ values: ['Autorisation de défrichement', 'Certificat d’urbanisme', 'Dossier loi sur l’eau'] })
 

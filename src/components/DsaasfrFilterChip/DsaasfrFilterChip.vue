@@ -58,9 +58,19 @@ const valuesText = computed(() => {
 })
 const fullValues = computed(() => props.values.join(', '))
 
+/** Values in the chip's accessible name: all of them up to 10, then "et N autres" (a long
+ * list, e.g. 200 communes, would otherwise be read out in full). */
+const NAMED_VALUES = 10
+const namedValues = computed(() => {
+  const { values } = props
+  if (!values.length) return props.emptyValuesText
+  const rest = values.length - NAMED_VALUES
+  return rest > 0
+    ? `${values.slice(0, NAMED_VALUES).join(', ')} et ${rest} autre${rest > 1 ? 's' : ''}`
+    : values.join(', ')
+})
 const groupName = computed(() =>
-  [`${props.groupLabel} :`, props.field, props.operator, props.values.length ? props.values.join(', ') : props.emptyValuesText]
-    .filter(Boolean).join(' '))
+  [`${props.groupLabel} :`, props.field, props.operator, namedValues.value].filter(Boolean).join(' '))
 
 interface PartDef { part: DsaasfrFilterChipPart, text: string, label: string }
 const parts = computed<PartDef[]>(() => [

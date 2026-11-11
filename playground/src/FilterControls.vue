@@ -6,12 +6,14 @@
 // - toolbar start: one chip per applied field. The field is fixed (one chip per field);
 //   condition and values open a panel with its own "Appliquer"; × removes the filter.
 // Every panel works on a draft: closing it without applying discards the changes.
+// Long lists (communes: over a thousand) use DsaasfrSearchableCheckboxSet in the same
+// panels: search, selection, capped results.
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { dossiers } from './fakeData'
 import {
-  applied, applyFilter, applySelection, clearFilters, countResults, facetCount, fieldLabel,
-  fields, filteredDossiers, filtersOf, operatorLabel, operators, removeFilter, selectionOf,
-  valuesOf,
+  applied, applyFilter, applySelection, availableFirst, clearFilters, countResults, facetCount,
+  fieldLabel, fields, filteredDossiers, filtersOf, isLong, operatorLabel, operators, removeFilter,
+  selectionOf, valuesOf,
 } from './filters'
 import type { Operator } from './filters'
 
@@ -134,7 +136,14 @@ function clearAll() {
       </template>
       <template #values>
         <div class="fr-px-2w fr-pt-1w">
+          <DsaasfrSearchableCheckboxSet
+            v-if="isLong(filter.field)"
+            v-model="chipDraft.values"
+            :label="fieldLabel(filter.field)"
+            :options="availableFirst(chipOptions(filter.field))"
+          />
           <DsfrCheckboxSet
+            v-else
             v-model="chipDraft.values"
             :legend="`Valeurs : ${fieldLabel(filter.field)}`"
             small
@@ -177,14 +186,24 @@ function clearAll() {
     </template>
     <template #default>
       <div class="fr-px-2w fr-pt-1w">
-        <DsfrCheckboxSet
+        <template
           v-for="field in fields"
           :key="field.key"
-          v-model="draft[field.key]"
-          :legend="field.label"
-          small
-          :options="draftOptions(field.key, `filtre-${field.key}`)"
-        />
+        >
+          <DsaasfrSearchableCheckboxSet
+            v-if="field.long"
+            v-model="draft[field.key]"
+            :label="field.label"
+            :options="availableFirst(draftOptions(field.key, `filtre-${field.key}`))"
+          />
+          <DsfrCheckboxSet
+            v-else
+            v-model="draft[field.key]"
+            :legend="field.label"
+            small
+            :options="draftOptions(field.key, `filtre-${field.key}`)"
+          />
+        </template>
       </div>
     </template>
     <template #footer="{ close }">

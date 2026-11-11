@@ -69,6 +69,7 @@ export default defineConfig({
           items: [
             { text: 'DsaasfrDropdown', link: '/composants/dropdown' },
             { text: 'DsaasfrFilterChip', link: '/composants/filter-chip' },
+            { text: 'DsaasfrSearchableCheckboxSet', link: '/composants/searchable-checkbox-set' },
           ],
         },
         {

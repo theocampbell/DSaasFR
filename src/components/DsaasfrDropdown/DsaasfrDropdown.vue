@@ -93,7 +93,9 @@ async function keepInViewport() {
   // flipping into space taken by e.g. the DSFR header would hide the panel's top.
   if (natural > room && room < MIN_ROOM && other > room) flipped.value = true
   const space = flipped.value ? other : room
-  maxHeight.value = natural > space ? Math.max(space, 0) : undefined
+  // Always capped, not only when too tall now: content can grow once open (e.g. search
+  // results appearing), and the footer ("Appliquer") must stay on screen.
+  maxHeight.value = Math.max(space, 0)
   await nextTick()
 
   const rect = el.getBoundingClientRect()
