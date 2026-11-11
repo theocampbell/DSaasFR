@@ -3,7 +3,25 @@
 Traité un élément à la fois, de haut en bas. Claude met ce fichier à jour au fur et à
 mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vous seul pouvez prendre).
 
-## 1. Terminer le shell (base de la v0.1.0)
+## 0. Prochaines étapes (état au 2026-11-11)
+
+- [ ] 👤 Fusionner la PR #4 (`develop → main`, **« Create a merge commit »**) → publication
+      0.3.0. Si la publication échoue après la création du tag, supprimer le tag avant de
+      relancer.
+- [ ] 👤 Faire valider par la designer : filtres groupés (Communes / Instruction / Projet),
+      tags sous les boutons, recherche dans la page (bac à sable, page Dossiers).
+- [ ] 🤖 « Mes recherches » : menu à droite de la barre d’outils (enregistrer, ouvrir,
+      recherche par défaut, recherches partagées par organisation). Le bouton « Enregistrer
+      la recherche » du bac à sable n’est encore qu’un emplacement.
+- [ ] 🤖 Option : « Tout effacer » sur la dernière ligne de tags plutôt que seul en dessous.
+- [ ] 🤖 Option : revue `dsfr-guardian` + `a11y-auditor` de `DsaasfrFilterDropdown` et
+      `DsaasfrFilterModal` (code déjà revu dans le bac à sable, puis déplacé).
+- [ ] 👤 Tests manuels avec NVDA / JAWS / VoiceOver (listes dans les fiches 0008 à 0011).
+- [ ] 👤 Message à la communauté (artefact « Annonce DSaaSFR ») : relire les liens, poster.
+- [ ] 🤖👤 Plus tard : reprendre `DsaasfrFilterChip` (retiré pour l’instant, code dans
+      l’historique git, commit `c0f120e`).
+
+
 
 - [ ] 🤖 **Titres de page issus des données chargées** (après les filtres) : un titre par page,
       défini par la page une fois ses données chargées (par ex. numéro de dossier, demandeur),
@@ -53,6 +71,15 @@ mesure. **Responsable** : 🤖 Claude · 👤 Théo (décision ou action que vou
 - [ ] Module Nuxt (seulement si des équipes Nuxt le demandent).
 
 ## Fait
+
+- [x] 0.3.0 (PR #4) : aperçu flottant contenu dans la liste ; filtres groupés
+      (`DsaasfrFilterDropdown`, `DsaasfrFilterModal`, `DsaasfrSearchableCheckboxSet`,
+      `DsaasfrSelectedFilters`), recherche dans la page ; sélecteur de département
+      (`DsaasfrContextSwitcher`, emplacement `context`) ; agent `a11y-auditor` sur le RGAA
+      4.1.2 officiel ; revues DSFR et RGAA corrigées ; `DsaasfrFilterChip` retiré pour
+      l’instant ; « projet expérimental, non officiel ».
+- [x] Publication automatisée réparée : 0.2.0 publiée (trusted publisher npm, pas de commit
+      sur `main` protégée).
 
 - [x] Site de documentation (VitePress, en français) à la racine du bac à sable : guide,
       une page par composant avec exemple en direct et code à copier, composables, recettes
