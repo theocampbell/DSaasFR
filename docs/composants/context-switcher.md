@@ -1,8 +1,15 @@
 # DsaasfrContextSwitcher
 
 Le **sélecteur de contexte** montre le contexte dans lequel toute l’application travaille (un
-département, une organisation…) et permet d’en changer. Il se place sous le nom du service,
-dans l’emplacement `context` de [DsaasfrSidebar](/composants/sidebar).
+département, une organisation…) et permet d’en changer. Il se place dans
+[DsaasfrSidebar](/composants/sidebar), à l’un de deux endroits :
+
+- **à côté de la personne connectée**, au-dessus du [menu utilisateur](/composants/user-menu),
+  dans l’emplacement `footer`, avec `placement="top"` : « qui je suis » et « où je
+  travaille » ensemble, pratique quand le contexte découle des droits de la personne (c’est
+  le choix du bac à sable) ;
+- **sous le nom du service**, dans l’emplacement `context` : plus visible à l’arrivée, comme
+  le sélecteur d’espace de travail de nombreux outils.
 
 Il reprend le modèle du **sélecteur de langue du DSFR** : un bouton qui montre la valeur
 courante et ouvre une liste de liens, le lien courant marqué.
@@ -21,8 +28,9 @@ courante et ouvre une liste de liens, le lien courant marqué.
 
 ```vue
 <DsaasfrSidebar service-title="Démarches Pro" :items="items">
-  <template #context>
+  <template #footer>
     <DsaasfrContextSwitcher
+      class="fr-mb-1w"
       label="Département"
       current="Gironde (33)"
       :items="[
@@ -30,11 +38,14 @@ courante et ouvre une liste de liens, le lien courant marqué.
         { text: 'Landes (40)', to: '/40/dossiers' },
       ]"
       :more-link="{ text: 'Tous les départements', to: '/departements' }"
+      placement="top"
     />
+    <DsaasfrUserMenu name="Camille Martin" description="Instructrice · DDT 33" :items="compte" />
   </template>
-  <template #footer>…</template>
 </DsaasfrSidebar>
 ```
+
+Sous le nom du service : même composant dans `<template #context>`, sans `placement`.
 
 ### Beaucoup de choix
 

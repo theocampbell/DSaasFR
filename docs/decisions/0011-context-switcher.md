@@ -64,6 +64,17 @@ changer pour ceux qui en changent souvent.
 - L’emplacement `context` est rendu deux fois (barre latérale et menu mobile), comme la
   navigation : ne pas passer d’`id` fixe au sélecteur.
 
+### Placement à côté de la personne connectée (2026-11-11)
+
+Retour du responsable produit : le sélecteur sous le nom du service ne convainc pas. Il peut
+aussi se placer **au-dessus du menu utilisateur**, dans le pied de la barre latérale
+(emplacement `footer`, ouverture vers le haut) : « qui je suis » et « où je travaille »
+ensemble, ce qui correspond au cas où le périmètre découle des droits de la personne. C’est
+désormais le choix du bac à sable. Moins visible à l’arrivée qu’en haut ; plus rapide qu’une
+entrée du menu utilisateur, que l’on a écartée (un clic de plus pour ceux qui changent
+souvent). L’emplacement `context` reste disponible pour un placement en haut. Sur écran
+étroit, le sélecteur suit le pied dans le menu, après la navigation.
+
 ## Conséquences pour l'accessibilité
 
 - Bouton de divulgation (`aria-expanded`, `aria-controls`) ; nom accessible « Département :

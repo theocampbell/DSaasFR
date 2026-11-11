@@ -27,7 +27,7 @@ function step(delta: number) {
   if (id) preview.open(id, { replace: true })
 }
 
-// Département switcher (sidebar `context` slot). Each choice is a link to the same page
+// Département switcher (sidebar footer, above the user menu). Each choice is a link to the same page
 // in the other département; switching drops the commune filter (communes belong to a
 // département) and the preview, and says so (role="status", present from the start).
 const contextMessage = ref('')
@@ -121,15 +121,17 @@ const accountItems: DsaasfrUserMenuItem[] = [
         service-description="Back-office instructeurs"
         :items="items"
       >
-        <template #context>
+        <!-- Département switcher next to the person (who I am / where I work), above
+             the user menu; it could also go under the service name (#context slot). -->
+        <template #footer>
           <DsaasfrContextSwitcher
+            class="fr-mb-1w"
             label="Département"
             :current="departementLabel(currentDep)"
             :items="depChoices"
             :more-link="{ text: 'Tous les départements', to: '/departements' }"
+            placement="top"
           />
-        </template>
-        <template #footer>
           <DsaasfrUserMenu
             name="Camille Martin"
             description="Instructrice · DDT 33"
