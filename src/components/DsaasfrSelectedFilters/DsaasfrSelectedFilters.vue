@@ -107,8 +107,8 @@ function clear() {
     <DsfrButton
       v-if="tags.length > 1"
       :label="clearText"
+      icon="fr-icon-close-circle-line"
       tertiary
-      no-outline
       size="sm"
       @click="clear"
     />
@@ -124,20 +124,26 @@ function clear() {
 }
 
 /* fr-tags-group spaces its items with bottom margins (for stacked groups): in this line,
-   the gap does it. */
+   the gap does it. Items are centred, so tags and "Tout effacer" (a taller sm button)
+   line up on their middle. */
 .dsaasfr-selected-filters__list.fr-tags-group {
+  align-items: center;
   gap: var(--dsaasfr-space-1w);
   margin: 0;
 }
 
 .dsaasfr-selected-filters__list.fr-tags-group > li {
+  display: flex;
   margin: 0;
   line-height: normal;
 }
 
-/* A long value stays inside the line at 320 px (RGAA 10.11): the tag wraps its text. */
+/* fr-tags-group also gives each tag side and bottom margins (stacked tags); the gap
+   spaces them here. A long value stays inside the line at 320 px (RGAA 10.11): the tag
+   wraps its text. */
 .dsaasfr-selected-filters__list .fr-tag {
   max-width: 100%;
+  margin: 0;
   overflow-wrap: anywhere;
 }
 

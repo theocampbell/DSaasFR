@@ -100,7 +100,7 @@ const filterGroups = computed(() => groups.filter(g => g.key !== 'communes'))
   <!-- First thing in the page, right-aligned under the filter buttons: selected filters -->
   <DsaasfrSelectedFilters
     v-else-if="selected.length"
-    class="fr-mb-3w"
+    class="fr-mb-3w playground-selected"
     align="end"
     :items="selected"
     @remove="remove"
@@ -112,5 +112,10 @@ const filterGroups = computed(() => groups.filter(g => g.key !== 'communes'))
 <style scoped>
 .playground-search {
   max-width: 40rem;
+}
+
+/* Close under the filter buttons: 1w from the toolbar instead of the page's 3w padding. */
+.playground-selected {
+  margin-top: calc(-1 * var(--dsaasfr-space-2w));
 }
 </style>
