@@ -190,7 +190,7 @@ const stats = [
           :key="dep.code"
         >
           <RouterLink
-            :class="dep.code === currentDep ? 'fr-btn' : 'fr-btn fr-btn--tertiary'"
+            :class="['fr-btn fr-btn--tertiary', { 'fr-btn--icon-left fr-icon-check-line': dep.code === currentDep }]"
             :to="{ path: '/dossiers', query: { dep: dep.code } }"
             :aria-current="dep.code === currentDep ? 'true' : undefined"
           >

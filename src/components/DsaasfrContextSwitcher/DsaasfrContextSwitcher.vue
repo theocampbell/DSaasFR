@@ -15,7 +15,7 @@
 import { computed, useId } from 'vue'
 import { RouterLink } from 'vue-router'
 import DsaasfrDropdown from '../DsaasfrDropdown/DsaasfrDropdown.vue'
-import type { DsaasfrContextSwitcherItem, DsaasfrContextSwitcherProps } from './DsaasfrContextSwitcher.types'
+import type { DsaasfrContextSwitcherItem, DsaasfrContextSwitcherMoreLink, DsaasfrContextSwitcherProps } from './DsaasfrContextSwitcher.types'
 
 const props = withDefaults(defineProps<DsaasfrContextSwitcherProps>(), {
   items: () => [],
@@ -26,22 +26,25 @@ const props = withDefaults(defineProps<DsaasfrContextSwitcherProps>(), {
   id: undefined,
 })
 
-const emit = defineEmits<{ select: [item: DsaasfrContextSwitcherItem] }>()
+const emit = defineEmits<{ select: [item: DsaasfrContextSwitcherItem | DsaasfrContextSwitcherMoreLink] }>()
 
 const open = defineModel<boolean>('open', { default: false })
 
 const uid = useId()
 const baseId = computed(() => props.id ?? `dsaasfr-context-switcher-${uid}`)
-const listLabel = computed(() => props.listLabel ?? `${props.label} : changer`)
+const listLabel = computed(() => props.listLabel ?? `Choisir : ${props.label}`)
 
-function select(item: DsaasfrContextSwitcherItem, close: () => void) {
+// Focus goes back to the trigger, which now reads the new value ("Département : Landes
+// (40)"): the chosen link disappears with the panel, and the page often stays the same
+// (only the context changes), so focus would otherwise fall on <body> (RGAA 12.8).
+function select(item: DsaasfrContextSwitcherItem | DsaasfrContextSwitcherMoreLink, close: (returnFocus?: boolean) => void) {
   emit('select', item)
-  close()
+  close(true)
 }
 
-const itemClass = (item: DsaasfrContextSwitcherItem) => [
+const itemClass = (current?: boolean) => [
   'fr-btn fr-btn--tertiary-no-outline fr-btn--sm dsaasfr-context-switcher__item',
-  { 'fr-text--bold dsaasfr-context-switcher__item--current': item.current },
+  { 'fr-text--bold dsaasfr-context-switcher__item--current': current },
 ]
 </script>
 
@@ -82,7 +85,7 @@ const itemClass = (item: DsaasfrContextSwitcherItem) => [
           <RouterLink
             v-if="item.to"
             :to="item.to"
-            :class="itemClass(item)"
+            :class="itemClass(item.current)"
             :aria-current="item.current ? 'true' : undefined"
             @click="select(item, close)"
           >
@@ -91,7 +94,7 @@ const itemClass = (item: DsaasfrContextSwitcherItem) => [
           <a
             v-else
             :href="item.href"
-            :class="itemClass(item)"
+            :class="itemClass(item.current)"
             :aria-current="item.current ? 'true' : undefined"
             @click="select(item, close)"
           >{{ item.text }}</a>
@@ -119,7 +122,7 @@ const itemClass = (item: DsaasfrContextSwitcherItem) => [
             <RouterLink
               v-if="item.to"
               :to="item.to"
-              :class="itemClass(item)"
+              :class="itemClass(item.current)"
               :aria-current="item.current ? 'true' : undefined"
               @click="select(item, close)"
             >
@@ -128,7 +131,7 @@ const itemClass = (item: DsaasfrContextSwitcherItem) => [
             <a
               v-else
               :href="item.href"
-              :class="itemClass(item)"
+              :class="itemClass(item.current)"
               :aria-current="item.current ? 'true' : undefined"
               @click="select(item, close)"
             >{{ item.text }}</a>
@@ -143,7 +146,8 @@ const itemClass = (item: DsaasfrContextSwitcherItem) => [
         <RouterLink
           v-if="moreLink.to"
           :to="moreLink.to"
-          :class="itemClass(moreLink)"
+          :class="itemClass()"
+          :aria-current="undefined"
           @click="select(moreLink, close)"
         >
           {{ moreLink.text }}
@@ -151,7 +155,7 @@ const itemClass = (item: DsaasfrContextSwitcherItem) => [
         <a
           v-else
           :href="moreLink.href"
-          :class="itemClass(moreLink)"
+          :class="itemClass()"
           @click="select(moreLink, close)"
         >{{ moreLink.text }}</a>
       </div>
@@ -183,16 +187,15 @@ const itemClass = (item: DsaasfrContextSwitcherItem) => [
 }
 
 .dsaasfr-context-switcher :deep(.dsaasfr-context-switcher__trigger[aria-expanded="true"]) {
-  --idle: transparent;
-  --hover: var(--background-open-blue-france-hover);
-  --active: var(--background-open-blue-france-active);
-
   background-color: var(--background-open-blue-france);
   color: var(--text-active-blue-france);
 }
 
-.dsaasfr-context-switcher :deep(.dsaasfr-context-switcher__trigger[aria-expanded="true"]:hover) {
-  background-color: var(--hover);
+/* Open: no darker hover background. The DSFR pair (text-active-blue-france on
+   background-open-blue-france-hover) falls to 2.6:1 in dark mode (RGAA 3.2). */
+.dsaasfr-context-switcher :deep(.dsaasfr-context-switcher__trigger[aria-expanded="true"]:hover),
+.dsaasfr-context-switcher :deep(.dsaasfr-context-switcher__trigger[aria-expanded="true"]:active) {
+  background-color: var(--background-open-blue-france);
 }
 
 .dsaasfr-context-switcher__value {
@@ -210,6 +213,13 @@ const itemClass = (item: DsaasfrContextSwitcherItem) => [
 
 .dsaasfr-context-switcher__label {
   color: var(--text-mention-grey);
+}
+
+/* The grey "Département" line only on the idle background: on hover and open backgrounds
+   it falls under 4.5:1 (RGAA 3.2); it then takes the trigger's colour. */
+.dsaasfr-context-switcher :deep(.dsaasfr-context-switcher__trigger:hover) .dsaasfr-context-switcher__label,
+.dsaasfr-context-switcher :deep(.dsaasfr-context-switcher__trigger[aria-expanded="true"]) .dsaasfr-context-switcher__label {
+  color: inherit;
 }
 
 .dsaasfr-context-switcher__chevron {
@@ -237,7 +247,8 @@ const itemClass = (item: DsaasfrContextSwitcherItem) => [
 }
 
 .dsaasfr-context-switcher__group-title {
-  padding: var(--dsaasfr-space-1w) var(--dsaasfr-space-2w) var(--dsaasfr-space-1v);
+  /* Inline padding of fr-btn--sm, so titles line up with the links. */
+  padding: var(--dsaasfr-space-1w) var(--dsaasfr-space-3v) var(--dsaasfr-space-1v);
   color: var(--text-mention-grey);
 }
 
@@ -246,11 +257,29 @@ const itemClass = (item: DsaasfrContextSwitcherItem) => [
   max-width: none;
 }
 
-/* Current choice: the DSFR active-navigation marker (blue bar on the left, as
-   fr-nav__link[aria-current]), not colour alone (RGAA 3.1). */
+/* Current choice: the DSFR active-navigation marker of fr-sidemenu__link[aria-current]
+   (a thin blue bar on the left, inset top and bottom), plus bold — not colour alone
+   (RGAA 3.1). A pseudo-element, not a box-shadow, so it stays in forced colours. */
 .dsaasfr-context-switcher__item--current {
-  box-shadow: inset var(--dsaasfr-space-1v) 0 0 0 var(--border-active-blue-france);
+  position: relative;
   color: var(--text-active-blue-france);
+}
+
+.dsaasfr-context-switcher__item--current::before {
+  content: "";
+  position: absolute;
+  top: var(--dsaasfr-space-3v);
+  bottom: var(--dsaasfr-space-3v);
+  left: 0;
+  width: var(--dsaasfr-active-marker-width);
+  background-color: var(--border-active-blue-france);
+}
+
+@media (forced-colors: active) {
+  .dsaasfr-context-switcher__item--current::before {
+    background-color: Highlight;
+    forced-color-adjust: none;
+  }
 }
 
 .dsaasfr-context-switcher__more {

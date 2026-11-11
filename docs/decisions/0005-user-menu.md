@@ -49,6 +49,9 @@ emplacement unique et prévisible. Les outils SaaS le placent en bas de la barre
 
 - Nom du déclencheur = nom + rôle ; `aria-expanded`, `aria-controls`.
 - La liste est nommée (« Mon compte »), les éléments sont de vrais liens ou boutons.
+- Contraste (2026-11-11, revue de la fiche 0011) : ouvert, le déclencheur ne fonce plus au
+  survol. La paire DSFR `text-active-blue-france` sur `background-open-blue-france-hover`
+  (celle de `fr-translate__btn`) tombe à 2,6:1 en thème sombre (RGAA 3.2).
 
 ## Paramètres d'affichage
 

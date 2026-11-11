@@ -46,6 +46,9 @@
   --dsaasfr-shell-row-height: 3rem;
   --dsaasfr-shell-border-width: 1px;
 
+  /* Bar marking the current item, as fr-sidemenu__link[aria-current] (DSFR: 2px). */
+  --dsaasfr-active-marker-width: 2px;
+
   /* Breadcrumb bar (docs/decisions/0006). */
   --dsaasfr-breadcrumb-label-max-width: 16rem;
   --dsaasfr-breadcrumb-current-min-width: 10rem;

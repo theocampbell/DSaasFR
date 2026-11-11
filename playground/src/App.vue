@@ -27,11 +27,14 @@ function step(delta: number) {
 
 // Département switcher (sidebar `context` slot). Each choice is a link to the same page
 // in the other département; switching drops the commune filter (communes belong to a
-// département) and the preview.
+// département) and the preview, and says so (role="status", present from the start).
+const contextMessage = ref('')
 watch(() => route.query.dep, (dep) => {
   if (typeof dep !== 'string' || dep === currentDep.value) return
   currentDep.value = dep
-  if (applied.some(f => f.field === 'commune')) removeFilter('commune')
+  const hadCommunes = applied.some(f => f.field === 'commune')
+  if (hadCommunes) removeFilter('commune')
+  contextMessage.value = `Département : ${departementLabel(dep)}.${hadCommunes ? ' Filtre Commune retiré.' : ''}`
 }, { immediate: true })
 const depChoices = computed<DsaasfrContextSwitcherItem[]>(() => myDeps.map(code => ({
   text: departementLabel(code),
@@ -173,6 +176,12 @@ const accountItems: DsaasfrUserMenuItem[] = [
       desc="Ce site est un bac à sable du projet DSaaSFR (projet expérimental, non officiel). Ce n’est pas un service public réel et aucune donnée n’est enregistrée."
     />
 
+    <p
+      class="fr-sr-only"
+      role="status"
+    >
+      {{ contextMessage }}
+    </p>
     <h1 class="fr-h3">
       {{ pageTitle }}
     </h1>

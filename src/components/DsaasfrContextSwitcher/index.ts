@@ -1,2 +1,2 @@
 export { default as DsaasfrContextSwitcher } from './DsaasfrContextSwitcher.vue'
-export type { DsaasfrContextSwitcherGroup, DsaasfrContextSwitcherItem, DsaasfrContextSwitcherProps } from './DsaasfrContextSwitcher.types'
+export type { DsaasfrContextSwitcherGroup, DsaasfrContextSwitcherItem, DsaasfrContextSwitcherMoreLink, DsaasfrContextSwitcherProps, DsaasfrContextSwitcherTarget } from './DsaasfrContextSwitcher.types'

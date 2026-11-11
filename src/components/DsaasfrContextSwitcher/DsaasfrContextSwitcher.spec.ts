@@ -40,7 +40,7 @@ describe('DsaasfrContextSwitcher', () => {
     const { user, trigger } = setup()
     await user.click(trigger)
 
-    const list = screen.getByRole('list', { name: 'Département : changer' })
+    const list = screen.getByRole('list', { name: 'Choisir : Département' })
     const current = within(list).getByRole('link', { name: 'Gironde (33)' })
     expect(current.getAttribute('aria-current')).toBe('true')
     expect(within(list).getByRole('link', { name: 'Landes (40)' }).hasAttribute('aria-current')).toBe(false)
@@ -55,6 +55,17 @@ describe('DsaasfrContextSwitcher', () => {
     await vi.waitFor(() => expect(router.currentRoute.value.query.dep).toBe('40'))
     expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ text: 'Landes (40)' }))
     expect(trigger.getAttribute('aria-expanded')).toBe('false')
+    // The chosen link disappears with the panel: focus goes back to the trigger, which
+    // reads the new value (RGAA 12.8), instead of falling on <body>.
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it('never marks the link to every choice as current, even on its own page', async () => {
+    const { user, router, trigger } = setup({ moreLink: { text: 'Tous les départements', to: '/departements' } })
+    await router.push('/departements')
+    await user.click(trigger)
+
+    expect(screen.getByRole('link', { name: 'Tous les départements' }).hasAttribute('aria-current')).toBe(false)
   })
 
   it('shows choices under named groups, and a link to every choice', async () => {

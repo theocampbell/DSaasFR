@@ -55,6 +55,8 @@ départements) :
   appartiennent à un département) et l’aperçu.
 - **Les recherches enregistrées** contiennent le département : en ouvrir une change de
   département si besoin.
+- L’emplacement `context` est rendu deux fois (barre latérale et menu mobile) : ne passez pas
+  d’`id` fixe au sélecteur.
 
 ## API
 
@@ -64,10 +66,10 @@ départements) :
 |---|---|---|---|
 | `label` | `string` | — (obligatoire) | Ce qui est choisi, par exemple « Département » (première ligne du bouton). |
 | `current` | `string` | — (obligatoire) | Le contexte courant, par exemple « Gironde (33) » (seconde ligne). |
-| `items` | `{ text, to?, href?, current? }[]` | `[]` | Les choix, en liens. |
+| `items` | `{ text, to \| href, current? }[]` | `[]` | Les choix, en liens (`to` ou `href` obligatoire). |
 | `groups` | `{ title, items }[]` | `[]` | Des choix sous des titres (par région), après `items`. |
-| `moreLink` | `{ text, to?, href? }` | — | Lien vers une page qui liste tous les choix. |
-| `listLabel` | `string` | `'{label} : changer'` | Nom accessible de la liste des choix. |
+| `moreLink` | `{ text, to \| href }` | — | Lien vers une page qui liste tous les choix. |
+| `listLabel` | `string` | `'Choisir : {label}'` | Nom accessible de la liste des choix, par exemple « Changer de département ». |
 | `placement` | `'top' \| 'bottom'` | `'bottom'` | Ouverture du panneau par rapport au bouton. |
 | `id` | `string` | généré | Identifiant de base (`aria-controls`). |
 
@@ -89,6 +91,10 @@ départements) :
 - Des liens : changer de contexte est une action explicite (RGAA 7.4). Le choix courant porte
   `aria-current="true"`, un repère bleu et de la graisse (pas la couleur seule).
 - À l’ouverture, le focus va sur le choix courant ; Échap, clic en dehors et Tab ferment.
+- Après un choix, le focus revient au bouton, qui annonce la nouvelle valeur.
+- **À votre charge** : annoncer ce que le changement a réinitialisé (zone `role="status"`
+  présente dès le chargement, par exemple « Département : Landes (40). Filtre Commune
+  retiré. ») et mettre le département dans le titre de la page.
 - Sur écran étroit, il est en haut du menu, avant la navigation.
 
 ## Voir aussi
