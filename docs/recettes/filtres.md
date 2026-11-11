@@ -465,7 +465,8 @@ autres filtres ensemble. Donnez-lui son **propre bouton** à côté de « Filtre
 </DsfrModal>
 ```
 
-- Le bouton résume la sélection : « Communes », « Communes : Lacanau et 2 autres ».
+- Le bouton indique le nombre : « Communes », « Communes (3) ». Le détail est dans les
+  filtres sélectionnés.
 - La liste a une hauteur fixe : la modale ne change pas de taille pendant la recherche.
 - Un petit périmètre (10 communes) affiche de simples cases à cocher ; un département entier,
   la recherche. Passez le nom seul dans `searchText`.

@@ -10,11 +10,12 @@ import { applied, applyFilter, countResults, facetCount, valuesOf } from './filt
 const plural = (n: number) => `${n} dossier${n > 1 ? 's' : ''}`
 
 const chosen = computed(() => applied.find(f => f.field === 'commune')?.values ?? [])
-/** The button shows the selection: "Communes", "Communes : Lacanau", "Communes : Lacanau et 2 autres". */
-const buttonLabel = computed(() => {
-  const [first, ...rest] = chosen.value
-  if (!first) return 'Communes'
-  return rest.length ? `Communes : ${first} et ${rest.length} autre${rest.length > 1 ? 's' : ''}` : `Communes : ${first}`
+/** The button shows how many communes are chosen, like the other groups: "Communes (3)".
+ * Which ones is in the selected filters, under the buttons. */
+const buttonLabel = computed(() => (chosen.value.length ? `Communes (${chosen.value.length})` : 'Communes'))
+const buttonName = computed(() => {
+  const n = chosen.value.length
+  return n ? `Communes (${n}), ${n} commune${n > 1 ? 's' : ''} sélectionnée${n > 1 ? 's' : ''}` : undefined
 })
 
 const opened = ref(false)
@@ -50,6 +51,7 @@ const origin = { focus: () => trigger.value?.querySelector('button')?.focus() }
   >
     <DsfrButton
       :label="buttonLabel"
+      :aria-label="buttonName"
       icon="fr-icon-map-pin-2-line"
       secondary
       size="sm"

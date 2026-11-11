@@ -103,7 +103,10 @@ utilisateurs visés. Nouveau motif, montré dans le bac à sable :
 - **Les filtres sélectionnés hors de la barre d’outils**, en haut de la page, **alignés à
   droite sous les boutons** (`align="end"`), sur leur propre ligne : un **tag
   supprimable DSFR** par filtre et « Tout effacer » (qui ne vide pas le champ de recherche).
-  Le texte recherché n’a pas de tag : il reste visible dans son champ. Un tag montre une
+  Le texte recherché n’a pas de tag : il reste visible dans son champ. Les boutons de
+  groupe n’indiquent que le nombre (« Communes (3) », « Instruction (2) ») : le détail est
+  dans les tags, pas répété. Le × d’un tag retire le filtre entier, tout de suite (action
+  explicite, sans « Afficher ») ; pour retirer une seule valeur, on rouvre le groupe. Un tag montre une
   valeur puis le nombre des autres (« Commune : Pessac et 49 autres »). Nouveau composant
   `DsaasfrSelectedFilters` : le balisage officiel `fr-tag--dismiss` (Vue DSFR n’a pas de
   variante supprimable de `DsfrTag`), chaque tag nommé « Retirer le filtre … ».

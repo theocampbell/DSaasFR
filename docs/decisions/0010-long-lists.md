@@ -99,8 +99,8 @@ Ajustements liés :
 - **Choix du responsable produit : un bouton « Communes » à part**, à côté de « Filtrer »,
   qui ouvre une **fenêtre modale DSFR** (`DsfrModal`) contenant ce composant. Un seul niveau,
   le motif standard du DSFR (un bouton qui ouvre une modale), plus de place, et le critère le
-  plus utilisé bien visible. Le bouton résume la sélection (« Communes : Lacanau et 2
-  autres ») ; les communes ne sont plus dans le panneau « Filtrer » ni dans les étiquettes.
+  plus utilisé bien visible. Le bouton indique le nombre de communes choisies
+  (« Communes (3) »), le détail étant dans les filtres sélectionnés ; les communes ne sont plus dans le panneau « Filtrer » ni dans les étiquettes.
   Même état de recherche : l’URL et les recherches enregistrées ne changent pas.
 - **Taille fixe** : la liste a une hauteur fixe dans la modale
   (`--dsaasfr-modal-list-height`) et défile à l’intérieur ; la modale ne change pas de taille
