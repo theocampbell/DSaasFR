@@ -28,13 +28,19 @@ d’Ariane se construit à partir des routes.
 ## Installation
 
 ```bash
-npm install @gouvminint/vue-dsfr @gouvfr/dsfr vue-router @dsaasfr/vue
+npm install @gouvminint/vue-dsfr@^8.21.0 @gouvfr/dsfr@~1.14.4 vue-router @dsaasfr/vue
 ```
 
 ::: tip Pourquoi `@gouvfr/dsfr` ?
 Vue DSFR l’installe déjà, mais votre code importe directement ses feuilles de style : il doit
 donc figurer dans vos propres dépendances (indispensable avec pnpm, qui n’expose que les
-dépendances déclarées). Prenez la version attendue par Vue DSFR.
+dépendances déclarées). Prenez la version attendue par Vue DSFR, ici `~1.14.4` : sans
+version, npm installe la dernière (1.15), dont le script d’installation échoue hors d’un
+projet initialisé par `npm create @gouvfr/dsfr`.
+
+Indiquez aussi la version de Vue DSFR (`^8.21.0`) : sans elle, npm échoue sur un conflit de
+dépendances (`ERESOLVE`) dans un projet où Vue DSFR n’est pas encore installé. Si votre
+application utilise déjà Vue DSFR 8.21 ou plus, `npm install @dsaasfr/vue` suffit.
 :::
 
 ## Déclarer les plugins et les styles
