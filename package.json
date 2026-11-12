@@ -73,6 +73,7 @@
     "test:coverage": "vitest run --coverage",
     "check-exports": "node ci/check-exports.mjs",
     "test:consumer": "node ci/consumer-test.mjs",
+    "test:consumer:latest": "node ci/consumer-test.mjs --latest",
     "prepare": "husky",
     "semantic-release": "semantic-release",
     "docs:dev": "vitepress dev docs",

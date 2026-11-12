@@ -1,0 +1,49 @@
+name: Upstream check
+
+# Every Monday: does the package still work with the LATEST Vue DSFR (and the DSFR it
+# depends on), Vue and vue-router? Applications upgrade those on their own schedule; this
+# says that an upstream release breaks DSaaSFR before they find out. On failure, an issue
+# is opened (one at a time, label "amont").
+
+on:
+  schedule:
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Consumer test with the latest Vue DSFR, DSFR, Vue and vue-router
+        run: pnpm test:consumer:latest
+      - name: Library tests with the latest Vue DSFR, Vue and vue-router
+        run: |
+          pnpm update --latest @gouvminint/vue-dsfr vue vue-router
+          pnpm add -D "@gouvfr/dsfr@$(npm view @gouvminint/vue-dsfr@latest dependencies.@gouvfr/dsfr)"
+          pnpm ls @gouvminint/vue-dsfr @gouvfr/dsfr vue vue-router
+          pnpm check
+      - name: Open an issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create amont --description "Compatibilité avec Vue DSFR, le DSFR, Vue, vue-router" --color FBCA04 2>/dev/null || true
+          if [ -z "$(gh issue list --label amont --state open --json number --jq '.[0].number')" ]; then
+            gh issue create --label amont \
+              --title "Compatibilité : échec avec les dernières versions de Vue DSFR / DSFR / Vue" \
+              --body "La vérification hebdomadaire a échoué avec les dernières versions des dépendances : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          À faire : lire le journal, adapter le paquet ou les plages de dépendances paires, mettre à jour le tableau de compatibilité (docs/guide/versions.md)."
+          fi
