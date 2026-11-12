@@ -26,8 +26,6 @@ propositions bienvenus dans les tickets ou les discussions du dépôt.
 - **Guide d’intégration** et rôles dans le bac à sable : navigation et actions selon le rôle,
   garde du routeur (un « instructeur » et un « administrateur » qui voient des choses
   différentes).
-- **Test côté consommateur en CI** : empaqueter, installer dans une application Vite + Vue
-  DSFR vierge, compiler, afficher.
 - **Signaler à Vue DSFR** deux problèmes relevés (fiche 0004) : slot `mainnav` de `DsfrHeader`
   typé sans sa prop `hidemodal` ; `DsfrSideMenuList` place `aria-current="page"` sur les
   boutons de groupe.
