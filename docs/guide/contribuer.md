@@ -1,6 +1,6 @@
 # Contribuer
 
-DSaaSFR est une **proposition communautaire** : remarques, questions et contributions sont
+DSaaSFR est un **projet expérimental et ouvert** : remarques, questions et contributions sont
 bienvenues, y compris un simple retour d’usage. Cette page résume le
 [guide du contributeur complet](https://github.com/theocampbell/DSaasFR/blob/develop/CONTRIBUTING.md).
 

@@ -12,6 +12,7 @@ Les composants de la mise en page, à utiliser ensemble.
 | [DsaasfrAppShell](/composants/app-shell) | Mise en page de l’application : régions, défilement, liens d’évitement, panneau d’aperçu. |
 | [DsaasfrSidebar](/composants/sidebar) | Barre latérale avec le bloc-marque, le nom du service et la navigation principale. Remplace l’en-tête DSFR. |
 | [DsaasfrUserMenu](/composants/user-menu) | La personne connectée et ses actions de compte, en bas de la barre latérale. |
+| [DsaasfrContextSwitcher](/composants/context-switcher) | Le contexte de travail (département…) sous le nom du service, et ses autres choix. |
 | [DsaasfrBreadcrumbBar](/composants/breadcrumb-bar) | Première ligne : fil d’Ariane construit à partir des routes et action principale de la page. |
 | [DsaasfrToolbar](/composants/toolbar) | Seconde ligne : nombre de résultats, filtres actifs et outils de la liste. |
 | [DsaasfrPreviewPanel](/composants/preview-panel) | Contenu du panneau d’aperçu : titre, bouton « Fermer », actions, corps qui défile. |
@@ -23,7 +24,10 @@ Des composants plus petits, utilisés par le shell et par vos pages.
 | Composant | Rôle |
 |---|---|
 | [DsaasfrDropdown](/composants/dropdown) | Un bouton qui ouvre un panneau flottant (déclencheur « Filtrer », menus). |
-| [DsaasfrFilterChip](/composants/filter-chip) | Un filtre actif, sous la forme « champ · condition · valeurs · × ». |
+| [DsaasfrFilterDropdown](/composants/filter-dropdown) | Un groupe de filtres dans la barre d’outils : bouton avec le nombre de filtres actifs, panneau, « Afficher N dossiers ». |
+| [DsaasfrFilterModal](/composants/filter-modal) | Un filtre à beaucoup de valeurs (communes) : bouton avec le nombre de valeurs, fenêtre modale DSFR de taille fixe. |
+| [DsaasfrSelectedFilters](/composants/selected-filters) | Les filtres en cours au-dessus des résultats : un tag supprimable DSFR par filtre, « Tout effacer ». |
+| [DsaasfrSearchableCheckboxSet](/composants/searchable-checkbox-set) | Cases à cocher avec recherche pour une liste longue (communes…), dans un panneau de filtre. |
 
 ## Composables
 

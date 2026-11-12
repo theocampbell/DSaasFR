@@ -132,8 +132,35 @@ describe('DsaasfrPreviewPanel previous / next', () => {
     expect(screen.queryByRole('button', { name: 'Élément suivant' })).toBeNull()
 
     await rerender({ title: 'Dossier 1', hasPrevious: false, hasNext: true })
-    expect((screen.getByRole('button', { name: 'Élément précédent' }) as HTMLButtonElement).disabled).toBe(true)
-    expect((screen.getByRole('button', { name: 'Élément suivant' }) as HTMLButtonElement).disabled).toBe(false)
+    // aria-disabled, not disabled: the button keeps focus at either end (RGAA 7.3.2).
+    const previous = screen.getByRole('button', { name: 'Élément précédent' }) as HTMLButtonElement
+    expect(previous.getAttribute('aria-disabled')).toBe('true')
+    expect(previous.disabled).toBe(false)
+    expect(screen.getByRole('button', { name: 'Élément suivant' }).getAttribute('aria-disabled')).toBeNull()
+  })
+
+  it('keeps focus on next at the last item and ignores further presses', async () => {
+    const user = userEvent.setup()
+    const onNext = vi.fn()
+    const Host = defineComponent({
+      setup() {
+        const n = ref(1)
+        return () => h(DsaasfrPreviewPanel, {
+          title: `Dossier ${n.value}`, hasPrevious: n.value > 1, hasNext: n.value < 2,
+          nextLabel: 'Dossier suivant', onNext: () => { onNext(); n.value++ },
+        })
+      },
+    })
+    render(Host)
+    const next = screen.getByRole('button', { name: 'Dossier suivant' })
+
+    await user.click(next)
+    expect(next.getAttribute('aria-disabled')).toBe('true')
+    expect(document.activeElement).toBe(next)
+
+    await user.click(next)
+    expect(onNext).toHaveBeenCalledTimes(1)
+    expect(document.activeElement).toBe(next)
   })
 
   it('emits next, keeps focus on the button and announces the new item', async () => {

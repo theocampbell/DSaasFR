@@ -93,7 +93,11 @@ async function keepInViewport() {
   // flipping into space taken by e.g. the DSFR header would hide the panel's top.
   if (natural > room && room < MIN_ROOM && other > room) flipped.value = true
   const space = flipped.value ? other : room
-  maxHeight.value = natural > space ? Math.max(space, 0) : undefined
+  // Capped to the space left, even if the content fits now: it can grow once open (e.g.
+  // search results appearing) and the footer ("Appliquer") must stay on screen. Not
+  // capped when that space is too small to show any content next to the footer (high
+  // zoom on a short window, RGAA 10.11): the panel then extends and the page scrolls.
+  maxHeight.value = space >= MIN_ROOM ? space : undefined
   await nextTick()
 
   const rect = el.getBoundingClientRect()
@@ -112,9 +116,13 @@ function stopTracking() {
   window.removeEventListener('resize', onWindowResize)
 }
 
-/** Autofocus target: the current choice first (checked / pressed / current), else the first control. */
+/**
+ * Autofocus target: an element marked `data-autofocus` (e.g. a search field), else the
+ * current choice (checked / pressed / current), else the first control.
+ */
 function focusTarget(root: HTMLElement) {
-  return root.querySelector<HTMLElement>('input:checked, [aria-pressed="true"], [aria-current]:not([aria-current="false"])')
+  return root.querySelector<HTMLElement>('[data-autofocus]')
+    ?? root.querySelector<HTMLElement>('input:checked, [aria-pressed="true"], [aria-current]:not([aria-current="false"])')
     ?? root.querySelector<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
 }
 
@@ -184,7 +192,11 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
         class="fr-menu__list dsaasfr-dropdown__surface"
         :style="maxHeight !== undefined ? { maxHeight: `${maxHeight}px` } : undefined"
       >
-        <slot :close="close" />
+        <!-- Only the content scrolls; the footer sits below it, so it can never cover the
+             focused control (RGAA 10.7). -->
+        <div class="dsaasfr-dropdown__body">
+          <slot :close="close" />
+        </div>
         <div
           v-if="$slots.footer"
           class="dsaasfr-dropdown__footer"
@@ -252,10 +264,12 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
 }
 
 .dsaasfr-dropdown__surface.fr-menu__list {
+  display: flex;
+  flex-direction: column;
   width: auto;
   margin: 0;
-  padding: var(--dsaasfr-space-1w) 0;
-  overflow-y: auto;
+  padding: 0;
+  overflow: hidden;
   background-color: var(--background-overlap-grey);
 
   /* No DSFR open-blue top line: it only exists from lg up; consistent at all widths. */
@@ -266,15 +280,19 @@ defineExpose({ close, focus: () => trigger.value?.focus() })
   --active: var(--background-overlap-grey-active);
 }
 
+.dsaasfr-dropdown__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--dsaasfr-space-1w) 0;
+  overflow-y: auto;
+}
+
 .dsaasfr-dropdown__footer {
-  position: sticky;
-  bottom: calc(-1 * var(--dsaasfr-space-1w));
   display: flex;
+  flex: none;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: var(--dsaasfr-space-1w);
-  margin-top: var(--dsaasfr-space-1w);
-  margin-bottom: calc(-1 * var(--dsaasfr-space-1w));
   padding: var(--dsaasfr-space-1w) var(--dsaasfr-space-2w);
   border-top: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
   background-color: inherit;

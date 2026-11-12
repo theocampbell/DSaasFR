@@ -105,12 +105,14 @@ onMounted(() => {
   observer = new ResizeObserver(() => {
     const pinned = bars.value && getComputedStyle(bars.value).position === 'sticky'
     root.style.setProperty('scroll-padding-top', pinned ? `${bars.value!.offsetHeight}px` : '')
+    if (overlay.value) measureListArea()
   })
   observer.observe(bars.value)
 })
 onBeforeUnmount(() => {
   observer?.disconnect()
   document.documentElement.style.removeProperty('scroll-padding-top')
+  stopTrackingListArea()
 })
 
 // Preview panel context: DsaasfrPreviewPanel registers its heading (region name and
@@ -127,6 +129,54 @@ const narrow = useNarrowViewport()
 const overlay = computed(() => hasPreview.value && props.previewMode === 'overlay' && !narrow.value)
 const pageInert = computed(() => (hasPreview.value && (narrow.value || overlay.value)) || undefined)
 
+// The floating preview stays inside the list area: below the breadcrumb / toolbar rows,
+// right of the sidebar. Their edges move with scrolling (header slot) and resizing, so
+// they are measured while the preview floats and handed to the CSS.
+const shell = useTemplateRef<HTMLElement>('shell')
+const content = useTemplateRef<HTMLElement>('content')
+function measureListArea() {
+  if (!shell.value || !content.value) return
+  const top = bars.value
+    ? bars.value.getBoundingClientRect().bottom
+    : content.value.getBoundingClientRect().top
+  shell.value.style.setProperty('--dsaasfr-shell-list-top', `${Math.max(0, top)}px`)
+  shell.value.style.setProperty('--dsaasfr-shell-list-left', `${content.value.getBoundingClientRect().left}px`)
+}
+function stopTrackingListArea() {
+  if (typeof window === 'undefined') return
+  window.removeEventListener('scroll', measureListArea)
+  window.removeEventListener('resize', measureListArea)
+}
+function trackListArea(floating: boolean) {
+  if (typeof window === 'undefined') return
+  if (!floating) return stopTrackingListArea()
+  measureListArea()
+  window.addEventListener('scroll', measureListArea, { passive: true })
+  window.addEventListener('resize', measureListArea)
+}
+watch(overlay, trackListArea, { flush: 'post' })
+onMounted(() => trackListArea(overlay.value))
+
+// While the preview floats, the rest of the page is inert: a click there (sidebar, bars,
+// list) lands on the shell and closes the preview, like a click on the veil. Only a
+// press that starts outside the panel while the preview floats counts: the click that
+// opens it (a list row) may bubble here after the route has already changed, and a text
+// selection dragged out of the panel must not close it (RGAA 13.11, WCAG 2.5.2).
+let pressedOutside = false
+function inPanel(target: EventTarget | null) {
+  const panel = document.getElementById(previewId.value)
+  return !!panel && target instanceof Node && panel.contains(target)
+}
+function onShellPointerdown(event: PointerEvent) {
+  pressedOutside = overlay.value && !inPanel(event.target)
+}
+function onShellClick(event: MouseEvent) {
+  const outsideClick = pressedOutside
+  pressedOutside = false
+  if (!outsideClick || !overlay.value || inPanel(event.target)) return
+  closePreview()
+}
+
 function onPreviewKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
     event.stopPropagation()
@@ -134,41 +184,80 @@ function onPreviewKeydown(event: KeyboardEvent) {
   }
 }
 
+// While the preview is a modal dialog (page paused), Escape closes it wherever focus is,
+// as DsfrModal (RGAA 7.3, 12.8).
+function onDocumentKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && !event.defaultPrevented) closePreview()
+}
+
+function focusPreview() {
+  const target = (previewHeadingId.value && document.getElementById(previewHeadingId.value))
+    || document.getElementById(previewId.value)
+  target?.focus()
+}
+
+// A modal dialog always takes focus, even when nobody opened it (shared link, page load,
+// window narrowed below 62em): focus must not stay on the paused page (APG Dialog).
+function setModal(modal: boolean | undefined) {
+  if (typeof document === 'undefined') return
+  if (!modal) {
+    document.removeEventListener('keydown', onDocumentKeydown)
+    return
+  }
+  document.addEventListener('keydown', onDocumentKeydown)
+  const panel = document.getElementById(previewId.value)
+  if (!panel?.contains(document.activeElement)) focusPreview()
+}
+watch(pageInert, setModal, { flush: 'post' })
+// After the first render settles, so the panel's title is registered.
+onMounted(() => nextTick(() => setModal(pageInert.value)))
+onBeforeUnmount(() => {
+  if (typeof document !== 'undefined') document.removeEventListener('keydown', onDocumentKeydown)
+})
+
 // Focus management (RGAA 12.8): when the user opens the preview, move focus to the
-// panel (its heading when there is one) so it is announced and reachable; on close, while focus is inside it
-// (or lost), give focus back to the element that opened it.
+// panel (its heading when there is one) so it is announced and reachable; on close, while
+// focus is inside it (or lost), give focus back to the element that opened it, or to the
+// main content when the preview was not opened from the page.
 let opener: HTMLElement | null = null
 watch(hasPreview, async (open) => {
   if (typeof document === 'undefined') return
   if (open) {
     const active = document.activeElement
     opener = active instanceof HTMLElement && active !== document.body ? active : null
-    // Opened from a shared link / page load (no user action): leave focus at the page
-    // start, the panel is announced by its region name when reached.
+    // Opened from a shared link / page load (no user action): a pushed preview leaves
+    // focus at the page start (announced by its region name when reached); a modal one
+    // takes focus (watch on pageInert above).
     if (!opener) return
     await nextTick()
-    const target = (previewHeadingId.value && document.getElementById(previewHeadingId.value))
-      || document.getElementById(previewId.value)
-    target?.focus()
+    focusPreview()
     return
   }
   const panel = document.getElementById(previewId.value)
   const focusWasInPanel = !!panel && panel.contains(document.activeElement)
   await nextTick()
   const focusLost = document.activeElement === document.body
-  if ((focusWasInPanel || focusLost) && opener?.isConnected) opener.focus()
+  if (focusWasInPanel || focusLost) {
+    if (opener?.isConnected) opener.focus()
+    else document.getElementById(props.mainId)?.focus()
+  }
   opener = null
 })
 </script>
 
 <template>
+  <!-- Click outside the floating preview closes it; keyboard: Échap (onPreviewKeydown). -->
+  <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events, vuejs-accessibility/no-static-element-interactions -->
   <div
+    ref="shell"
     class="dsaasfr-app-shell"
     :class="{
       'dsaasfr-app-shell--preview-open': hasPreview && !overlay,
       'dsaasfr-app-shell--preview-overlay': overlay,
     }"
     :style="sizeStyle"
+    @pointerdown.capture="onShellPointerdown"
+    @click="onShellClick"
   >
     <div
       v-if="!hideSkipLinks"
@@ -197,6 +286,7 @@ watch(hasPreview, async (open) => {
       </div>
 
       <div
+        ref="content"
         class="dsaasfr-app-shell__content"
         :inert="pageInert"
       >
@@ -234,16 +324,19 @@ watch(hasPreview, async (open) => {
         </main>
       </div>
 
-      <!-- Floating preview: veil over the paused page; clicking it closes the preview.
-           While the page is paused (floating, or full screen below 62em) the preview is a
-           modal dialog, like DsfrModal; otherwise a complementary region. -->
+      <!-- Floating preview: veil over the list area of the paused page (a click anywhere
+           outside the panel closes it, see onShellClick). While the page is paused
+           (floating, or full screen below 62em) the preview is a modal dialog, like
+           DsfrModal; otherwise a complementary region. -->
       <div
         v-if="overlay"
         class="dsaasfr-app-shell__backdrop"
         aria-hidden="true"
-        @click="closePreview"
       />
-      <aside
+      <!-- role="dialog" is not allowed on <aside> (ARIA in HTML, RGAA 8.2): a div while
+           modal, a complementary <aside> otherwise. -->
+      <component
+        :is="pageInert ? 'div' : 'aside'"
         v-if="hasPreview"
         :id="previewId"
         class="dsaasfr-app-shell__preview"
@@ -258,7 +351,7 @@ watch(hasPreview, async (open) => {
           name="preview"
           v-bind="previewScope"
         />
-      </aside>
+      </component>
     </div>
   </div>
 </template>
@@ -369,29 +462,37 @@ watch(hasPreview, async (open) => {
   background-color: var(--background-default-grey);
 }
 
-.dsaasfr-app-shell__preview:focus {
-  outline: none;
-}
-
-/* Floating preview (previewMode="overlay"): above the page and a DSFR-modal veil, at the
-   DSFR modal layer; lifted surface and shadow, as fr-modal. */
+/* Floating preview (previewMode="overlay"): contained in the list area (below the
+   breadcrumb / toolbar rows, right of the sidebar, both measured in the script), over a
+   DSFR-modal veil limited to that area, at the DSFR modal layer; lifted surface and
+   shadow, as fr-modal. It fills the area minus a band of veil on every side, and its
+   content scrolls inside (the panel header stays pinned). */
 .dsaasfr-app-shell__backdrop {
   position: fixed;
   z-index: 1749;
-  inset: 0;
+  inset: var(--dsaasfr-shell-list-top) 0 0 var(--dsaasfr-shell-list-left);
   background-color: var(--dsaasfr-backdrop);
 }
 
 .dsaasfr-app-shell--preview-overlay .dsaasfr-app-shell__preview {
   position: fixed;
   z-index: 1750;
-  top: 0;
-  right: 0;
+  top: calc(var(--dsaasfr-shell-list-top) + var(--dsaasfr-space-2w));
+  right: var(--dsaasfr-space-2w);
+  bottom: var(--dsaasfr-space-2w);
   width: var(--dsaasfr-shell-preview-width);
-  max-width: 100%;
+  max-width: calc(100% - var(--dsaasfr-shell-list-left) - 2 * var(--dsaasfr-space-2w));
+  height: auto;
+  overscroll-behavior: contain;
   border-left: 0;
   background-color: var(--background-lifted-grey);
   box-shadow: var(--lifted-shadow);
+}
+
+/* Focus lands on the panel itself when its content registers no title: the DSFR focus
+   ring stays visible for keyboard users only. */
+.dsaasfr-app-shell__preview:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Below 62em (DSFR "lg", i.e. high zoom) nothing is pinned: pinned areas would eat the

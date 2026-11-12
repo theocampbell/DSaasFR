@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/vue'
 import { vi } from 'vitest'
 import userEvent from '@testing-library/user-event'
-import { defineComponent, h, ref } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { expectNoA11yViolations } from '@/test-utils/axe'
 import DsaasfrAppShell from './DsaasfrAppShell.vue'
@@ -96,6 +96,76 @@ describe('DsaasfrAppShell', () => {
     await user.click(screen.getByRole('button', { name: 'Fermer l’aperçu' }))
     expect(screen.queryByRole('complementary')).toBeNull()
     expect(document.activeElement).toBe(toggle)
+  })
+
+  it('closes the floating preview on a click outside it, not inside', async () => {
+    const user = userEvent.setup()
+    const Host = defineComponent({
+      setup() {
+        const open = ref(true)
+        return () =>
+          h(
+            DsaasfrAppShell,
+            {
+              previewMode: 'overlay',
+              previewOpen: open.value,
+              'onUpdate:previewOpen': (v: boolean) => (open.value = v),
+            },
+            {
+              default: () => h('h1', 'Dossiers'),
+              preview: () => h('p', 'Dossier 42'),
+            },
+          )
+      },
+    })
+
+    render(Host)
+    expect(screen.getByRole('dialog', { name: 'Aperçu' })).toBeTruthy()
+
+    await user.click(screen.getByText('Dossier 42'))
+    expect(screen.getByRole('dialog', { name: 'Aperçu' })).toBeTruthy()
+
+    await user.click(screen.getByText('Dossiers'))
+    expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
+  it('does not close the floating preview when a press starts inside it and ends outside', async () => {
+    const user = userEvent.setup()
+    const open = ref(true)
+    render(() => h(DsaasfrAppShell, {
+      previewMode: 'overlay',
+      previewOpen: open.value,
+      'onUpdate:previewOpen': (v: boolean) => (open.value = v),
+    }, { default: () => h('h1', 'Dossiers'), preview: () => h('p', 'Dossier 42') }))
+
+    // Text selection dragged out of the panel: pointer down inside, up outside.
+    await user.pointer([
+      { keys: '[MouseLeft>]', target: screen.getByText('Dossier 42') },
+      { keys: '[/MouseLeft]', target: screen.getByText('Dossiers') },
+    ])
+    expect(screen.getByRole('dialog', { name: 'Aperçu' })).toBeTruthy()
+  })
+
+  it('makes a floating preview opened without user action a focused dialog that Escape closes', async () => {
+    const user = userEvent.setup()
+    const open = ref(true)
+    render(() => h(DsaasfrAppShell, {
+      previewMode: 'overlay',
+      previewOpen: open.value,
+      'onUpdate:previewOpen': (v: boolean) => (open.value = v),
+    }, { default: () => h('h1', 'Dossiers'), preview: () => h('p', 'Dossier 42') }))
+
+    // Opened from a shared link: no opener, but a modal dialog still takes focus.
+    const dialog = screen.getByRole('dialog', { name: 'Aperçu' })
+    expect(dialog.tagName).toBe('DIV') // role="dialog" is not allowed on <aside>
+    await nextTick()
+    expect(document.activeElement).toBe(dialog)
+
+    // Escape works wherever focus is while the page is paused.
+    ;(document.activeElement as HTMLElement).blur()
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(document.activeElement).toBe(screen.getByRole('main'))
   })
 
   it('scrolls the page back to the top when the page changes', async () => {

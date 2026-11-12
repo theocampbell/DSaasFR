@@ -126,16 +126,15 @@ const itemClass = (item: DsaasfrUserMenuItem) => [
 }
 
 .dsaasfr-user-menu :deep(.dsaasfr-user-menu__trigger[aria-expanded="true"]) {
-  --idle: transparent;
-  --hover: var(--background-open-blue-france-hover);
-  --active: var(--background-open-blue-france-active);
-
   background-color: var(--background-open-blue-france);
   color: var(--text-active-blue-france);
 }
 
-.dsaasfr-user-menu :deep(.dsaasfr-user-menu__trigger[aria-expanded="true"]:hover) {
-  background-color: var(--hover);
+/* Open: no darker hover background. The DSFR pair (text-active-blue-france on
+   background-open-blue-france-hover) falls to 2.6:1 in dark mode (RGAA 3.2). */
+.dsaasfr-user-menu :deep(.dsaasfr-user-menu__trigger[aria-expanded="true"]:hover),
+.dsaasfr-user-menu :deep(.dsaasfr-user-menu__trigger[aria-expanded="true"]:active) {
+  background-color: var(--background-open-blue-france);
 }
 
 .dsaasfr-user-menu__avatar,

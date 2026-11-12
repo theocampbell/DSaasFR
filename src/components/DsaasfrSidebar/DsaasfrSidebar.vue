@@ -7,6 +7,8 @@
  *   │ Service name          │
  *   │ baseline              │
  *   ├───────────────────────┤
+ *   │ context slot          │  <section> e.g. DsaasfrContextSwitcher (département)
+ *   ├───────────────────────┤
  *   │ primary nav           │  <nav>     DsfrSideMenuList, groups = secondary nav
  *   │   ▸ group             │
  *   │       sub-item        │
@@ -36,6 +38,7 @@ const props = withDefaults(defineProps<DsaasfrSidebarProps>(), {
   homeTo: '/',
   items: () => [],
   navLabel: 'Navigation principale',
+  contextLabel: 'Périmètre',
   footerLabel: 'Mon espace',
   menuLabel: 'Menu',
   closeMenuLabel: 'Fermer',
@@ -44,6 +47,8 @@ const props = withDefaults(defineProps<DsaasfrSidebarProps>(), {
 
 defineSlots<{
   brand?: () => unknown
+  /** The context the app works in (e.g. DsaasfrContextSwitcher), under the brand. */
+  context?: () => unknown
   default?: () => unknown
   footer?: () => unknown
 }>()
@@ -59,29 +64,59 @@ const homeTitle = computed(() => `Accueil - ${props.serviceTitle} - ${logoLines.
 const homeIsRouterLink = computed(() => !!router && !isExternal(props.homeTo))
 const homeHref = computed(() => (typeof props.homeTo === 'string' ? props.homeTo : '/'))
 
-function pathOf(to?: RouteLocationRaw): string | undefined {
+type Query = Record<string, unknown>
+function locationOf(to?: RouteLocationRaw): { path: string, query: Query } | undefined {
   if (to === undefined || isExternal(to)) return undefined
-  if (typeof to === 'string') return to
-  return router ? router.resolve(to).path : undefined
+  if (router) {
+    const { path, query } = router.resolve(to)
+    return { path, query }
+  }
+  if (typeof to !== 'string') return undefined
+  const [path = '', search = ''] = to.split('?')
+  return { path, query: Object.fromEntries(new URLSearchParams(search)) }
+}
+const asText = (value: unknown) => (Array.isArray(value) ? value.join(',') : String(value ?? ''))
+
+/**
+ * How well a link matches the current URL: -1 if it does not (other path, or one of its
+ * query parameters differs: a saved search "/dossiers?statut=urgent" is not current on
+ * "/dossiers"); otherwise higher for an exact path than a parent one, then for each
+ * matching query parameter. Only the best match of the whole navigation is the current
+ * page: on "/dossiers?statut=urgent", the saved search, not "Dossiers" as well.
+ */
+function matchScore(to?: RouteLocationRaw): number {
+  const target = locationOf(to)
+  const current = route?.path
+  if (!target || !current) return -1
+  const exact = current === target.path
+  if (target.path === '/' ? !exact : !(exact || current.startsWith(`${target.path}/`))) return -1
+  const keys = Object.keys(target.query)
+  if (keys.some(key => asText(target.query[key]) !== asText(route!.query[key]))) return -1
+  return (exact ? 1_000_000 : 0) + keys.length * 1_000 + target.path.length
 }
 
-function isCurrent(to?: RouteLocationRaw): boolean {
-  const target = pathOf(to)
-  const current = route?.path
-  if (!target || !current) return false
-  if (target === '/') return current === '/'
-  return current === target || current.startsWith(`${target}/`)
+/** Key of each link (by position), the same in `bestMatch` and `decorate`. */
+const groupId = (item: DsaasfrSidebarItem, prefix: string, index: number) => item.id ?? `${prefix}-group-${index}`
+function bestMatch(items: DsaasfrSidebarItem[], prefix: string): { key?: string, score: number } {
+  let best: { key?: string, score: number } = { score: -1 }
+  items.forEach((item, index) => {
+    const candidate = item.menuItems?.length
+      ? bestMatch(item.menuItems, groupId(item, prefix, index))
+      : { key: `${prefix}-${index}`, score: item.active === undefined ? matchScore(item.to) : -1 }
+    if (candidate.score > best.score) best = candidate
+  })
+  return best
 }
 
 /**
  * Derive active/expanded states from the route. The result is kept in a ref because
  * DsfrSideMenuList toggles `expanded` directly on the items it receives.
  */
-function decorate(items: DsaasfrSidebarItem[], prefix: string): DsaasfrSidebarItem[] {
+function decorate(items: DsaasfrSidebarItem[], prefix: string, current?: string): DsaasfrSidebarItem[] {
   return items.map((item, index) => {
     if (item.menuItems?.length) {
-      const id = item.id ?? `${prefix}-group-${index}`
-      const children = decorate(item.menuItems, id)
+      const id = groupId(item, prefix, index)
+      const children = decorate(item.menuItems, id, current)
       const hasActiveChild = children.some(child => child.active)
       return {
         ...item,
@@ -93,7 +128,7 @@ function decorate(items: DsaasfrSidebarItem[], prefix: string): DsaasfrSidebarIt
         expanded: item.expanded ?? hasActiveChild,
       }
     }
-    return { ...item, active: item.active ?? isCurrent(item.to) }
+    return { ...item, active: item.active ?? `${prefix}-${index}` === current }
   })
 }
 
@@ -109,9 +144,9 @@ const brandProps = computed(() => ({
 
 const menuItems = ref<DsaasfrSidebarItem[]>([])
 watch(
-  () => [props.items, route?.path] as const,
+  () => [props.items, route?.fullPath] as const,
   () => {
-    menuItems.value = decorate(props.items, props.id)
+    menuItems.value = decorate(props.items, props.id, bestMatch(props.items, props.id).key)
   },
   { immediate: true, deep: true },
 )
@@ -145,6 +180,14 @@ function hideModalOf(scope: unknown): () => void {
         <SidebarBrand v-bind="brandProps" />
       </slot>
     </header>
+
+    <section
+      v-if="$slots.context"
+      class="dsaasfr-sidebar__context"
+      :aria-label="contextLabel"
+    >
+      <slot name="context" />
+    </section>
 
     <SidebarNav
       :id="`${id}-list`"
@@ -181,6 +224,13 @@ function hideModalOf(scope: unknown): () => void {
     >
       <template #mainnav="mainnavScope">
         <div @click="closeOnLink($event, hideModalOf(mainnavScope))">
+          <section
+            v-if="$slots.context"
+            class="dsaasfr-sidebar__context dsaasfr-sidebar__context--modal"
+            :aria-label="contextLabel"
+          >
+            <slot name="context" />
+          </section>
           <SidebarNav
             :id="`${id}-list`"
             :label="navLabel"
@@ -231,6 +281,24 @@ function hideModalOf(scope: unknown): () => void {
 
 .dsaasfr-sidebar__service a {
   color: var(--text-title-grey);
+}
+
+.dsaasfr-sidebar__context {
+  padding: var(--dsaasfr-space-2w);
+  border-bottom: var(--dsaasfr-shell-border-width) solid var(--border-default-grey);
+
+  /* Hover pair for controls here (e.g. DsaasfrContextSwitcher), on the alt-grey sidebar. */
+  --idle: transparent;
+  --hover: var(--background-alt-grey-hover);
+  --active: var(--background-alt-grey-active);
+}
+
+.dsaasfr-sidebar__context--modal {
+  --hover: var(--background-default-grey-hover);
+  --active: var(--background-default-grey-active);
+
+  padding: 0 0 var(--dsaasfr-space-2w);
+  border-bottom: 0;
 }
 
 .dsaasfr-sidebar__nav {

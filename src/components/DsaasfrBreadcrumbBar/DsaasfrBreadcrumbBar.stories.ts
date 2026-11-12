@@ -25,7 +25,7 @@ const withAction = (args: object) => ({
   template: `
     <DsaasfrBreadcrumbBar v-bind="args">
       <template #actions>
-        <DsfrButton label="Nouveau dossier" icon="fr-icon-add-line" size="sm" />
+        <DsfrButton label="Action principale" icon="fr-icon-add-line" size="sm" />
       </template>
     </DsaasfrBreadcrumbBar>`,
 })

@@ -5,7 +5,7 @@ DSaaSFR **complète** Vue DSFR. Votre application utilise Vue DSFR comme d’hab
 métier autour : barre latérale, fil d’Ariane avec l’action principale, barre d’outils,
 panneau d’aperçu.
 
-::: warning Proposition communautaire
+::: warning Projet expérimental
 DSaaSFR est une preuve de concept, pas un produit officiel du DSFR. Les composants sont au
 stade de brouillon et leurs interprétations du DSFR sont décrites dans les
 [fiches de décision](/decisions/), au statut « Proposé ».

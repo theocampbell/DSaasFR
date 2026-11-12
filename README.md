@@ -1,6 +1,6 @@
 # DSaaSFR
 
-> **POC / proposition communautaire** — composants Vue 3 orientés application (SaaS,
+> **Projet expérimental, non officiel** — composants Vue 3 orientés application (SaaS,
 > back-office) construits **sur** [Vue DSFR](https://vue-ds.fr) et le
 > [Système de Design de l'État](https://www.systeme-de-design.gouv.fr).
 > Ce n'est pas un produit officiel du DSFR.
@@ -72,7 +72,10 @@ import { DsaasfrAppShell } from '@dsaasfr/vue'
 | `DsaasfrBreadcrumbBar` | Brouillon — voir la [fiche de décision 0006](docs/decisions/0006-breadcrumb-bar.md) |
 | `DsaasfrToolbar` | Brouillon — voir la [fiche de décision 0007](docs/decisions/0007-toolbar.md) |
 | `DsaasfrPreviewPanel` | Brouillon — voir la [fiche de décision 0008](docs/decisions/0008-preview-panel.md) |
-| `DsaasfrDropdown`, `DsaasfrFilterChip` | Brouillon — voir la [fiche de décision 0009](docs/decisions/0009-filters.md) |
+| `DsaasfrDropdown`, `DsaasfrFilterDropdown`, `DsaasfrSelectedFilters` | Brouillon — voir la [fiche de décision 0009](docs/decisions/0009-filters.md) |
+| `DsaasfrFilterModal` | Brouillon — voir la [fiche de décision 0010](docs/decisions/0010-long-lists.md) |
+| `DsaasfrSearchableCheckboxSet` | Brouillon — voir la [fiche de décision 0010](docs/decisions/0010-long-lists.md) |
+| `DsaasfrContextSwitcher` | Brouillon — voir la [fiche de décision 0011](docs/decisions/0011-context-switcher.md) |
 
 ## Principes
 

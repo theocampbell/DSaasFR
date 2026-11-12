@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Long, realistic content per page, to test scrolling in the shell.
+import { currentDep, regions } from './context'
 import { activity, lorem, usagers } from './fakeData'
 import { filteredDossiers as dossiers } from './filters'
 
@@ -168,6 +169,37 @@ const stats = [
     :headers="['Nom', 'Commune', 'Dossiers', 'Dernière demande']"
     :rows="usagers"
   />
+
+  <!-- Every département (national admin): the list is too long for the switcher's panel,
+       so its "Tous les départements" link leads here. Grouped by région, no search needed. -->
+  <template v-else-if="path === '/departements'">
+    <p>
+      Choisissez le département dans lequel travailler. Extrait : 2 régions sur 18.
+    </p>
+    <section
+      v-for="region in regions"
+      :key="region.name"
+      class="fr-mb-4w"
+    >
+      <h2 class="fr-h5">
+        {{ region.name }}
+      </h2>
+      <ul class="fr-btns-group fr-btns-group--inline-md fr-btns-group--sm">
+        <li
+          v-for="dep in region.departements"
+          :key="dep.code"
+        >
+          <RouterLink
+            :class="['fr-btn fr-btn--tertiary', { 'fr-btn--icon-left fr-icon-check-line': dep.code === currentDep }]"
+            :to="{ path: '/dossiers', query: { dep: dep.code } }"
+            :aria-current="dep.code === currentDep ? 'true' : undefined"
+          >
+            {{ dep.name }} ({{ dep.code }})
+          </RouterLink>
+        </li>
+      </ul>
+    </section>
+  </template>
 
   <!-- Other pages: long text -->
   <template v-else>

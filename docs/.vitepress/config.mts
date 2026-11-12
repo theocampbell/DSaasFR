@@ -59,6 +59,7 @@ export default defineConfig({
             { text: 'DsaasfrAppShell', link: '/composants/app-shell' },
             { text: 'DsaasfrSidebar', link: '/composants/sidebar' },
             { text: 'DsaasfrUserMenu', link: '/composants/user-menu' },
+            { text: 'DsaasfrContextSwitcher', link: '/composants/context-switcher' },
             { text: 'DsaasfrBreadcrumbBar', link: '/composants/breadcrumb-bar' },
             { text: 'DsaasfrToolbar', link: '/composants/toolbar' },
             { text: 'DsaasfrPreviewPanel', link: '/composants/preview-panel' },
@@ -68,7 +69,10 @@ export default defineConfig({
           text: 'Briques',
           items: [
             { text: 'DsaasfrDropdown', link: '/composants/dropdown' },
-            { text: 'DsaasfrFilterChip', link: '/composants/filter-chip' },
+            { text: 'DsaasfrFilterDropdown', link: '/composants/filter-dropdown' },
+            { text: 'DsaasfrFilterModal', link: '/composants/filter-modal' },
+            { text: 'DsaasfrSelectedFilters', link: '/composants/selected-filters' },
+            { text: 'DsaasfrSearchableCheckboxSet', link: '/composants/searchable-checkbox-set' },
           ],
         },
         {
@@ -113,7 +117,7 @@ export default defineConfig({
       text: 'Proposer une modification de cette page',
     },
     footer: {
-      message: 'Proposition communautaire, non officielle. Code sous licence MIT.',
+      message: 'Projet expérimental, non officiel. Code sous licence MIT.',
       copyright: 'Construit sur Vue DSFR et le Système de Design de l’État.',
     },
     search: {

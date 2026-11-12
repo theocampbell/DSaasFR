@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Un bouton déclencheur qui ouvre un panneau flottant (pattern de divulgation, surface officielle du menu DSFR). Échap rend le focus au déclencheur ; un clic à l’extérieur ou une sortie avec Tab le ferment ; `autofocus` place le focus dans le panneau ; le panneau reste dans la fenêtre d’affichage. Utilisé par DsaasfrUserMenu, DsaasfrFilterChip et le déclencheur « Filtrer ». Voir la fiche de décision docs/decisions/0009.',
+          'Un bouton déclencheur qui ouvre un panneau flottant (pattern de divulgation, surface officielle du menu DSFR). Échap rend le focus au déclencheur ; un clic à l’extérieur ou une sortie avec Tab le ferment ; `autofocus` place le focus dans le panneau ; le panneau reste dans la fenêtre d’affichage. Utilisé par DsaasfrUserMenu, DsaasfrContextSwitcher et les boutons de groupes de filtres. Voir la fiche de décision docs/decisions/0009.',
       },
     },
   },

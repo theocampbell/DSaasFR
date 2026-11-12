@@ -96,14 +96,14 @@ Le shell propose deux façons d’ouvrir l’aperçu, à choisir selon l’usage
 
 | | `push` (défaut) | `overlay` |
 |---|---|---|
-| Rendu | Colonne à droite, le contenu se resserre | Panneau flottant, la page est assombrie |
-| Page derrière | Utilisable | En pause (inerte), clic sur le voile = fermer |
+| Rendu | Colonne à droite, le contenu se resserre | Panneau flottant dans la zone de la liste (sous le fil d’Ariane et la barre d’outils), sur toute la hauteur de cette zone avec une bande sombre autour, large selon `preview-size` (≈ un tiers de l’écran par défaut) ; un contenu long défile à l’intérieur |
+| Page derrière | Utilisable | En pause (inerte), clic en dehors du panneau = fermer |
 | Pour | Un document lu à côté de la page | Un coup d’œil à un élément sans resserrer un tableau |
 
 <Example story="shell-dsaasfrappshell--floating-preview" title="aperçu flottant au-dessus de la liste" :height="480" :viewport="1280" />
 
 ```vue
-<DsaasfrAppShell v-model:preview-open="isOpen" preview-mode="overlay" preview-size="lg">
+<DsaasfrAppShell v-model:preview-open="isOpen" preview-mode="overlay">
   …
   <template #preview>
     <DsaasfrPreviewPanel

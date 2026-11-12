@@ -5,7 +5,7 @@ fermeture, le focus et la position du panneau. Vous fournissez le texte du bouto
 contenu du panneau : une liste de boutons, des cases à cocher, un petit formulaire.
 
 C’est la brique commune du [menu utilisateur](/composants/user-menu), des
-[étiquettes de filtre](/composants/filter-chip) et du déclencheur « Filtrer ».
+boutons de groupes de filtres (« Instruction », « Projet »).
 
 ## Quand l’utiliser
 
@@ -48,8 +48,9 @@ Le bouton déclencheur est rendu par le composant. Donnez-lui son apparence avec
 
 ### Avec un pied fixé
 
-L’emplacement `footer` reste visible en bas du panneau quand son contenu défile. Il sert aux
-boutons « Réinitialiser » et « Appliquer » d’un panneau de filtres.
+L’emplacement `footer` reste visible en bas du panneau quand son contenu défile : seul le
+contenu défile, le pied est en dessous et ne masque jamais l’élément qui a le focus. Il sert
+aux boutons « Réinitialiser » et « Appliquer » d’un panneau de filtres.
 
 ```vue
 <DsaasfrDropdown
@@ -83,8 +84,11 @@ La recette [Filtres d’une liste](/recettes/filtres) montre ce panneau en entie
 utilisateur dans la barre latérale).
 
 Tant qu’il est ouvert, le panneau reste dans la fenêtre : il est décalé horizontalement s’il
-déborde, sa hauteur est limitée à l’espace disponible (son contenu défile), et il ne passe de
-l’autre côté du bouton que si le côté demandé est trop exigu (moins de 12rem).
+déborde, sa hauteur est limitée à l’espace disponible (son contenu défile, même s’il grandit
+après l’ouverture), et il ne passe de l’autre côté du bouton que si le côté demandé est trop
+exigu (moins de 12rem). Si aucun côté n’offre 12rem (fort zoom sur une fenêtre basse), la
+hauteur n’est pas limitée : le panneau s’allonge et la page défile, plutôt que de ne montrer
+que le pied.
 
 ## API
 
@@ -96,7 +100,7 @@ l’autre côté du bouton que si le côté demandé est trop exigu (moins de 12
 | `triggerClass` | `string \| string[] \| Record<string, boolean>` | — | Classes du bouton déclencheur (par exemple des classes de bouton DSFR). |
 | `triggerLabel` | `string` | — | Nom accessible du bouton, quand son contenu visible ne suffit pas. Il doit contenir le texte visible. |
 | `triggerTitle` | `string` | — | Infobulle du bouton (par exemple le texte complet d’un libellé raccourci). |
-| `autofocus` | `boolean` | `false` | À l’ouverture, place le focus dans le panneau : sur le choix courant (case cochée, élément `aria-pressed` ou `aria-current`), sinon sur le premier contrôle. |
+| `autofocus` | `boolean` | `false` | À l’ouverture, place le focus dans le panneau : sur l’élément marqué `data-autofocus` (par exemple un champ de recherche), sinon sur le choix courant (case cochée, élément `aria-pressed` ou `aria-current`), sinon sur le premier contrôle. |
 | `id` | `string` | unique | Identifiant de base. Le panneau a l’identifiant `<id>-panel`. |
 
 ### v-model
@@ -148,5 +152,5 @@ Par une référence de template (`ref`) :
 ## Voir aussi
 
 - [Fiche de décision 0009](/decisions/0009-filters)
-- [DsaasfrFilterChip](/composants/filter-chip), [DsaasfrUserMenu](/composants/user-menu)
+- [Recette : filtres d’une liste](/recettes/filtres), [DsaasfrUserMenu](/composants/user-menu)
 - [Recette : filtres d’une liste](/recettes/filtres)

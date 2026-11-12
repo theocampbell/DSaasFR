@@ -30,7 +30,10 @@ const navigation = computed(() => props.hasPrevious !== undefined || props.hasNe
 // announced politely instead (RGAA 7.5).
 const announcement = ref('')
 let navigating = false
+// At either end the button stays focusable (aria-disabled, not disabled): a disabled
+// button would drop the focus it holds (RGAA 7.3.2).
 function go(direction: 'previous' | 'next') {
+  if ((direction === 'previous' ? props.hasPrevious : props.hasNext) === false) return
   navigating = true
   if (direction === 'previous') emit('previous')
   else emit('next')
@@ -85,7 +88,7 @@ function close() {
           type="button"
           class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-arrow-up-s-line"
           :title="previousLabel"
-          :disabled="hasPrevious === false"
+          :aria-disabled="hasPrevious === false ? 'true' : undefined"
           @click="go('previous')"
         >
           {{ previousLabel }}
@@ -94,7 +97,7 @@ function close() {
           type="button"
           class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-arrow-down-s-line"
           :title="nextLabel"
-          :disabled="hasNext === false"
+          :aria-disabled="hasNext === false ? 'true' : undefined"
           @click="go('next')"
         >
           {{ nextLabel }}
@@ -169,6 +172,12 @@ function close() {
 .dsaasfr-preview-panel__nav {
   display: flex;
   flex: 0 0 auto;
+}
+
+/* DSFR disabled look (.fr-btn--tertiary-no-outline:disabled) for buttons kept focusable. */
+.dsaasfr-preview-panel__nav .fr-btn[aria-disabled='true'] {
+  color: var(--text-disabled-grey);
+  cursor: not-allowed;
 }
 
 .dsaasfr-preview-panel__title {

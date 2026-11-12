@@ -28,6 +28,8 @@ export interface DsaasfrSidebarProps {
   items?: DsaasfrSidebarItem[]
   /** Accessible name of the navigation landmark. */
   navLabel?: string
+  /** Accessible name of the context region (`context` slot, e.g. the département switcher). */
+  contextLabel?: string
   /** Accessible name of the footer region (account, settings). */
   footerLabel?: string
   /** Label of the button opening the menu on narrow screens. */

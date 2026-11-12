@@ -60,6 +60,52 @@ ou plein écran sous 62em), l’aperçu est exposé comme une **boîte de dialog
 (`role="dialog"`, `aria-modal="true"`, nommée par son titre), comme `DsfrModal` ; en mode
 `push`, il reste une région `complementary`.
 
+### Aperçu flottant contenu dans la zone de la liste (2026-11-09)
+
+Retour du responsable produit : en pleine hauteur, l’aperçu flottant « prend tout l’écran ».
+Le comportement modal est conservé (page en pause, focus dans le panneau, Échap), seul le
+rendu change : le panneau flotte **dans la zone de la liste**, sous les lignes fil d’Ariane /
+barre d’outils et à droite de la barre latérale, sur **toute la hauteur** de cette zone,
+en laissant toujours une **bande du voile** (`2w`) visible sur chaque côté ; sa largeur
+reste `previewSize` (`md` par défaut, environ un tiers de l’écran, retenu pour les
+dossiers) ; un contenu long **défile à
+l’intérieur** du panneau (en-tête fixé), sans faire défiler la page derrière. Le voile ne couvre que cette zone :
+la barre latérale et les lignes fixées restent lisibles, mais inertes. Pour que leur aspect
+non assombri ne piège pas l’utilisateur de la souris, **un clic n’importe où en dehors du
+panneau le ferme**, comme un clic sur le voile. Les bords de la zone sont mesurés par le shell
+(défilement, redimensionnement) et passés au CSS (`--dsaasfr-shell-list-top` / `-left`).
+Sous 62em, l’aperçu reste en plein écran.
+
+### Revue RGAA 4.1.2 de l’aperçu flottant (2026-11-10)
+
+Revue par l’agent `a11y-auditor` sur le référentiel officiel ; corrections apportées :
+
+- **Précédent / suivant aux extrémités** (test 7.3.2) : les boutons restent focalisables
+  (`aria-disabled="true"`, aspect désactivé du DSFR) au lieu de `disabled`, qui faisait
+  perdre le focus en arrivant au premier ou au dernier élément ; un appui de plus est ignoré.
+- **Ouverture sans action de l’utilisateur** (lien partagé, rechargement, fenêtre réduite
+  sous 62em ; tests 7.3.1, 12.8.2) : une boîte de dialogue modale prend toujours le focus
+  (son titre), comme `DsfrModal`. En mode `push`, l’aperçu ne vole toujours pas le focus.
+  À la fermeture, le focus revient sur l’élément déclencheur, sinon sur le contenu principal.
+- **Échap** ferme la boîte de dialogue modale où que soit le focus (écoute sur le document
+  tant que la page est en pause).
+- **Clic en dehors** : seul un appui commencé ET terminé hors du panneau le ferme ; une
+  sélection de texte glissée hors du panneau ne le ferme plus (13.11.1, WCAG 2.5.2).
+- **Balisage** (8.2.1) : `role="dialog"` n’est pas autorisé sur `<aside>` ; l’aperçu est un
+  `<div>` quand il est modal, un `<aside>` (région `complementary`) sinon.
+- **Focus visible** (10.7.1) : si le contenu de l’aperçu n’enregistre pas de titre, le focus
+  va sur le panneau lui-même, avec l’anneau DSFR visible au clavier.
+
+Choix produit retenu : la barre latérale et les lignes fixées restent **non assombries**
+pendant l’aperçu flottant (elles situent l’écran et l’action principale) ; un clic dessus
+ferme seulement l’aperçu. Aucun test RGAA en échec (10.8.1 conforme : contenu inerte destiné
+à être ignoré pendant la boîte de dialogue modale).
+
+Restent à vérifier avec des technologies d’assistance (NVDA + Firefox, JAWS + Chrome/Edge,
+VoiceOver + Safari) : annonce « Dossier …, dialogue », curseur virtuel confiné, annonce
+unique du nouvel élément sur précédent / suivant, défilement clavier du panneau, zoom texte
+200 % et zoom 400 %, bord du panneau visible sur le voile en thème sombre.
+
 ## Conséquences pour l'accessibilité
 
 - Exception à l'anneau de focus du DSFR : le titre reçoit le focus par programmation à

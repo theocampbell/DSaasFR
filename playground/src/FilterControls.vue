@@ -1,207 +1,122 @@
 <script setup lang="ts">
-// App-side filter UI for the Dossiers list, built from the library's DsaasfrFilterChip +
-// DsaasfrDropdown:
-// - toolbar end: "Filtrer" opens every field with its values; nothing changes until
-//   "Appliquer les filtres";
-// - toolbar start: one chip per applied field. The field is fixed (one chip per field);
-//   condition and values open a panel with its own "Appliquer"; × removes the filter.
-// Every panel works on a draft: closing it without applying discards the changes.
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+// App-side search UI for the Dossiers list:
+// - page, under the title ("search"): the search bar (reference, applicant, commune),
+//   applied on submit;
+// - toolbar start: the result count (announced);
+// - toolbar end: one button per group of filters — "Communes" (its own modal, up to a whole
+//   département), "Instruction", "Projet" (panels) — and "Enregistrer la recherche";
+// - first thing in the page ("summary"), right-aligned under the filter buttons: the
+//   selected filters (DsaasfrSelectedFilters: one dismissible DSFR tag per filter, "Tout
+//   effacer").
+// The toolbar row holds a fixed set of controls, so it never overflows with use; the
+// selected filters get their own line outside it, with room to wrap.
+import { computed, nextTick, ref, watch } from 'vue'
+import type { DsaasfrSelectedFilter } from '@dsaasfr/vue'
+import CommunesModal from './CommunesModal.vue'
+import FilterGroupButton from './FilterGroupButton.vue'
 import { dossiers } from './fakeData'
-import {
-  applied, applyFilter, applySelection, clearFilters, countResults, facetCount, fieldLabel,
-  fields, filteredDossiers, filtersOf, operatorLabel, operators, removeFilter, selectionOf,
-  valuesOf,
-} from './filters'
-import type { Operator } from './filters'
+import { applied, clearFilters, fieldLabel, fields, filteredDossiers, groups, removalNote, removeFilter, searchText } from './filters'
 
-defineProps<{ area: 'start' | 'end' }>()
+defineProps<{ area: 'search' | 'start' | 'end' | 'summary' }>()
 
 const total = dossiers.length
 const plural = (n: number) => `${n} dossier${n > 1 ? 's' : ''}`
+const filtering = computed(() => !!applied.length || !!searchText.value)
 const count = computed(() =>
-  applied.length ? `${plural(filteredDossiers.value.length)} sur ${total}` : plural(total))
+  filtering.value ? `${plural(filteredDossiers.value.length)} sur ${total}` : plural(total))
 
-// ── "Filtrer": draft selection of all fields ─────────────────────────────────
-const panelOpen = ref(false)
-const draft = reactive<Record<string, string[]>>(selectionOf([]))
-const draftCount = computed(() => Object.values(draft).reduce((n, v) => n + v.length, 0))
-const draftFilters = computed(() => filtersOf(draft))
-const draftResults = computed(() => countResults(draftFilters.value))
-/** Value options with their faceted count; values that would return nothing are disabled. */
-const draftOptions = (fieldKey: string, name: string) => valuesOf(fieldKey).map((v) => {
-  const n = facetCount(draftFilters.value, fieldKey, v)
-  return { label: `${v} (${n})`, value: v, name, id: `${name}-${v}`, disabled: n === 0 && !draft[fieldKey]!.includes(v) }
+
+// Search bar: a draft, applied on submit (Enter or the button), like the filters.
+const query = ref(searchText.value)
+watch(searchText, (text) => {
+  query.value = text
 })
-watch(panelOpen, (open) => {
-  if (open) Object.assign(draft, selectionOf(applied))
-})
-function applyAll(close: (returnFocus?: boolean) => void) {
-  applySelection(draft)
-  close(true)
-}
-function resetDraft() {
-  Object.assign(draft, selectionOf([]))
+function search() {
+  searchText.value = query.value.trim()
 }
 
-// ── Chips: draft of the open part ────────────────────────────────────────────
-type Part = 'field' | 'operator' | 'values'
-const openChip = ref<{ field: string, part: Part }>()
-const chipDraft = reactive<{ operator: Operator, values: string[] }>({ operator: 'is', values: [] })
-function setOpenPart(field: string, part: Part | undefined) {
-  if (part) {
-    const filter = applied.find(f => f.field === field)!
-    chipDraft.operator = filter.operator
-    chipDraft.values = [...filter.values]
-    openChip.value = { field, part }
-  }
-  else if (openChip.value?.field === field) {
-    openChip.value = undefined
-  }
-}
-const chipFilters = (field: string) => [
-  ...applied.filter(f => f.field !== field),
-  { field, operator: chipDraft.operator, values: chipDraft.values },
-]
-const chipResults = (field: string) => countResults(chipFilters(field))
-const chipOptions = (field: string) => valuesOf(field).map((v) => {
-  const others = applied.filter(f => f.field !== field)
-  const n = chipDraft.operator === 'is' ? facetCount(others, field, v) : undefined
-  return {
-    label: n === undefined ? v : `${v} (${n})`,
-    value: v,
-    name: `chip-${field}`,
-    id: `chip-${field}-${v}`,
-    disabled: n === 0 && !chipDraft.values.includes(v),
-  }
-})
+// Selected filters: one tag per filter in use (the search text stays in its field).
+const selected = computed<DsaasfrSelectedFilter[]>(() =>
+  applied.map(f => ({ key: f.field, label: fieldLabel(f.field), values: f.values })))
 
-function applyChip(field: string, close: (returnFocus?: boolean) => void) {
-  const empty = !chipDraft.values.length
-  applyFilter(field, chipDraft.operator, chipDraft.values)
-  if (empty) void focusAfterRemoval(applied.length)
-  else close(true)
+// No tag left: focus goes back to the button of the group the last filter came from
+// ("Tout effacer": the first group), instead of falling on <body>.
+let lastGroup = groups[0]!.key
+function remove(key: string) {
+  lastGroup = fields.find(f => f.key === key)!.group
+  removeFilter(key)
 }
-
-// Removing a chip or clearing all would drop focus on <body>.
-async function focusAfterRemoval(index: number) {
-  await nextTick()
-  const chips = document.querySelectorAll<HTMLElement>('.dsaasfr-filter-chip')
-  const target = chips[Math.min(index, chips.length - 1)]?.querySelector<HTMLElement>('button')
-    ?? document.querySelector<HTMLElement>('[data-filter-trigger] > button')
-  target?.focus()
-}
-function remove(field: string) {
-  const index = applied.findIndex(f => f.field === field)
-  removeFilter(field)
-  void focusAfterRemoval(index)
-}
-function clearAll() {
+function clear() {
+  lastGroup = groups[0]!.key
   clearFilters()
-  void focusAfterRemoval(0)
 }
+async function focusGroup() {
+  await nextTick()
+  document.querySelector<HTMLElement>(`[data-filter-group="${lastGroup}"] button`)?.focus()
+}
+
+const filterGroups = computed(() => groups.filter(g => g.key !== 'communes'))
 </script>
 
 <template>
-  <!-- Toolbar start: result count (announced) + one chip per applied field -->
-  <template v-if="area === 'start'">
-    <p
-      class="fr-text--sm fr-mb-0"
-      role="status"
-    >
-      {{ count }}
-    </p>
-    <DsaasfrFilterChip
-      v-for="filter in applied"
-      :key="filter.field"
-      :field="fieldLabel(filter.field)"
-      :operator="operatorLabel(filter.operator)"
-      :values="filter.values"
-      :open-part="openChip?.field === filter.field ? openChip.part : undefined"
-      @update:open-part="setOpenPart(filter.field, $event)"
-      @remove="remove(filter.field)"
-    >
-      <template #operator>
-        <div class="fr-px-2w fr-pt-1w">
-          <DsfrRadioButtonSet
-            v-model="chipDraft.operator"
-            :name="`operateur-${filter.field}`"
-            :legend="`Condition : ${fieldLabel(filter.field)}`"
-            small
-            :options="operators.map(o => ({ label: o.label, value: o.value }))"
-          />
-        </div>
-      </template>
-      <template #values>
-        <div class="fr-px-2w fr-pt-1w">
-          <DsfrCheckboxSet
-            v-model="chipDraft.values"
-            :legend="`Valeurs : ${fieldLabel(filter.field)}`"
-            small
-            :options="chipOptions(filter.field)"
-          />
-        </div>
-      </template>
-      <template #footer="{ close }">
-        <DsfrButton
-          :label="chipDraft.values.length ? `Afficher ${plural(chipResults(filter.field))}` : 'Retirer le filtre'"
-          size="sm"
-          @click="applyChip(filter.field, close)"
-        />
-      </template>
-    </DsaasfrFilterChip>
+  <!-- Page, under the title: search bar -->
+  <div
+    v-if="area === 'search'"
+    class="fr-grid-row fr-mb-3w"
+  >
+    <DsfrSearchBar
+      id="recherche-dossiers"
+      v-model="query"
+      class="fr-col-12 fr-col-md-8"
+      label="Rechercher un dossier"
+      placeholder="Référence, demandeur ou commune"
+      button-text="Rechercher"
+      @search="search"
+    />
+  </div>
+
+  <!-- Toolbar start: result count (announced) -->
+  <p
+    v-else-if="area === 'start'"
+    class="fr-text--sm fr-mb-0"
+    role="status"
+  >
+    <span class="fr-sr-only">{{ removalNote }}</span>{{ count }}
+  </p>
+
+  <!-- Toolbar end: one button per group of filters, then save -->
+  <template v-else-if="area === 'end'">
+    <CommunesModal />
+    <FilterGroupButton
+      v-for="group in filterGroups"
+      :key="group.key"
+      :group="group"
+    />
+    <!-- Saves the current search (text, communes, filters) — demo: does nothing. In a real
+         app, it stores the search URL in the database, listed in "Mes recherches". -->
     <DsfrButton
-      v-if="applied.length"
-      label="Tout effacer"
+      label="Enregistrer la recherche"
+      icon="fr-icon-save-line"
       tertiary
-      no-outline
       size="sm"
-      @click="clearAll"
     />
   </template>
 
-  <!-- Toolbar end: "Filtrer" = every field with its values, applied on demand -->
-  <DsaasfrDropdown
-    v-else
-    v-model:open="panelOpen"
-    data-filter-trigger
-    placement="bottom-end"
-    autofocus
-    trigger-class="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left fr-icon-filter-line"
-    :trigger-label="applied.length ? `Filtrer (${applied.length}), ${applied.length} filtre${applied.length > 1 ? 's' : ''} actif${applied.length > 1 ? 's' : ''}` : undefined"
-  >
-    <template #trigger>
-      Filtrer<template v-if="applied.length">
-        ({{ applied.length }})
-      </template>
-    </template>
-    <template #default>
-      <div class="fr-px-2w fr-pt-1w">
-        <DsfrCheckboxSet
-          v-for="field in fields"
-          :key="field.key"
-          v-model="draft[field.key]"
-          :legend="field.label"
-          small
-          :options="draftOptions(field.key, `filtre-${field.key}`)"
-        />
-      </div>
-    </template>
-    <template #footer="{ close }">
-      <DsfrButton
-        label="Réinitialiser"
-        tertiary
-        no-outline
-        size="sm"
-        :disabled="!draftCount"
-        @click="resetDraft"
-      />
-      <!-- Preview of the result before applying (one count query on a real server). -->
-      <DsfrButton
-        :label="draftCount ? `Afficher ${plural(draftResults)}` : `Afficher tous les dossiers`"
-        size="sm"
-        @click="applyAll(close)"
-      />
-    </template>
-  </DsaasfrDropdown>
+  <!-- First thing in the page, right-aligned under the filter buttons: selected filters -->
+  <DsaasfrSelectedFilters
+    v-else-if="selected.length"
+    class="fr-mb-3w playground-selected"
+    align="end"
+    :items="selected"
+    @remove="remove"
+    @clear="clear"
+    @empty="focusGroup"
+  />
 </template>
+
+<style scoped>
+/* Close under the filter buttons: 1w from the toolbar instead of the page's 3w padding. */
+.playground-selected {
+  margin-top: calc(-1 * var(--dsaasfr-space-2w));
+}
+</style>

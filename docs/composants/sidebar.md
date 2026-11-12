@@ -51,6 +51,12 @@ La page active est déduite de la route courante, par préfixe : sur `/dossiers/
 l’entrée « Dossiers » est active. L’entrée `/` n’est active que sur `/`. Pour forcer un état,
 utilisez `active` sur l’entrée.
 
+Les paramètres comptent aussi, pour des **recherches enregistrées** affichées comme liens
+(`/dossiers?statut=urgent`) : un lien dont un paramètre diffère de l’URL n’est pas actif, et
+seul le lien le plus précis de toute la navigation l’est. Sur `/dossiers?statut=urgent`, la
+recherche « Urgents » est la page courante, pas « Dossiers » en plus ; sur `/dossiers`,
+« Dossiers » seul.
+
 ### Page active dans un groupe
 
 <Example story="shell-dsaasfrsidebar--active-in-group" title="groupe Administration ouvert, page Démarches active" :height="560" />
@@ -109,6 +115,7 @@ Les mêmes props pilotent les deux mises en page ; pour voir ce rendu, zoomez à
 | `homeTo` | `RouteLocationRaw` | `'/'` | Destination du lien d’accueil. |
 | `items` | `DsaasfrSidebarItem[]` | `[]` | Entrées de la navigation principale. Ignorées si l’emplacement par défaut est utilisé. |
 | `navLabel` | `string` | `'Navigation principale'` | Nom accessible de la région de navigation. |
+| `contextLabel` | `string` | `'Périmètre'` | Nom accessible de la région du contexte (emplacement `context`). |
 | `footerLabel` | `string` | `'Mon espace'` | Nom accessible de la région du pied. |
 | `menuLabel` | `string` | `'Menu'` | Libellé du bouton qui ouvre le menu sur écran étroit. |
 | `closeMenuLabel` | `string` | `'Fermer'` | Libellé du bouton qui ferme le menu sur écran étroit. |
@@ -129,6 +136,7 @@ Les mêmes props pilotent les deux mises en page ; pour voir ce rendu, zoomez à
 
 | Nom | Description |
 |---|---|
+| `context` | Contexte de travail, sous le nom du service : par exemple [DsaasfrContextSwitcher](/composants/context-switcher) (département). Exposé comme une région nommée par `contextLabel`. Sur écran étroit, en haut du menu. |
 | `footer` | Pied de la barre latérale : compte, réglages, paramètres d’affichage. Exposé comme une région nommée par `footerLabel`. |
 | _par défaut_ | Remplace la liste générée à partir de `items`, à l’intérieur du `<nav>`. Réservé aux cas que `items` ne couvre pas. |
 | `brand` | Remplace le bloc-marque et le nom du service, sur grand écran uniquement. Le contenu doit garder le bloc-marque officiel et contenir **exactement un lien** (le bloc entier est cliquable). |
