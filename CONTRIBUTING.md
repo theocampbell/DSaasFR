@@ -51,6 +51,14 @@ vérifiés par commitlint :
 Le numéro de version et la release GitHub (avec les notes de version)
 sont générés automatiquement par semantic-release à partir de ces messages.
 
+### Changements incompatibles
+
+Retirer ou renommer une prop, un emplacement, un événement ou un composant exporté est un
+changement incompatible. Tant que le paquet est en `0.x`, il passe dans une version mineure :
+utilisez `feat:` (pas `feat!:`, qui publierait une `1.0.0`) et décrivez dans le corps du
+commit et dans la PR l’avant et l’après, sous « Changements incompatibles ». Voir
+[Versions et compatibilité](docs/guide/versions.md).
+
 ## Règles du projet
 
 Elles sont détaillées dans [CLAUDE.md](CLAUDE.md) (utilisé aussi par les agents IA du

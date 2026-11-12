@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://theocampbell.github.io/DSaasFR/
+    about: Guide, composants avec exemples, recettes et fiches de décision.
+  - name: Feuille de route
+    url: https://github.com/theocampbell/DSaasFR/blob/develop/ROADMAP.md
+    about: Ce qui est prévu, et ce qui ne l’est pas.

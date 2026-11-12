@@ -47,6 +47,7 @@ export default defineConfig({
             { text: 'Pour commencer', link: '/guide/pour-commencer' },
             { text: 'Intégrer dans une application', link: '/guide/integration' },
             { text: 'Principes', link: '/guide/principes' },
+            { text: 'Versions et compatibilité', link: '/guide/versions' },
             { text: 'Contribuer', link: '/guide/contribuer' },
           ],
         },

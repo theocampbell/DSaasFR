@@ -77,6 +77,13 @@ import { DsaasfrAppShell } from '@dsaasfr/vue'
 | `DsaasfrSearchableCheckboxSet` | Brouillon — voir la [fiche de décision 0010](docs/decisions/0010-long-lists.md) |
 | `DsaasfrContextSwitcher` | Brouillon — voir la [fiche de décision 0011](docs/decisions/0011-context-switcher.md) |
 
+## Versions et compatibilité
+
+Le paquet est en `0.x` : une version mineure peut contenir des changements incompatibles,
+listés dans ses notes de version. Compatibilité avec Vue DSFR et le DSFR, politique de
+versions et plan de sortie : voir
+[Versions et compatibilité](https://theocampbell.github.io/DSaasFR/guide/versions).
+
 ## Principes
 
 - Étendre Vue DSFR, jamais le remplacer ([fiche de décision 0001](docs/decisions/0001-build-on-vue-dsfr.md)).
