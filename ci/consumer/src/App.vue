@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import {
   DsaasfrAppShell, DsaasfrBreadcrumbBar, DsaasfrContextSwitcher, DsaasfrFilterDropdown, DsaasfrFilterModal,
-  DsaasfrPreviewPanel, DsaasfrSearchableCheckboxSet, DsaasfrSelectedFilters, DsaasfrSidebar, DsaasfrToolbar,
+  DsaasfrPreviewPanel, DsaasfrSearchableCheckboxSet, DsaasfrSidebar, 
   DsaasfrUserMenu, usePreviewQuery, useRouteBreadcrumb,
 } from '@dsaasfr/vue'
 import type { DsaasfrSelectedFilter, DsaasfrSidebarItem } from '@dsaasfr/vue'

@@ -72,6 +72,12 @@ Deux points sur les feuilles de style :
   que la palette claire. Les composants DSaaSFR n’utilisent que les variables de couleur du
   DSFR : ils suivent le thème choisi sans réglage supplémentaire.
 
+::: tip Autocomplétion dans les templates
+Avec `app.use(DSaaSFR)`, les composants `Dsaasfr*` sont enregistrés globalement et typés :
+votre éditeur (Vue - Official) propose leurs props et `vue-tsc` les vérifie, sans import dans
+chaque fichier.
+:::
+
 ## Plugin ou imports un par un
 
 `app.use(DSaaSFR)` enregistre globalement tous les composants `Dsaasfr*`. Vous pouvez aussi
