@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": false,
+    "noUncheckedSideEffectImports": true,
+    "jsx": "preserve",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "vueCompilerOptions": { "strictTemplates": true },
+  "include": ["src/**/*.ts", "src/**/*.vue"]
+}

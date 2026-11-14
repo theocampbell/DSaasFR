@@ -1,0 +1,47 @@
+name: Signaler un problème
+description: Un composant ne fonctionne pas comme prévu, ou un défaut d’accessibilité.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci ! DSaaSFR est un projet expérimental maintenu sur du temps limité : une reproduction courte nous fait gagner beaucoup de temps.
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: "@dsaasfr/vue, @gouvminint/vue-dsfr, @gouvfr/dsfr, vue, vue-router (`npm ls` les affiche)."
+      placeholder: "@dsaasfr/vue 0.4.0, vue-dsfr 8.21.0, dsfr 1.14.4, vue 3.5.45, vue-router 5.5.0"
+    validations:
+      required: true
+  - type: input
+    id: composant
+    attributes:
+      label: Composant concerné
+      placeholder: DsaasfrFilterModal
+    validations:
+      required: true
+  - type: textarea
+    id: constat
+    attributes:
+      label: Ce qui se passe, et ce que vous attendiez
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Comment reproduire
+      description: Les étapes, un extrait de code, ou un lien vers une page du bac à sable ou de Storybook où le défaut est visible.
+    validations:
+      required: true
+  - type: input
+    id: contexte
+    attributes:
+      label: Navigateur, zoom, technologie d’assistance
+      description: Utile pour un défaut d’affichage ou d’accessibilité.
+      placeholder: Firefox 144, zoom 200 %, NVDA 2026.1
+  - type: input
+    id: rgaa
+    attributes:
+      label: Critère RGAA concerné (si connu)
+      placeholder: "7.1.3"

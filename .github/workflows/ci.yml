@@ -24,6 +24,8 @@ jobs:
           pnpm test:coverage | tee coverage.txt
           { echo '### Couverture des tests'; echo '```'; sed -n '/Coverage summary/,/^=*$/p' coverage.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
       - run: pnpm build
+      - name: Consumer test (pack, install in a blank app, type-check, build)
+        run: pnpm test:consumer
       - run: pnpm build-storybook --quiet
       - run: pnpm docs:build
       - uses: actions/upload-artifact@v4

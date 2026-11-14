@@ -18,7 +18,7 @@ strictement les couleurs, la typographie, les espacements et l'accessibilité du
 ## Installation
 
 ```bash
-npm install @gouvminint/vue-dsfr @gouvfr/dsfr vue-router @dsaasfr/vue
+npm install @gouvminint/vue-dsfr@^8.21.0 @gouvfr/dsfr@~1.14.4 vue-router @dsaasfr/vue
 ```
 
 ```ts
@@ -76,6 +76,13 @@ import { DsaasfrAppShell } from '@dsaasfr/vue'
 | `DsaasfrFilterModal` | Brouillon — voir la [fiche de décision 0010](docs/decisions/0010-long-lists.md) |
 | `DsaasfrSearchableCheckboxSet` | Brouillon — voir la [fiche de décision 0010](docs/decisions/0010-long-lists.md) |
 | `DsaasfrContextSwitcher` | Brouillon — voir la [fiche de décision 0011](docs/decisions/0011-context-switcher.md) |
+
+## Versions et compatibilité
+
+Le paquet est en `0.x` : une version mineure peut contenir des changements incompatibles,
+listés dans ses notes de version. Compatibilité avec Vue DSFR et le DSFR, politique de
+versions et plan de sortie : voir
+[Versions et compatibilité](https://theocampbell.github.io/DSaasFR/guide/versions).
 
 ## Principes
 

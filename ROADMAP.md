@@ -23,11 +23,16 @@ propositions bienvenus dans les tickets ou les discussions du dépôt.
 
 ## Ensuite
 
+- **Tests de régression visuelle** sur les stories Storybook : repérer un décalage après une
+  mise à jour du DSFR.
+- **Textes par défaut** modifiables en un seul endroit, à l’installation du plugin.
+- **Page « cas limites »** dans le bac à sable : libellés très longs, listes vides, 40
+  filtres, chargement lent.
+- **État de l’accessibilité** : ce qui a été testé, avec quels lecteurs d’écran, et ce qui ne
+  l’a pas été.
 - **Guide d’intégration** et rôles dans le bac à sable : navigation et actions selon le rôle,
   garde du routeur (un « instructeur » et un « administrateur » qui voient des choses
   différentes).
-- **Test côté consommateur en CI** : empaqueter, installer dans une application Vite + Vue
-  DSFR vierge, compiler, afficher.
 - **Signaler à Vue DSFR** deux problèmes relevés (fiche 0004) : slot `mainnav` de `DsfrHeader`
   typé sans sa prop `hidemodal` ; `DsfrSideMenuList` place `aria-current="page"` sur les
   boutons de groupe.

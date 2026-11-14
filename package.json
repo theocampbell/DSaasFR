@@ -44,16 +44,22 @@
       }
     },
     "./styles": {
-      "import": "./dist/dsaasfr.css"
+      "import": {
+        "types": "./types/styles.d.ts",
+        "default": "./dist/dsaasfr.css"
+      }
     },
     "./dist/dsaasfr.css": {
-      "import": "./dist/dsaasfr.css"
+      "import": {
+        "types": "./types/styles.d.ts",
+        "default": "./dist/dsaasfr.css"
+      }
     }
   },
   "scripts": {
     "dev": "vite --config playground/vite.config.ts",
     "build:playground": "vite build --config playground/vite.config.ts",
-    "build": "vite build && vue-tsc -p tsconfig.build.json",
+    "build": "node ci/types.mjs clean && vite build && vue-tsc -p tsconfig.build.json && node ci/types.mjs extras",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "lint": "pnpm lint:js && pnpm lint:css",
     "lint:js": "eslint .",
@@ -66,6 +72,8 @@
     "prepublishOnly": "pnpm check",
     "test:coverage": "vitest run --coverage",
     "check-exports": "node ci/check-exports.mjs",
+    "test:consumer": "node ci/consumer-test.mjs",
+    "test:consumer:latest": "node ci/consumer-test.mjs --latest",
     "prepare": "husky",
     "semantic-release": "semantic-release",
     "docs:dev": "vitepress dev docs",
@@ -73,6 +81,7 @@
     "docs:preview": "vitepress preview docs"
   },
   "peerDependencies": {
+    "@gouvfr/dsfr": "~1.14.4",
     "@gouvminint/vue-dsfr": "^8.21.0",
     "vue": "^3.5.27",
     "vue-router": "^5.0.3"

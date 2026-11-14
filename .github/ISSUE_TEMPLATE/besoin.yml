@@ -1,0 +1,21 @@
+name: Proposer un besoin
+description: Un motif d’application métier que DSaaSFR ne couvre pas, ou une évolution d’un composant.
+labels: [besoin]
+body:
+  - type: textarea
+    id: besoin
+    attributes:
+      label: Le besoin
+      description: Ce que l’utilisateur de votre application doit pouvoir faire, plutôt que la solution technique.
+    validations:
+      required: true
+  - type: textarea
+    id: contexte
+    attributes:
+      label: Votre application
+      description: Type d’application, utilisateurs, ce que vous faites aujourd’hui pour ce besoin.
+  - type: textarea
+    id: dsfr
+    attributes:
+      label: Ce que prévoient le DSFR et Vue DSFR
+      description: Le composant ou le modèle le plus proche, et ce qui lui manque. Toute extension du DSFR fait l’objet d’une fiche de décision.
