@@ -7,7 +7,8 @@ attendre d’une mise à jour, et avec quelles versions de ses dépendances le p
 
 | `@dsaasfr/vue` | Vue DSFR | DSFR | Vue | vue-router |
 |---|---|---|---|---|
-| 0.4 | `^8.17.2` | `~1.14.4` | `^3.5.27` | `^5.0.3` |
+| 0.5 | `^8.17.2` | `~1.14.4` | `^3.5.27` | `^5.0.3` |
+| 0.4 | `^8.21.0` | `~1.14.4` | `^3.5.27` | `^5.0.3` |
 | 0.2 – 0.3 | `^8.21.0` | celle de Vue DSFR (`~1.14.4`) | `^3.5.27` | `^5.0.3` |
 
 Ce sont des dépendances paires : votre application les fournit, et npm vous prévient si une
