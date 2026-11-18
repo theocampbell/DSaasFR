@@ -74,6 +74,7 @@
     "check-exports": "node ci/check-exports.mjs",
     "test:consumer": "node ci/consumer-test.mjs",
     "test:consumer:latest": "node ci/consumer-test.mjs --latest",
+    "test:consumer:minimum": "node ci/consumer-test.mjs --minimum",
     "prepare": "husky",
     "semantic-release": "semantic-release",
     "docs:dev": "vitepress dev docs",
@@ -82,7 +83,7 @@
   },
   "peerDependencies": {
     "@gouvfr/dsfr": "~1.14.4",
-    "@gouvminint/vue-dsfr": "^8.21.0",
+    "@gouvminint/vue-dsfr": "^8.17.2",
     "vue": "^3.5.27",
     "vue-router": "^5.0.3"
   },

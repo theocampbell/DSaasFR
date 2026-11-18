@@ -26,6 +26,8 @@ jobs:
       - run: pnpm build
       - name: Consumer test (pack, install in a blank app, type-check, build)
         run: pnpm test:consumer
+      - name: Consumer test, lowest Vue DSFR of the peer range
+        run: pnpm test:consumer:minimum
       - run: pnpm build-storybook --quiet
       - run: pnpm docs:build
       - uses: actions/upload-artifact@v4

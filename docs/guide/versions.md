@@ -7,11 +7,16 @@ attendre d’une mise à jour, et avec quelles versions de ses dépendances le p
 
 | `@dsaasfr/vue` | Vue DSFR | DSFR | Vue | vue-router |
 |---|---|---|---|---|
-| 0.4 | `^8.21.0` | `~1.14.4` | `^3.5.27` | `^5.0.3` |
+| 0.4 | `^8.17.2` | `~1.14.4` | `^3.5.27` | `^5.0.3` |
 | 0.2 – 0.3 | `^8.21.0` | celle de Vue DSFR (`~1.14.4`) | `^3.5.27` | `^5.0.3` |
 
 Ce sont des dépendances paires : votre application les fournit, et npm vous prévient si une
 version ne convient pas. La version du DSFR est celle dont dépend Vue DSFR ; prenez la même.
+
+Deux versions de Vue DSFR sont vérifiées à chaque modification : le paquet est installé dans
+une application vierge avec la version recommandée (celle de la commande d’installation),
+**puis** avec la plus ancienne que la plage accepte (8.17.2) ; les types sont vérifiés et
+l’application est compilée.
 
 Chaque lundi, une vérification automatique installe le paquet avec les **dernières** versions
 de Vue DSFR, du DSFR, de Vue et de vue-router, vérifie les types, compile et lance les tests.

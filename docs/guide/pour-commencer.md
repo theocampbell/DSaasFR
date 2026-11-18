@@ -20,7 +20,7 @@ DSaaSFR s’appuie sur les mêmes briques qu’un projet Vue DSFR. Ce sont des d
 |---|---|
 | `vue` | 3.5 ou plus |
 | `vue-router` | 5 |
-| `@gouvminint/vue-dsfr` | 8.21 ou plus |
+| `@gouvminint/vue-dsfr` | 8.17.2 ou plus |
 
 vue-router est obligatoire : la barre latérale déduit la page active de la route, et le fil
 d’Ariane se construit à partir des routes.
@@ -40,7 +40,7 @@ projet initialisé par `npm create @gouvfr/dsfr`.
 
 Indiquez aussi la version de Vue DSFR (`^8.21.0`) : sans elle, npm échoue sur un conflit de
 dépendances (`ERESOLVE`) dans un projet où Vue DSFR n’est pas encore installé. Si votre
-application utilise déjà Vue DSFR 8.21 ou plus, `npm install @dsaasfr/vue` suffit.
+application utilise déjà Vue DSFR 8.17.2 ou plus, `npm install @dsaasfr/vue` suffit.
 :::
 
 ## Déclarer les plugins et les styles

@@ -8,6 +8,9 @@
 // With --latest (weekly CI): install the LATEST Vue DSFR, and the DSFR version it depends
 // on, instead of the versions of the README — to learn that an upstream release breaks the
 // package before the applications using it do.
+//
+// With --minimum: install the LOWEST Vue DSFR the peer range allows (an application that has
+// not upgraded yet), to check that the range does not promise more than the package keeps.
 import { execSync } from 'node:child_process'
 import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -42,6 +45,11 @@ try {
       .replace(/@gouvminint\/vue-dsfr@\S+/, '@gouvminint/vue-dsfr@latest')
       .replace(/@gouvfr\/dsfr@\S+/, `@gouvfr/dsfr@${dsfr}`)
       .replace(/ vue-router /, ' vue@latest vue-router@latest ')
+  }
+  if (process.argv.includes('--minimum')) {
+    const range = JSON.parse(readFileSync('package.json', 'utf8')).peerDependencies['@gouvminint/vue-dsfr']
+    const minimum = range.replace(/^[\^~]/, '')
+    command = command.replace(/@gouvminint\/vue-dsfr@\S+/, `@gouvminint/vue-dsfr@${minimum}`)
   }
   run(`${command} --no-audit --no-fund`, app)
   run('npm install --no-audit --no-fund', app) // the app's own tooling (vite, vue-tsc…)
